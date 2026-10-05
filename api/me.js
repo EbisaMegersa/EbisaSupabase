@@ -55,6 +55,7 @@ module.exports = async (req, res) => {
       streak: user.streak || 0,
       last_checkin: user.last_checkin,
       first_name: user.first_name,
+      referral_code: user.referral_code,
       tasks: (tdone || []).map(t => t.task_key),
       referrals,
       withdrawals: hist || []
