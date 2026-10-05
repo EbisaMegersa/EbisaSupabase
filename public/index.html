@@ -312,7 +312,7 @@ function renderMethods() {
 function renderHistory() {
   const h = me.withdrawals || [];
   $('history').innerHTML = h.length
-    ? h.map(w => '<div class="row"><div><p class="rt">' + ((METHODS[w.method] || {}).label || w.method || '—') + '</p><p class="rd">' + String(w.created_at || '').slice(0, 10) + '</p></div><div style="text-align:right"><p class="rt">-' + fmt(w.points) + ' pts</p><p class="rd ' + (w.status === 'done' ? 'ok' : '') + '">' + (w.status === 'done' ? 'Paid ✓' : 'Pending ⏳') + '</p></div></div>').join('')
+    ? h.map(w => '<div class="row"><div><p class="rt">' + ((METHODS[w.method] || {}).label || w.method || '—') + '</p><p class="rd">' + String(w.created_at || '').slice(0, 10) + '</p></div><div style="text-align:right"><p class="rt">-' + fmt(w.points) + ' pts</p><p class="rd ' + (w.status === 'done' ? 'ok' : '') + '">' + (w.status === 'done' ? 'Paid ✓' : (w.status === 'rejected' ? 'Rejected ❌' : 'Pending ⏳') + '</p></div></div>').join('')
     : '<p class="empty">No withdrawals yet</p>';
 }
 
