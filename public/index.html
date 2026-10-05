@@ -3,56 +3,56 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-<title>EarnApp — Refer & Earn</title>
+<title>EarnApp</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{--bg:#F2F2F7;--card:#FFFFFF;--txt:#1C1C1E;--dim:#8E8E93;--sep:#E5E5EA;--acc:#007AFF;--green:#34C759;--orange:#FF9500;--red:#FF3B30;--dark:#1C1C1E}
+:root{--bg:#000;--card:#1C1C1E;--card2:#2C2C2E;--sep:#38383A;--txt:#fff;--dim:#98989F;--acc:#0A84FF;--green:#30D158;--orange:#FF9F0A;--red:#FF453A}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding-bottom:96px}
 main{max-width:480px;margin:0 auto;padding:16px}
 .hide{display:none!important}
-.emw{display:inline-block;width:1.2em;height:1.2em;vertical-align:-0.25em}
-.emw img{width:100%;height:100%;display:block}
-.emw.big{width:26px;height:26px;vertical-align:middle}
-.emw.nav{width:24px;height:24px;vertical-align:middle}
-.xlogo{display:inline-flex;width:26px;height:26px;border-radius:7px;background:#000;color:#fff;font-weight:800;font-size:14px;align-items:center;justify-content:center;font-family:inherit}
+.ic{display:inline-flex;width:20px;height:20px;color:#fff;flex-shrink:0}
+.ic svg{width:100%;height:100%}
+.ic.lg{width:24px;height:24px}
+.ic.sm{width:16px;height:16px}
+.ic.green{color:var(--green)}.ic.orange{color:var(--orange)}.ic.dim{color:var(--dim)}.ic.dark{color:#000}
 .header{display:flex;align-items:center;gap:11px;margin-bottom:16px}
-.avatar{width:44px;height:44px;border-radius:50%;background:var(--acc);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px;flex-shrink:0}
+.avatar{width:44px;height:44px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex-shrink:0}
 .hname{font-weight:700;font-size:16px}
 .hsub{font-size:13px;color:var(--dim)}
-.chipbtn{margin-left:auto;background:#FFF3E0;color:var(--orange);font-size:13px;font-weight:700;padding:7px 13px;border-radius:999px;display:flex;align-items:center;gap:5px}
-.hero{background:var(--dark);border-radius:22px;padding:24px 20px;text-align:center;margin-bottom:14px;box-shadow:0 6px 20px rgba(0,0,0,.18)}
-.hero-label{font-size:11px;letter-spacing:2px;color:rgba(255,255,255,.55);font-weight:600}
-.hero-amt{font-size:42px;font-weight:800;color:#fff;margin:4px 0 2px}
-.hero-usd{font-size:13px;color:rgba(255,255,255,.55)}
-.card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:14px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
-.ctitle{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:7px}
-.btn{width:100%;padding:14px;border-radius:14px;border:none;font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;color:#fff;transition:opacity .15s;background:var(--acc)}
+.chipbtn{margin-left:auto;background:var(--card);color:#fff;font-size:13px;font-weight:700;padding:8px 14px;border-radius:999px;display:flex;align-items:center;gap:6px}
+.hero{background:#fff;border-radius:22px;padding:24px 20px;text-align:center;margin-bottom:14px}
+.hero-label{font-size:11px;letter-spacing:2px;color:rgba(0,0,0,.45);font-weight:700}
+.hero-amt{font-size:42px;font-weight:800;color:#000;margin:4px 0 2px}
+.hero-usd{font-size:13px;color:rgba(0,0,0,.45);font-weight:500}
+.card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:14px}
+.ctitle{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:9px}
+.btn{width:100%;padding:14px;border-radius:14px;border:none;font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;color:#000;background:#fff;transition:opacity .15s;display:flex;align-items:center;justify-content:center;gap:8px}
 .btn:active{opacity:.7}
 .btn:disabled{opacity:.4;cursor:default}
-.btn-green{background:var(--green)}
-.btn-ghost{background:var(--sep);color:var(--txt)}
+.btn-green{background:var(--green);color:#000}
+.btn-ghost{background:var(--card2);color:#fff}
+.btn-blue{background:rgba(10,132,255,.16);color:var(--acc)}
 .btn-sm{width:auto;padding:9px 16px;font-size:13px;border-radius:11px}
-.btn-blue-tint{background:#E5F0FF;color:var(--acc)}
 .done{color:var(--green);font-weight:700;font-size:13px;padding:9px 14px}
 .row2{display:flex;gap:10px}
 .row2>*{flex:1}
 .dots{display:flex;gap:6px;margin-bottom:12px}
-.dot{flex:1;text-align:center;padding:9px 2px;border-radius:11px;background:var(--bg);font-size:10px;color:var(--dim)}
-.dot b{display:block;font-size:12px;font-weight:700}
-.dot.on{background:#E5F0FF;color:var(--acc)}
-.dot.on b{color:var(--acc)}
-.task{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--sep)}
+.dot{flex:1;text-align:center;padding:9px 2px;border-radius:11px;background:var(--card2);font-size:10px;color:var(--dim);font-weight:600}
+.dot b{display:block;font-size:12px;font-weight:800}
+.dot.on{background:var(--green);color:#000}
+.task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--sep)}
 .task:last-child{border-bottom:none}
-.ticon{width:44px;height:44px;border-radius:12px;background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.ticon{width:44px;height:44px;border-radius:12px;background:var(--card2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .tinfo{flex:1}
 .ttitle{font-size:14px;font-weight:600}
 .trew{font-size:12px;color:var(--green);font-weight:700}
-.inp{width:100%;padding:13px 14px;border-radius:13px;background:var(--bg);border:none;color:var(--txt);font-size:15px;font-family:inherit;outline:none;margin-bottom:10px}
+.inp{width:100%;padding:13px 14px;border-radius:13px;background:var(--card2);border:none;color:#fff;font-size:15px;font-family:inherit;outline:none;margin-bottom:10px}
+.inp::placeholder{color:#6E6E73}
 .lbl{font-size:12px;color:var(--dim);margin-bottom:7px;font-weight:600;letter-spacing:.3px}
-.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
-.chip{padding:9px 15px;border-radius:11px;border:none;background:var(--sep);color:var(--txt);font-size:13px;font-weight:600;font-family:inherit;cursor:pointer}
-.chip.sel{background:#E5F0FF;color:var(--acc)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{padding:9px 15px;border-radius:11px;border:none;background:var(--card2);color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+.chip.sel{background:#fff;color:#000}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
 .gnum{font-size:20px;font-weight:800}
 .glbl{font-size:11px;color:var(--dim);margin-top:2px}
@@ -65,41 +65,40 @@ main{max-width:480px;margin:0 auto;padding:16px}
 .warn{color:var(--orange)}
 .empty{font-size:13px;color:var(--dim);text-align:center;padding:10px 0}
 .note{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5}
-.linkbox{width:100%;font-size:11px;background:var(--bg);border-radius:12px;padding:12px;color:var(--acc);outline:none;word-break:break-all;border:none;font-family:inherit}
-.hint{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--sep);font-size:13px;font-weight:500}
+.linkbox{width:100%;font-size:11px;background:var(--card2);border-radius:12px;padding:12px;color:#fff;outline:none;word-break:break-all;border:none;font-family:inherit}
+.hint{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--sep);font-size:13px;font-weight:500}
 .hint:last-child{border-bottom:none}
-.hint span:first-child{font-size:19px;display:flex}
 .hint .pts{margin-left:auto;color:var(--green);font-weight:700;font-size:13px}
-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;display:flex;background:rgba(255,255,255,.96);backdrop-filter:blur(14px);border-top:1px solid var(--sep);padding:7px 4px 11px;z-index:50}
-.nav-btn{flex:1;padding:4px 0;border-radius:12px;text-align:center;font-size:10px;font-weight:600;color:var(--dim);background:none;border:none;font-family:inherit;cursor:pointer}
-.nav-btn.active{color:var(--acc)}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;display:flex;background:rgba(10,10,10,.96);backdrop-filter:blur(16px);border-top:1px solid var(--sep);padding:8px 4px 12px;z-index:50}
+.nav-btn{flex:1;padding:4px 0;border-radius:12px;text-align:center;font-size:10px;font-weight:600;color:rgba(255,255,255,.4);background:none;border:none;font-family:inherit;cursor:pointer}
+.nav-btn .ic{width:22px;height:22px;margin:0 auto 2px}
+.nav-btn.active{color:#fff}
+.nav-btn.active .ic{color:#fff}
 .amtwrap{position:relative}
-.maxb{position:absolute;right:9px;top:9px;background:#E5F0FF;color:var(--acc);border:none;font-size:11px;font-weight:800;padding:6px 11px;border-radius:8px;cursor:pointer;font-family:inherit}
+.maxb{position:absolute;right:9px;top:9px;background:#fff;color:#000;border:none;font-size:11px;font-weight:800;padding:6px 11px;border-radius:8px;cursor:pointer;font-family:inherit}
 /* wheel */
-.wheelwrap{position:relative;width:258px;height:258px;margin:8px auto 4px}
-.wheel{width:100%;height:100%;border-radius:50%;border:7px solid #fff;box-shadow:0 4px 18px rgba(0,0,0,.14);transition:transform 4.2s cubic-bezier(.15,.72,.22,1);background:conic-gradient(var(--sep) 0deg 45deg,var(--acc) 45deg 90deg,var(--sep) 90deg 135deg,var(--green) 135deg 180deg,var(--sep) 180deg 225deg,var(--orange) 225deg 270deg,var(--sep) 270deg 315deg,var(--acc) 315deg 360deg)}
-.seg{position:absolute;left:50%;top:50%;font-size:13px;font-weight:800;color:#fff;transform-origin:0 0}
-.seg.loser{color:var(--dim)}
-.hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:74px;height:74px;border-radius:50%;background:#fff;box-shadow:0 2px 10px rgba(0,0,0,.16);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px}
-.pointer{position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:20px solid var(--dark);z-index:2}
-.gres{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
-.gtag{font-size:11px;font-weight:700;padding:5px 9px;border-radius:8px;background:var(--sep)}
-.gtag.win{background:#E8F9EE;color:var(--green)}
+.wheelwrap{position:relative;width:272px;height:272px;margin:8px auto 6px}
+#wheel{width:100%;height:100%;display:block;transition:transform 4.2s cubic-bezier(.12,.67,.16,1);will-change:transform}
+.pointer{position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:22px solid #fff;z-index:3;filter:drop-shadow(0 2px 4px rgba(0,0,0,.7))}
+.hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;background:#000;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;z-index:2;letter-spacing:1px}
+.gres{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.gtag{font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;background:var(--card2);color:var(--dim)}
+.gtag.win{color:var(--green)}
 </style>
 </head>
 <body>
 <main>
 <div id="loading" class="empty" style="margin-top:180px">Loading…</div>
-<div id="nottg" class="hide empty" style="margin-top:180px">Please open this app inside Telegram 🙂</div>
+<div id="nottg" class="hide empty" style="margin-top:180px">Please open this app inside Telegram</div>
 
 <div id="app" class="hide">
   <div class="header">
     <div class="avatar" id="avatar">?</div>
     <div>
-      <p class="hname" id="hello">Hi 👋</p>
+      <p class="hname" id="hello">Hi</p>
       <p class="hsub">Let's earn some points</p>
     </div>
-    <div class="chipbtn"><i class="emw" data-em="1f525"></i><span id="streakVal">0</span></div>
+    <div class="chipbtn"><i class="ic sm orange" data-ic="flame"></i><span id="streakVal">0</span></div>
   </div>
 
   <!-- ============ HOME ============ -->
@@ -111,45 +110,45 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
     </div>
 
     <div class="card">
-      <p class="ctitle"><i class="emw big" data-em="1f525"></i> Daily Streak</p>
+      <p class="ctitle"><i class="ic" data-ic="flame"></i> Daily Streak</p>
       <div class="dots" id="dots"></div>
       <button class="btn btn-green" id="checkinBtn" onclick="doCheckin()">Claim</button>
     </div>
 
     <div class="card">
-      <p class="ctitle"><i class="emw big" data-em="26a1"></i> Ways to earn</p>
-      <div class="hint"><span><i class="emw" data-em="1f465"></i></span><span>Invite a friend</span><span class="pts">+100</span></div>
-      <div class="hint"><span><i class="emw" data-em="2705"></i></span><span>Complete tasks</span><span class="pts">+150</span></div>
-      <div class="hint"><span><i class="emw" data-em="1f3b0"></i></span><span>Play Lucky Wheel</span><span class="pts">up to x3</span></div>
-      <div class="hint"><span><i class="emw" data-em="1f525"></i></span><span>Daily check-in</span><span class="pts">up to +50/day</span></div>
+      <p class="ctitle"><i class="ic" data-ic="zap"></i> Ways to earn</p>
+      <div class="hint"><i class="ic" data-ic="users"></i><span>Invite a friend</span><span class="pts">+100</span></div>
+      <div class="hint"><i class="ic" data-ic="check"></i><span>Complete tasks</span><span class="pts">+150</span></div>
+      <div class="hint"><i class="ic" data-ic="game"></i><span>Play Lucky Wheel</span><span class="pts">up to x3</span></div>
+      <div class="hint"><i class="ic" data-ic="flame"></i><span>Daily check-in</span><span class="pts">up to +50/day</span></div>
     </div>
 
-    <button class="btn" onclick="switchTab('friends')">📣 Invite Friends & Earn</button>
+    <button class="btn" onclick="switchTab('friends')"><i class="ic dark sm" data-ic="share"></i> Invite Friends & Earn</button>
   </section>
 
   <!-- ============ TASKS ============ -->
   <section id="tab-tasks" class="hide">
     <div class="card">
-      <p class="ctitle"><i class="emw big" data-em="2705"></i> Tasks</p>
+      <p class="ctitle"><i class="ic" data-ic="check"></i> Tasks</p>
       <div id="taskList"></div>
-      <p class="note">💡 Tap <b>Start</b>, join/follow, come back and tap <b>Verify</b>.</p>
+      <p class="note">Tap Start, join/follow, come back and tap Verify.</p>
     </div>
     <div class="card">
-      <p class="ctitle"><i class="emw big" data-em="1f381"></i> Referral bonus</p>
-      <p style="font-size:13px;line-height:1.6">Complete <b>all tasks above</b> to unlock your inviter's <b style="color:var(--green)">+100 pts</b>. Fair rewards for real members! 💜</p>
+      <p class="ctitle"><i class="ic" data-ic="gift"></i> Referral bonus</p>
+      <p style="font-size:13px;line-height:1.6;color:var(--dim)">Complete <b style="color:#fff">all tasks above</b> to unlock your inviter's <b style="color:var(--green)">+100 pts</b>. Fair rewards for real members.</p>
     </div>
   </section>
 
   <!-- ============ GAME ============ -->
   <section id="tab-game" class="hide">
     <div class="card">
-      <p class="ctitle"><i class="emw big" data-em="1f3b0"></i> Lucky Wheel</p>
+      <p class="ctitle"><i class="ic" data-ic="game"></i> Lucky Wheel</p>
       <div class="wheelwrap">
         <div class="pointer"></div>
-        <div class="wheel" id="wheel"></div>
+        <svg id="wheel" viewBox="0 0 260 260"></svg>
         <div class="hub" id="hub">SPIN</div>
       </div>
-      <p class="lbl" style="margin-top:14px">YOUR BET</p>
+      <p class="lbl" style="margin-top:16px">YOUR BET</p>
       <div class="amtwrap">
         <input id="gbet" type="number" class="inp" placeholder="10" inputmode="numeric">
         <button class="maxb" onclick="maxBet()">MAX 5000</button>
@@ -159,23 +158,24 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
         <button class="chip" onclick="setBet(50)">50</button>
         <button class="chip" onclick="setBet(100)">100</button>
         <button class="chip" onclick="setBet(500)">500</button>
+        <button class="chip" onclick="setBet(1000)">1000</button>
       </div>
-      <button class="btn" id="spinBtn" onclick="playGame()">🎡 Spin the Wheel</button>
+      <button class="btn" id="spinBtn" onclick="playGame()">Spin the Wheel</button>
       <div class="gres" id="gres"></div>
-      <p class="note">Win multipliers: <b style="color:var(--acc)">x1.5</b> · <b style="color:var(--orange)">x2</b> · <b style="color:var(--green)">x3</b> — results are decided on the server and can't be manipulated. Play for fun!</p>
+      <p class="note">Multipliers: <b style="color:var(--acc)">x1.5</b> · <b style="color:var(--orange)">x2</b> · <b style="color:var(--green)">x3</b> — results are decided on the server and cannot be manipulated. Play for fun.</p>
     </div>
   </section>
 
   <!-- ============ FRIENDS ============ -->
   <section id="tab-friends" class="hide">
     <div class="card">
-      <p class="ctitle"><i class="emw big" data-em="1f517"></i> Your referral link</p>
+      <p class="ctitle"><i class="ic" data-ic="link"></i> Your referral link</p>
       <input id="link" class="linkbox" readonly>
       <div class="row2" style="margin-top:12px">
-        <button class="btn btn-ghost" onclick="copyLink()">📋 Copy</button>
-        <button class="btn" onclick="shareLink()">🚀 Share</button>
+        <button class="btn btn-ghost" onclick="copyLink()">Copy</button>
+        <button class="btn" onclick="shareLink()">Share</button>
       </div>
-      <p class="note">You get <b style="color:var(--green)">+100 pts</b> when your friend <b>completes all tasks</b>. They get <b style="color:var(--green)">+25 pts</b> welcome bonus.</p>
+      <p class="note">You get <b style="color:var(--green)">+100 pts</b> when your friend <b style="color:#fff">completes all tasks</b>. They get <b style="color:var(--green)">+25 pts</b> welcome bonus.</p>
     </div>
 
     <div class="card">
@@ -187,8 +187,8 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
     </div>
 
     <div class="card">
-      <p class="ctitle"><i class="emw big" data-em="1f465"></i> Your friends</p>
-      <div id="refList"><p class="empty">No referrals yet — share your link! 📣</p></div>
+      <p class="ctitle"><i class="ic" data-ic="users"></i> Your friends</p>
+      <div id="refList"><p class="empty">No referrals yet — share your link</p></div>
     </div>
   </section>
 
@@ -203,7 +203,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
     </div>
 
     <div class="card">
-      <p class="ctitle"><i class="emw big" data-em="1f4b5"></i> Request Withdrawal</p>
+      <p class="ctitle"><i class="ic" data-ic="dollar"></i> Request Withdrawal</p>
       <p class="lbl">AMOUNT</p>
       <div class="amtwrap">
         <input id="amt" type="number" class="inp" placeholder="500" inputmode="numeric">
@@ -213,22 +213,22 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
       <div class="chips" id="methods"></div>
       <p class="lbl">YOUR ACCOUNT</p>
       <input id="acct" class="inp" placeholder="">
-      <button class="btn btn-green" onclick="doWithdraw()">Request Withdrawal 💸</button>
-      <p class="note">⏳ Processed manually within 24–48 hours. Double-check your account details.</p>
+      <button class="btn btn-green" onclick="doWithdraw()">Request Withdrawal</button>
+      <p class="note">Processed manually within 24–48 hours. Double-check your account details.</p>
     </div>
 
     <div class="card">
-      <p class="ctitle"><i class="emw big" data-em="1f4cb"></i> History</p>
+      <p class="ctitle"><i class="ic" data-ic="list"></i> History</p>
       <div id="history"><p class="empty">No withdrawals yet</p></div>
     </div>
   </section>
 
   <nav>
-    <button class="nav-btn active" data-t="home" onclick="switchTab('home')"><i class="emw nav" data-em="1f3e0"></i><br>Home</button>
-    <button class="nav-btn" data-t="tasks" onclick="switchTab('tasks')"><i class="emw nav" data-em="2705"></i><br>Tasks</button>
-    <button class="nav-btn" data-t="game" onclick="switchTab('game')"><i class="emw nav" data-em="1f3b0"></i><br>Game</button>
-    <button class="nav-btn" data-t="friends" onclick="switchTab('friends')"><i class="emw nav" data-em="1f465"></i><br>Friends</button>
-    <button class="nav-btn" data-t="wallet" onclick="switchTab('wallet')"><i class="emw nav" data-em="1f4b0"></i><br>Wallet</button>
+    <button class="nav-btn active" data-t="home" onclick="switchTab('home')"><i class="ic" data-ic="home"></i>Home</button>
+    <button class="nav-btn" data-t="tasks" onclick="switchTab('tasks')"><i class="ic" data-ic="check"></i>Tasks</button>
+    <button class="nav-btn" data-t="game" onclick="switchTab('game')"><i class="ic" data-ic="game"></i>Game</button>
+    <button class="nav-btn" data-t="friends" onclick="switchTab('friends')"><i class="ic" data-ic="users"></i>Friends</button>
+    <button class="nav-btn" data-t="wallet" onclick="switchTab('wallet')"><i class="ic" data-ic="wallet"></i>Wallet</button>
   </nav>
 </div>
 </main>
@@ -240,9 +240,9 @@ const RATE = 0.001;
 const MIN_WD = 500;
 const STREAK_REWARDS = [10, 15, 20, 25, 30, 35, 50];
 const TASKS = [
-  { key: 'channel', icon: '<i class="emw big" data-em="1f4e2"></i>', title: 'Join our Channel', reward: 50, link: 'https://t.me/ebtry0' },
-  { key: 'group',   icon: '<i class="emw big" data-em="1f4ac"></i>', title: 'Join our Group',   reward: 50, link: 'https://t.me/ebatest' },
-  { key: 'x',       icon: '<span class="xlogo">𝕏</span>',            title: 'Follow @prime_ebisa on X', reward: 50, link: 'https://x.com/prime_ebisa' }
+  { key: 'channel', icon: 'mega', title: 'Join our Channel', reward: 50, link: 'https://t.me/ebtry0' },
+  { key: 'group',   icon: 'chat', title: 'Join our Group',   reward: 50, link: 'https://t.me/ebatest' },
+  { key: 'x',       icon: 'x',    title: 'Follow @prime_ebisa on X', reward: 50, link: 'https://x.com/prime_ebisa' }
 ];
 const METHODS = {
   telebirr: { label: 'Telebirr', ph: 'Phone number e.g. 09xxxxxxxx' },
@@ -250,23 +250,37 @@ const METHODS = {
   paypal:   { label: 'PayPal',   ph: 'PayPal email address' },
   usdt:     { label: 'USDT',     ph: 'Binance Pay ID / wallet address' }
 };
-const EMOJI_CDN = 'https://cdn.jsdelivr.net/npm/emoji-datasource-apple@15/img/apple/64/';
-const SEG = [0, 1.5, 0, 3, 0, 2, 0, 1.5]; // must match wheel colors in CSS
 
+/* ---------- white SVG icon set ---------- */
+const IC = {
+  home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/>',
+  check:'<circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/>',
+  game:'<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="4.5"/><circle cx="12" cy="12" r="1"/>',
+  users:'<path d="M17 21v-2a4 4 0 0 0-4-4H7a4 4 0 0 0-4 4v2"/><circle cx="10" cy="7" r="4"/><path d="M21 21v-2a4 4 0 0 0-3-3.87"/><path d="M15 3.13a4 4 0 0 1 0 7.75"/>',
+  wallet:'<rect x="2" y="5" width="20" height="14" rx="3"/><path d="M2 10h20"/><path d="M6 15h4"/>',
+  flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.07-2.14-.22-4.05 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.15.43-2.29 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
+  zap:'<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>',
+  link:'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
+  mega:'<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+  chat:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+  x:'<path d="M4 4l16 16M20 4 4 20"/>',
+  dollar:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5H11a2 2 0 1 0 0 4h2a2 2 0 1 1 0 4H8.5"/><path d="M12 6.5v11"/>',
+  list:'<path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/>',
+  gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/>'
+};
+function icon(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + IC[n] + '</svg>'; }
+document.querySelectorAll('[data-ic]').forEach(el => { el.innerHTML = icon(el.dataset.ic); });
+
+/* ---------- app state ---------- */
 const tg = window.Telegram?.WebApp;
 let me = null, doneTasks = new Set(), startedTasks = new Set(), selMethod = 'telebirr';
-let wheelBase = 0, spinning = false, gameHistory = [];
 
 function $(id){ return document.getElementById(id); }
 function fmt(n){ return Number(n || 0).toLocaleString('en-US'); }
 function todayUTC(){ return new Date().toISOString().slice(0, 10); }
 function notify(m){ if (tg && tg.showAlert) tg.showAlert(m); else alert(m); }
 function haptic(t){ try { tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(t); } catch(e){} }
-
-// replace all <i data-em="..."> placeholders with Apple emoji images
-document.querySelectorAll('[data-em]').forEach(el => {
-  el.innerHTML = '<img loading="lazy" src="' + EMOJI_CDN + el.dataset.em + '.png" alt="">';
-});
+function tick(){ try { tg.HapticFeedback && tg.HapticFeedback.selectionChanged(); } catch(e){} }
 
 if (!tg || !tg.initData) {
   $('loading').classList.add('hide');
@@ -302,7 +316,7 @@ async function loadMe() {
 }
 
 function renderAll() {
-  $('hello').textContent = 'Hi, ' + (me.first_name || 'Friend') + ' 👋';
+  $('hello').textContent = 'Hi, ' + (me.first_name || 'Friend');
   $('avatar').textContent = (me.first_name || '?')[0].toUpperCase();
   $('streakVal').textContent = me.streak || 0;
   $('points').textContent = fmt(me.points);
@@ -315,7 +329,7 @@ function renderAll() {
   $('refEarned').textContent = fmt(refs.length * 100);
   $('refList').innerHTML = refs.length
     ? refs.map(r => '<div class="row"><span class="rt">' + (r.first_name || 'Anonymous') + '</span><span style="color:var(--green);font-weight:700">+100</span></div>').join('')
-    : '<p class="empty">No referrals yet — share your link! 📣</p>';
+    : '<p class="empty">No referrals yet — share your link</p>';
 
   renderStreak();
   renderTasks();
@@ -334,11 +348,11 @@ function renderStreak() {
   $('dots').innerHTML = html;
   const btn = $('checkinBtn');
   if (me.last_checkin === todayUTC()) {
-    btn.textContent = '✓ Claimed today — come back tomorrow';
+    btn.textContent = 'Claimed today — come back tomorrow';
     btn.disabled = true;
     btn.className = 'btn btn-ghost';
   } else {
-    btn.textContent = '🔥 Claim +' + STREAK_REWARDS[Math.min(s, 6)] + ' pts';
+    btn.textContent = 'Claim +' + STREAK_REWARDS[Math.min(s, 6)] + ' pts';
     btn.disabled = false;
     btn.className = 'btn btn-green';
   }
@@ -348,10 +362,10 @@ function renderTasks() {
   $('taskList').innerHTML = TASKS.map(t => {
     const done = doneTasks.has(t.key);
     let btn;
-    if (done) btn = '<span class="done">✓ Done</span>';
-    else if (startedTasks.has(t.key)) btn = '<button class="btn btn-blue-tint btn-sm" onclick="taskVerify(\'' + t.key + '\')">Verify ✓</button>';
-    else btn = '<button class="btn btn-sm" onclick="taskStart(\'' + t.key + '\')">Start ➜</button>';
-    return '<div class="task"><div class="ticon">' + t.icon + '</div>' +
+    if (done) btn = '<span class="done">Done</span>';
+    else if (startedTasks.has(t.key)) btn = '<button class="btn btn-blue btn-sm" onclick="taskVerify(\'' + t.key + '\')">Verify</button>';
+    else btn = '<button class="btn btn-sm" onclick="taskStart(\'' + t.key + '\')">Start</button>';
+    return '<div class="task"><div class="ticon"><i class="ic">' + icon(t.icon) + '</i></div>' +
       '<div class="tinfo"><p class="ttitle">' + t.title + '</p><p class="trew">+' + t.reward + ' pts</p></div>' +
       btn + '</div>';
   }).join('');
@@ -368,8 +382,8 @@ function renderHistory() {
   const h = me.withdrawals || [];
   $('history').innerHTML = h.length
     ? h.map(w => {
-        const lbl = w.status === 'done' ? '<span class="ok">Paid ✓</span>'
-          : (w.status === 'rejected' ? '<span class="bad">Rejected ✗</span>' : '<span class="warn">Pending ⏳</span>');
+        const lbl = w.status === 'done' ? '<span class="ok">Paid</span>'
+          : (w.status === 'rejected' ? '<span class="bad">Rejected</span>' : '<span class="warn">Pending</span>');
         return '<div class="row"><div><p class="rt">' + ((METHODS[w.method] || {}).label || w.method || '—') + '</p>' +
           '<p class="rd">' + String(w.created_at || '').slice(0, 10) + '</p></div>' +
           '<div style="text-align:right"><p class="rt">-' + fmt(w.points) + ' pts</p><p class="rd">' + lbl + '</p></div></div>';
@@ -390,12 +404,12 @@ async function doCheckin() {
       body: JSON.stringify({ initData: tg.initData })
     });
     const d = await r.json();
-    if (d.already) { notify('Already claimed today — come back tomorrow 🔥'); return; }
+    if (d.already) { notify('Already claimed today — come back tomorrow'); return; }
     me.points += d.reward;
     me.streak = d.streak;
     me.last_checkin = todayUTC();
     haptic('success');
-    notify('🎉 +' + d.reward + ' pts! Streak: ' + d.streak + ' day(s)');
+    notify('+' + d.reward + ' pts! Streak: ' + d.streak + ' day(s)');
     renderAll();
   } catch (e) { notify('Error: ' + e.message); }
 }
@@ -418,7 +432,7 @@ async function taskVerify(k) {
       doneTasks.add(k);
       me.points += d.reward;
       haptic('success');
-      notify('✅ +' + d.reward + ' pts!' + (doneTasks.size === TASKS.length ? '\n🎁 All tasks done — your inviter just got their bonus!' : ''));
+      notify('+' + d.reward + ' pts!' + (doneTasks.size === TASKS.length ? ' All tasks done — your inviter just got the bonus!' : ''));
       await loadMe();
     } else notify(d.error || 'Verification failed');
   } catch (e) { notify('Error: ' + e.message); }
@@ -430,13 +444,13 @@ function setBet(v) { $('gbet').value = v; }
 function maxBet() { $('gbet').value = Math.min(me.points, 5000); }
 
 async function copyLink() {
-  try { await navigator.clipboard.writeText($('link').value); alert('Link copied! ✅'); }
+  try { await navigator.clipboard.writeText($('link').value); alert('Link copied'); }
   catch (e) { $('link').select(); alert('Long-press the link, then copy it'); }
   haptic('success');
 }
 
 function shareLink() {
-  const text = '🎁 Join me and get 25 free points instantly!';
+  const text = 'Join me and get 25 free points instantly!';
   tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent($('link').value) + '&text=' + encodeURIComponent(text));
 }
 
@@ -457,28 +471,51 @@ async function doWithdraw() {
       $('amt').value = ''; $('acct').value = '';
       me.withdrawals.unshift({ points: amt, method: selMethod, status: 'pending', created_at: new Date().toISOString() });
       haptic('success');
-      notify('🎉 Withdrawal of ' + fmt(amt) + ' pts requested!');
+      notify('Withdrawal of ' + fmt(amt) + ' pts requested');
       renderAll();
     } else notify(d.error || 'Failed');
   } catch (e) { notify('Error: ' + e.message); }
 }
 
-/* ---------- Lucky Wheel ---------- */
-function buildWheelLabels() {
-  const w = $('wheel');
-  const wrap = w.parentElement;
-  SEG.forEach((m, i) => {
-    const ang = i * 45 + 22.5;
-    const s = document.createElement('span');
-    s.className = 'seg' + (m === 0 ? ' loser' : '');
-    s.textContent = m === 0 ? '✕' : 'x' + m;
-    s.style.transform = 'rotate(' + ang + 'deg) translate(8px, -96px)';
-    wrap.appendChild(s);
-  });
-}
-buildWheelLabels();
+/* ================= LUCKY WHEEL (SVG) ================= */
+const SEG = [0, 1.5, 0, 3, 0, 2, 0, 1.5];          // segment multipliers, 45deg each
+const SEG_COLOR = { 0: '#232327', 1.5: '#0A84FF', 2: '#FF9F0A', 3: '#30D158' };
+let wheelR = 0, spinning = false, gameHistory = [];
 
-function setBetByBalance() {}
+function buildWheel() {
+  const cx = 130, cy = 130, r = 118;
+  let svg = '';
+
+  // segments
+  for (let i = 0; i < 8; i++) {
+    const a0 = (i * 45 - 90) * Math.PI / 180;
+    const a1 = ((i + 1) * 45 - 90) * Math.PI / 180;
+    const x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0);
+    const x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+    svg += '<path d="M ' + cx + ' ' + cy + ' L ' + x0.toFixed(2) + ' ' + y0.toFixed(2) +
+      ' A ' + r + ' ' + r + ' 0 0 1 ' + x1.toFixed(2) + ' ' + y1.toFixed(2) + ' Z" fill="' + SEG_COLOR[SEG[i]] + '"/>';
+  }
+  // labels
+  for (let i = 0; i < 8; i++) {
+    const m = SEG[i];
+    const txt = m === 0 ? '×' : 'x' + m;
+    const fill = m === 0 ? '#6E6E73' : '#fff';
+    const size = m === 0 ? 18 : 15;
+    svg += '<text x="130" y="54" text-anchor="middle" font-size="' + size + '" font-weight="800" fill="' + fill +
+      '" transform="rotate(' + (i * 45 + 22.5) + ' 130 130)" font-family="inherit">' + txt + '</text>';
+  }
+  // pins
+  for (let i = 0; i < 8; i++) {
+    const a = (i * 45 - 90) * Math.PI / 180;
+    svg += '<circle cx="' + (cx + 107 * Math.cos(a)).toFixed(2) + '" cy="' + (cy + 107 * Math.sin(a)).toFixed(2) +
+      '" r="3" fill="#fff" opacity=".9"/>';
+  }
+  // outer ring
+  svg += '<circle cx="130" cy="130" r="124" fill="none" stroke="#3A3A3C" stroke-width="6"/>';
+
+  $('wheel').innerHTML = svg;
+}
+buildWheel();
 
 async function playGame() {
   if (spinning) return;
@@ -489,7 +526,7 @@ async function playGame() {
 
   spinning = true;
   $('spinBtn').disabled = true;
-  $('hub').textContent = '…';
+  $('hub').textContent = '·';
 
   try {
     const r = await fetch('/api/game', {
@@ -508,30 +545,34 @@ async function playGame() {
     $('usd').textContent = '≈ $' + (me.points * RATE).toFixed(2);
     $('wUsd').textContent = '$' + (me.points * RATE).toFixed(2);
 
-    // pick a visual segment matching the server result & spin there
+    // aim at a segment matching the server result
     const idxs = SEG.map((m, i) => m === d.mult ? i : -1).filter(i => i >= 0);
     const idx = idxs[Math.floor(Math.random() * idxs.length)];
-    const target = idx * 45 + 22.5 + (Math.random() * 24 - 12);
-    wheelBase += 1800;
-    $('wheel').style.transform = 'rotate(' + (wheelBase + (360 - target)) + 'deg)';
+    const a = idx * 45 + 22.5 + (Math.random() * 16 - 8);
+    const corr = (((-a - wheelR) % 360) + 360) % 360;
+    wheelR += 4 * 360 + corr;
+    $('wheel').style.transform = 'rotate(' + wheelR + 'deg)';
 
-    $('wheel').addEventListener('transitionend', function h() {
-      $('wheel').removeEventListener('transitionend', h);
-      $('hub').textContent = d.mult > 0 ? 'x' + d.mult : '✕';
+    // tick sounds-feel via haptics, slowing down
+    [80, 200, 360, 560, 800, 1080, 1400, 1780, 2220, 2720, 3280, 3900].forEach(t => setTimeout(tick, t));
+
+    setTimeout(() => {
+      $('hub').textContent = d.mult > 0 ? 'x' + d.mult : '×';
       if (d.mult > 0) {
         haptic('success');
-        notify('🎉 You won ' + fmt(d.win) + ' pts (x' + d.mult + ')!');
+        notify('You won ' + fmt(d.win) + ' pts (x' + d.mult + ')');
       } else {
         haptic('error');
       }
       gameHistory.unshift({ m: d.mult, win: d.win });
       gameHistory = gameHistory.slice(0, 8);
       $('gres').innerHTML = gameHistory.map(g =>
-        '<span class="gtag' + (g.win > 0 ? ' win' : '') + '">' + (g.m > 0 ? 'x' + g.m + ' +' + fmt(g.win) : '✕ lost') + '</span>'
+        '<span class="gtag' + (g.win > 0 ? ' win' : '') + '">' + (g.m > 0 ? 'x' + g.m + ' +' + fmt(g.win) : 'lost') + '</span>'
       ).join('');
       spinning = false;
       $('spinBtn').disabled = false;
-    });
+      setTimeout(() => { $('hub').textContent = 'SPIN'; }, 1800);
+    }, 4350);
   } catch (e) {
     spinning = false; $('spinBtn').disabled = false; $('hub').textContent = 'SPIN';
     notify('Error: ' + e.message);
