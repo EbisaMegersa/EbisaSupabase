@@ -1,7 +1,9 @@
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
-
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
+
+const METHODS = ['telebirr', 'cbe', 'paypal', 'usdt'];
+const MIN_WD = 500;
 
 function valid(initData) {
   if (!initData) return false;
@@ -23,16 +25,25 @@ function tgId(initData) {
 
 module.exports = async (req, res) => {
   try {
-    const { initData } = req.body || {};
+    const { initData, amount, method, account } = req.body || {};
     if (!valid(initData)) return res.status(401).json({ error: 'Unauthorized' });
     const id = tgId(initData);
 
     const { data: user } = await supabase.from('users').select('points').eq('telegram_id', id).maybeSingle();
-    if (!user || user.points < 500) return res.status(400).json({ error: 'You need 500 points to withdraw' });
+    if (!user) return res.status(404).json({ error: 'User not found' });
 
-    await supabase.rpc('add_points', { p_telegram_id: id, p_amount: -500 });
-    await supabase.from('withdrawals').insert({ user_id: id, points: 500 });
-    return res.status(200).json({ ok: true });
+    const amt = Number(amount);
+    if (!Number.isInteger(amt) || amt < MIN_WD) return res.status(400).json({ error: 'Minimum withdrawal is ' + MIN_WD + ' pts' });
+    if (amt > user.points) return res.status(400).json({ error: 'Amount exceeds your balance' });
+    if (!METHODS.includes(method)) return res.status(400).json({ error: 'Choose a valid method' });
+    if (!account || String(account).trim().length < 5) return res.status(400).json({ error: 'Enter your account details' });
+
+    await supabase.rpc('add_points', { p_telegram_id: id, p_amount: -amt });
+    await supabase.from('withdrawals').insert({
+      user_id: id, points: amt, method, account: String(account).trim()
+    });
+
+    return res.status(200).json({ ok: true, balance: user.points - amt });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
