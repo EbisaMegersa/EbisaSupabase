@@ -2,13 +2,6 @@ const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-const TASKS = {
-  channel: { chat: '@ebtry0', reward: 50, verify: 'telegram' },
-  group:   { chat: '@ebatest', reward: 50, verify: 'telegram' },
-  x:       { reward: 50, verify: 'honor' }
-};
-const TOTAL_TASKS = Object.keys(TASKS).length;
-
 function valid(initData) {
   if (!initData) return false;
   const params = new URLSearchParams(initData);
@@ -33,32 +26,36 @@ module.exports = async (req, res) => {
     if (!valid(initData)) return res.status(401).json({ error: 'Unauthorized' });
     const id = tgId(initData);
 
-    const conf = TASKS[task];
-    if (!conf) return res.status(400).json({ error: 'Unknown task' });
+    const { data: taskRow } = await supabase.from('tasks')
+      .select('*').eq('id', Number(task)).eq('active', true).maybeSingle();
+    if (!taskRow) return res.status(400).json({ error: 'Unknown task' });
 
     const { data: done } = await supabase.from('task_completions')
-      .select('id').eq('user_id', id).eq('task_key', task).maybeSingle();
+      .select('id').eq('user_id', id).eq('task_key', String(taskRow.id)).maybeSingle();
     if (done) return res.status(400).json({ error: 'Task already completed' });
 
-    if (conf.verify === 'telegram') {
+    if (taskRow.verify && taskRow.verify.startsWith('telegram:')) {
+      const chat = taskRow.verify.split(':')[1];
       const r = await fetch('https://api.telegram.org/bot' + process.env.TELEGRAM_BOT_TOKEN +
-        '/getChatMember?chat_id=' + encodeURIComponent(conf.chat) + '&user_id=' + id);
+        '/getChatMember?chat_id=' + encodeURIComponent(chat) + '&user_id=' + id);
       const j = await r.json();
       const status = j.ok ? j.result.status : null;
       const joined = ['creator', 'administrator', 'member', 'restricted'].includes(status);
       if (!joined) return res.status(400).json({ error: 'You must join first! Tap Start, join, then Verify.' });
     }
 
-    await supabase.from('task_completions').insert({ user_id: id, task_key: task, reward: conf.reward });
-    await supabase.rpc('add_points', { p_telegram_id: id, p_amount: conf.reward });
+    await supabase.from('task_completions').insert({
+      user_id: id, task_key: String(taskRow.id), reward: taskRow.reward
+    });
+    await supabase.rpc('add_points', { p_telegram_id: id, p_amount: taskRow.reward });
 
-    // ---- qualified referral check ----
-    // if this user has now completed ALL tasks AND was invited by someone
-    // AND the referrer hasn't been rewarded yet → pay the referrer +100
-    const { count } = await supabase.from('task_completions')
+    // ---- qualified referral: completed ALL active tasks? ----
+    const { count: doneCount } = await supabase.from('task_completions')
       .select('id', { count: 'exact', head: true }).eq('user_id', id);
+    const { count: activeCount } = await supabase.from('tasks')
+      .select('id', { count: 'exact', head: true }).eq('active', true);
 
-    if (count >= TOTAL_TASKS) {
+    if (activeCount && doneCount >= activeCount) {
       const { data: me2 } = await supabase.from('users')
         .select('referred_by, first_name').eq('telegram_id', id).maybeSingle();
 
@@ -85,7 +82,7 @@ module.exports = async (req, res) => {
       }
     }
 
-    return res.status(200).json({ ok: true, reward: conf.reward });
+    return res.status(200).json({ ok: true, reward: taskRow.reward });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
