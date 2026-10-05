@@ -43,6 +43,15 @@ module.exports = async (req, res) => {
       });
     }
 
+    // invited users who haven't finished all tasks yet
+    let pending = 0;
+    const { data: invited } = await supabase.from('users')
+      .select('telegram_id').eq('referred_by', id);
+    if (invited && invited.length) {
+      const paidSet = new Set((refs || []).map(r => r.referred_id));
+      pending = invited.filter(p => !paidSet.has(p.telegram_id)).length;
+    }
+
     const { data: tdone } = await supabase.from('task_completions')
       .select('task_key').eq('user_id', id);
 
@@ -58,6 +67,7 @@ module.exports = async (req, res) => {
       referral_code: user.referral_code,
       tasks: (tdone || []).map(t => t.task_key),
       referrals,
+      pending,
       withdrawals: hist || []
     });
   } catch (e) {
