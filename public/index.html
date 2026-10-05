@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>EarnApp</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://sad.adsgram.ai/sdk/sad.min.js"></script>
 <style>
 :root{--bg:#000;--card:#1C1C1E;--card2:#2C2C2E;--sep:#38383A;--txt:#fff;--dim:#98989F;--acc:#0A84FF;--green:#30D158;--orange:#FF9F0A;--red:#FF453A}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -83,6 +84,8 @@ main{max-width:480px;margin:0 auto;padding:16px}
 .hint{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--sep);font-size:13px;font-weight:500}
 .hint:last-child{border-bottom:none}
 .hint .pts{margin-left:auto;color:var(--green);font-weight:700;font-size:13px}
+.adbar{height:8px;border-radius:99px;background:var(--card2);overflow:hidden;margin-bottom:8px}
+.adbar i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .4s}
 /* floating tab bar */
 nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:452px;display:flex;align-items:flex-end;background:rgba(20,20,22,.92);border:1px solid #2C2C2E;border-radius:26px;padding:9px 8px;backdrop-filter:blur(18px);box-shadow:0 12px 36px rgba(0,0,0,.65);z-index:50}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0;border-radius:17px;font-size:9.5px;font-weight:700;color:#6E6E73;background:none;border:none;font-family:inherit;cursor:pointer}
@@ -140,6 +143,8 @@ nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(10
       <div class="dots" id="dots"></div>
       <button class="btn btn-green" id="checkinBtn" onclick="doCheckin()">Claim</button>
     </div>
+
+    <div id="adCard"></div>
 
     <div class="card">
       <p class="ctitle"><i class="ic" data-ic="zap"></i> Ways to earn</p>
@@ -388,6 +393,7 @@ function renderAll() {
   $('wBalance').textContent = fmt(me.points);
   $('wUsd').textContent = '$' + (me.points * RATE).toFixed(2);
   renderHistory();
+  renderAd();
 }
 
 function renderStreak() {
@@ -537,6 +543,58 @@ async function doWithdraw() {
       renderAll();
     } else notify(d.error || 'Failed');
   } catch (e) { notify('Error: ' + e.message); }
+}
+
+/* ================= WATCH & EARN (AdsGram) ================= */
+const AD_BLOCK_ID = 49344;        // your AdsGram block ID
+const AD_REWARD = 15;             // points per ad (must match api/ad.js)
+const AD_DAILY_LIMIT = 10;        // must match api/ad.js
+IC.play = '<path d="m7 4 13 8-13 8z"/>';
+let adCtl = null, adBusy = false;
+
+function renderAd() {
+  const el = $('adCard');
+  if (!el) return;
+  const a = me.ads || { watched: 0, limit: AD_DAILY_LIMIT };
+  const left = a.limit - a.watched;
+  const btn = left > 0
+    ? '<button class="btn" id="adBtn" onclick="watchAd()"><i class="ic dark sm" data-ic="play"></i> Watch Ad — +' + AD_REWARD + ' pts</button>'
+    : '<button class="btn btn-ghost" disabled>Daily limit reached — back tomorrow</button>';
+  el.innerHTML = '<div class="card"><p class="ctitle"><i class="ic" data-ic="play"></i> Watch & Earn</p>' +
+    '<div class="adbar"><i style="width:' + Math.min(100, a.watched / a.limit * 100) + '%"></i></div>' +
+    '<p class="note" style="margin:0 0 12px">' + a.watched + '/' + a.limit + ' ads today • ' + left + ' left • watch a short video, get points</p>' + btn + '</div>';
+  el.querySelectorAll('[data-ic]').forEach(x => { x.innerHTML = icon(x.dataset.ic); });
+}
+
+async function watchAd() {
+  if (adBusy) return;
+  if (!window.AdsGram) return notify('Ad module not loaded — check your connection');
+  adBusy = true;
+  const btn = $('adBtn');
+  if (btn) { btn.disabled = true; btn.textContent = 'Loading ad…'; }
+  try {
+    if (!adCtl) adCtl = window.AdsGram.init(AD_BLOCK_ID);
+    await adCtl.show();
+    const r = await fetch('/api/ad', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initData: tg.initData })
+    });
+    const d = await r.json();
+    if (r.ok) {
+      me.points = d.balance;
+      me.ads = { watched: d.watched, limit: d.limit };
+      haptic('success');
+      notify('+' + d.reward + ' pts! ' + (d.limit - d.watched) + ' ads left today');
+      renderAll();
+    } else {
+      notify(d.error || 'Failed to credit reward');
+      if (btn) { btn.disabled = false; btn.textContent = 'Watch Ad — +' + AD_REWARD + ' pts'; }
+    }
+  } catch (e) {
+    haptic('error');
+    notify('No ad available right now — try again in a minute');
+    if (btn) { btn.disabled = false; btn.textContent = 'Watch Ad — +' + AD_REWARD + ' pts'; }
+  } finally { adBusy = false; }
 }
 
 /* ================= LUCKY WHEEL (SVG) ================= */
