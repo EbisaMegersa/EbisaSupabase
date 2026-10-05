@@ -1,6 +1,5 @@
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
-
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 function valid(initData) {
@@ -49,10 +48,19 @@ module.exports = async (req, res) => {
         await supabase.from('users').update({ referred_by: referrer.telegram_id }).eq('telegram_id', u.id);
         await supabase.rpc('add_points', { p_telegram_id: referrer.telegram_id, p_amount: 100 });
         await supabase.from('referrals').insert({
-          referrer_id: referrer.telegram_id,
-          referred_id: u.id,
-          reward_points: 100
+          referrer_id: referrer.telegram_id, referred_id: u.id, reward_points: 100
         });
+        // 🔔 notify the referrer via bot
+        try {
+          await fetch('https://api.telegram.org/bot' + process.env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              chat_id: referrer.telegram_id,
+              text: '🎉 ' + (u.first_name || 'Someone') + ' just joined with your referral link!\n💰 +100 points added to your balance.'
+            })
+          });
+        } catch (e) { /* ignore */ }
       }
     }
 
