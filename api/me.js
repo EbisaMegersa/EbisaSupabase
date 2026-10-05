@@ -27,7 +27,8 @@ module.exports = async (req, res) => {
     const id = tgId(initData);
 
     const { data: user } = await supabase.from('users')
-      .select('points, streak, last_checkin, first_name, referral_code, photo_url').eq('telegram_id', id).maybeSingle();
+      .select('points, streak, last_checkin, first_name, referral_code, photo_url, ads_watched, last_ad_date')
+      .eq('telegram_id', id).maybeSingle();
     if (!user) return res.status(404).json({ error: 'Not found' });
 
     const { data: refs } = await supabase.from('referrals')
@@ -44,7 +45,6 @@ module.exports = async (req, res) => {
       });
     }
 
-    // invited users who haven't finished all tasks yet
     let pending = 0;
     const { data: invited } = await supabase.from('users')
       .select('telegram_id').eq('referred_by', id);
@@ -63,6 +63,8 @@ module.exports = async (req, res) => {
       .select('points, method, status, created_at').eq('user_id', id)
       .order('created_at', { ascending: false }).limit(10);
 
+    const todayISO = new Date().toISOString().slice(0, 10);
+
     return res.status(200).json({
       points: user.points,
       streak: user.streak || 0,
@@ -70,6 +72,10 @@ module.exports = async (req, res) => {
       first_name: user.first_name,
       referral_code: user.referral_code,
       photo_url: user.photo_url,
+      ads: {
+        watched: user.last_ad_date === todayISO ? (user.ads_watched || 0) : 0,
+        limit: 10
+      },
       tasks: activeTasks || [],
       tasks_done: (tdone || []).map(t => t.task_key),
       referrals,
