@@ -252,13 +252,13 @@ function renderAll() {
   $('streakChip').textContent = '🔥 ' + (me.streak || 0);
   $('points').textContent = fmt(me.points);
   $('usd').textContent = '≈ $' + (me.points * RATE).toFixed(2);
-  $('link').value = 'https://t.me/' + BOT_USERNAME + '/' + APP_NAME + '?startapp=' + (me.referral_code || me.code || '');
+  $('link').value = 'https://t.me/' + BOT_USERNAME + '/' + APP_NAME + '?startapp=' + (me.referral_code || '');
 
   const refs = me.referrals || [];
   $('refCount').textContent = refs.length;
   $('refEarned').textContent = fmt(refs.length * 100);
   $('refList').innerHTML = refs.length
-    ? refs.map(r => '<div class="row"><span class="rt">' + (r.first_name || 'Anonymous') + '</span><span class="pts" style="color:var(--green);font-weight:600">+100</span></div>').join('')
+    ? refs.map(r => '<div class="row"><span class="rt">' + (r.first_name || 'Anonymous') + '</span><span style="color:var(--green);font-weight:600">+100</span></div>').join('')
     : '<p class="empty">No referrals yet — share your link! 📣</p>';
 
   renderStreak();
@@ -312,7 +312,15 @@ function renderMethods() {
 function renderHistory() {
   const h = me.withdrawals || [];
   $('history').innerHTML = h.length
-    ? h.map(w => '<div class="row"><div><p class="rt">' + ((METHODS[w.method] || {}).label || w.method || '—') + '</p><p class="rd">' + String(w.created_at || '').slice(0, 10) + '</p></div><div style="text-align:right"><p class="rt">-' + fmt(w.points) + ' pts</p><p class="rd ' + (w.status === 'done' ? 'ok' : '') + '">' + (w.status === 'done' ? 'Paid ✓' : (w.status === 'rejected' ? 'Rejected ❌' : 'Pending ⏳') + '</p></div></div>').join('')
+    ? h.map(w => {
+        const statusLabel = w.status === 'done' ? 'Paid ✓'
+          : (w.status === 'rejected' ? 'Rejected ❌' : 'Pending ⏳');
+        const statusColor = w.status === 'done' ? 'ok' : (w.status === 'rejected' ? 'style="color:#f87171"' : '');
+        return '<div class="row"><div><p class="rt">' + ((METHODS[w.method] || {}).label || w.method || '—') + '</p>' +
+          '<p class="rd">' + String(w.created_at || '').slice(0, 10) + '</p></div>' +
+          '<div style="text-align:right"><p class="rt">-' + fmt(w.points) + ' pts</p>' +
+          '<p class="rd" ' + (w.status === 'done' ? 'class="rd ok"' : statusColor) + '>' + statusLabel + '</p></div></div>';
+      }).join('')
     : '<p class="empty">No withdrawals yet</p>';
 }
 
