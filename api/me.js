@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
     const id = tgId(initData);
 
     const { data: user } = await supabase.from('users')
-      .select('points, streak, last_checkin, first_name').eq('telegram_id', id).maybeSingle();
+      .select('points, streak, last_checkin, first_name, referral_code').eq('telegram_id', id).maybeSingle();
     if (!user) return res.status(404).json({ error: 'Not found' });
 
     const { data: refs } = await supabase.from('referrals')
