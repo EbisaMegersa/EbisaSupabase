@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<title>Refer & Earn</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-950 text-white">
+<main class="max-w-md mx-auto p-5 pb-12">
+
+<div id="loading" class="text-center text-gray-400 mt-40">Loading…</div>
+<div id="nottg" class="hidden text-center text-gray-400 mt-40">Please open this app inside Telegram 🙂</div>
+
+<div id="app" class="hidden">
+  <div class="flex items-center gap-3 mb-6">
+    <div id="avatar" class="w-11 h-11 rounded-full bg-blue-600 flex items-center justify-center text-lg font-bold">?</div>
+    <div>
+      <p class="font-semibold" id="hello">Hi 👋</p>
+      <p class="text-sm text-gray-400">Invite friends, earn points</p>
+    </div>
+  </div>
+
+  <div class="rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-center mb-6">
+    <p class="text-sm text-blue-100">Your balance</p>
+    <p class="text-4xl font-bold mt-1" id="points">0 pts</p>
+  </div>
+
+  <div class="rounded-2xl bg-gray-900 p-4 mb-6">
+    <p class="text-sm text-gray-400 mb-2">Your referral link</p>
+    <input id="link" readonly class="w-full text-xs bg-gray-800 rounded-lg p-3 text-gray-300 outline-none">
+    <div class="flex gap-2 mt-3">
+      <button onclick="copyLink()" class="flex-1 py-2.5 rounded-xl bg-gray-800 font-medium">📋 Copy</button>
+      <button onclick="shareLink()" class="flex-1 py-2.5 rounded-xl bg-blue-600 font-medium">🚀 Share</button>
+    </div>
+  </div>
+
+  <div class="grid grid-cols-2 gap-3 mb-6">
+    <div class="rounded-2xl bg-gray-900 p-4">
+      <p class="text-2xl font-bold" id="refCount">0</p>
+      <p class="text-sm text-gray-400">Friends joined</p>
+    </div>
+    <div class="rounded-2xl bg-gray-900 p-4">
+      <p class="text-2xl font-bold" id="refPoints">0</p>
+      <p class="text-sm text-gray-400">Points earned</p>
+    </div>
+  </div>
+
+  <div class="rounded-2xl bg-gray-900 p-4 mb-6">
+    <p class="text-sm text-gray-400 mb-2">Your friends</p>
+    <div id="refList" class="text-sm text-gray-500">No referrals yet — share your link! 📣</div>
+  </div>
+
+  <button onclick="withdraw()" id="wdBtn" class="w-full py-3.5 rounded-2xl bg-green-600 font-semibold">
+    Withdraw (min 500 pts)
+  </button>
+</div>
+</main>
+
+<script>
+// ⚠️ EDIT THE NEXT LINE — put YOUR bot username here (without @)
+const BOT_USERNAME = "EbSupabaseBot";
+const APP_NAME = "refer"; // don't change this
+
+const tg = window.Telegram?.WebApp;
+let myPoints = 0;
+
+if (!tg || !tg.initData) {
+  document.getElementById('loading').classList.add('hidden');
+  document.getElementById('nottg').classList.remove('hidden');
+} else {
+  start();
+}
+
+async function start() {
+  try {
+    tg.ready();
+    tg.expand();
+
+    const res = await fetch('/api/auth', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        initData: tg.initData,
+        startParam: tg.initDataUnsafe?.start_param || ''
+      })
+    });
+    const data = await res.json();
+    if (!data.user) throw new Error(data.error || 'Login failed');
+
+    const meRes = await fetch('/api/me', { headers: { 'x-init-data': tg.initData } });
+    const me = await meRes.json();
+
+    myPoints = data.user.points;
+    document.getElementById('hello').textContent = 'Hi, ' + (data.user.first_name || 'Friend') + ' 👋';
+    document.getElementById('avatar').textContent = (data.user.first_name || '?')[0].toUpperCase();
+    document.getElementById('points').textContent = myPoints + ' pts';
+    document.getElementById('link').value = 'https://t.me/' + BOT_USERNAME + '/' + APP_NAME + '?startapp=' + data.user.referral_code;
+
+    if (me.referrals && me.referrals.length > 0) {
+      document.getElementById('refCount').textContent = me.referrals.length;
+      document.getElementById('refPoints').textContent = me.referrals.length * 100;
+      document.getElementById('refList').innerHTML = me.referrals.map(r =>
+        '<div class="flex justify-between py-2 border-b border-gray-800 text-gray-200">' +
+        '<span>' + (r.first_name || 'Anonymous') + '</span>' +
+        '<span class="text-green-400">+100</span></div>'
+      ).join('');
+    }
+
+    updateBtn();
+    document.getElementById('loading').classList.add('hidden');
+    document.getElementById('app').classList.remove('hidden');
+  } catch (e) {
+    document.getElementById('loading').textContent = 'Error: ' + e.message;
+  }
+}
+
+function updateBtn() {
+  document.getElementById('wdBtn').disabled = myPoints < 500;
+}
+
+async function copyLink() {
+  const link = document.getElementById('link').value;
+  try {
+    await navigator.clipboard.writeText(link);
+    alert('Link copied! ✅');
+  } catch {
+    document.getElementById('link').select();
+    alert('Long-press the link, then copy it');
+  }
+  if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+}
+
+function shareLink() {
+  const link = document.getElementById('link').value;
+  const text = '🎁 Join me and get 25 free points instantly!';
+  tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text));
+}
+
+async function withdraw() {
+  const btn = document.getElementById('wdBtn');
+  btn.disabled = true;
+  const res = await fetch('/api/withdraw', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ initData: tg.initData })
+  });
+  const data = await res.json();
+  if (res.ok) {
+    myPoints -= 500;
+    document.getElementById('points').textContent = myPoints + ' pts';
+    alert('🎉 Withdrawal requested!');
+  } else {
+    alert(data.error || 'Failed');
+  }
+  updateBtn();
+}
+</script>
+</body>
+</html>
