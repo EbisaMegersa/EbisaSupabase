@@ -1,165 +1,403 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-<title>Refer & Earn</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>EarnApp — Refer & Earn</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a14;--card:rgba(255,255,255,.045);--border:rgba(255,255,255,.09);--txt:#f1f0f7;--dim:#8b8aa0;--acc:#8b5cf6;--acc2:#d946ef;--green:#4ade80}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{background:var(--bg);color:var(--txt);font-family:'Poppins',sans-serif;padding-bottom:100px;
+background-image:radial-gradient(600px 300px at 85% -5%,rgba(139,92,246,.22),transparent 60%),radial-gradient(500px 280px at 0% 25%,rgba(217,70,239,.12),transparent 60%);background-attachment:fixed}
+main{max-width:480px;margin:0 auto;padding:18px 16px}
+.hide{display:none!important}
+.header{display:flex;align-items:center;gap:10px;margin-bottom:18px}
+.avatar{width:44px;height:44px;border-radius:50%;background:linear-gradient(135deg,var(--acc),var(--acc2));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:18px}
+.hname{font-weight:600;font-size:15px}
+.hsub{font-size:12px;color:var(--dim)}
+.streakchip{margin-left:auto;background:rgba(251,146,60,.15);border:1px solid rgba(251,146,60,.3);color:#fb923c;font-size:12px;font-weight:600;padding:6px 12px;border-radius:999px}
+.hero{position:relative;overflow:hidden;text-align:center;border-radius:24px;padding:26px 20px;margin-bottom:14px;background:linear-gradient(135deg,rgba(139,92,246,.28),rgba(217,70,239,.16));border:1px solid rgba(139,92,246,.4)}
+.hero::after{content:'';position:absolute;width:180px;height:180px;border-radius:50%;background:rgba(139,92,246,.35);filter:blur(60px);top:-60px;right:-40px}
+.hero-label{font-size:11px;letter-spacing:2px;color:#c4b5fd;font-weight:600}
+.hero-amt{font-size:40px;font-weight:800;margin:6px 0 2px}
+.hero-usd{font-size:13px;color:var(--dim);position:relative;z-index:1}
+.card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:16px;margin-bottom:14px}
+.ctitle{font-size:14px;font-weight:600;margin-bottom:12px}
+.btn{width:100%;padding:13px;border-radius:14px;border:none;font-weight:600;font-size:15px;font-family:'Poppins',sans-serif;cursor:pointer;color:#fff;transition:opacity .15s}
+.btn:active{opacity:.75}
+.btn:disabled{opacity:.45;cursor:default}
+.btn-primary{background:linear-gradient(135deg,var(--acc),var(--acc2))}
+.btn-ghost{background:rgba(255,255,255,.07);border:1px solid var(--border)}
+.btn-sm{width:auto;padding:9px 16px;font-size:13px;border-radius:12px}
+.btn-verify{background:rgba(139,92,246,.18);border:1px solid var(--acc);color:#c4b5fd}
+.done{color:var(--green);font-weight:600;font-size:13px;padding:9px 16px}
+.row2{display:flex;gap:10px}
+.dots{display:flex;gap:6px;margin-bottom:12px}
+.dot{flex:1;text-align:center;padding:9px 2px;border-radius:10px;background:rgba(255,255,255,.05);font-size:10px;color:var(--dim)}
+.dot b{display:block;font-size:11px;color:inherit}
+.dot.on{background:linear-gradient(135deg,rgba(139,92,246,.45),rgba(217,70,239,.45));color:#fff}
+.task{display:flex;align-items:center;gap:12px}
+.ticon{width:46px;height:46px;border-radius:14px;background:rgba(139,92,246,.15);border:1px solid rgba(139,92,246,.3);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.tinfo{flex:1}
+.ttitle{font-size:14px;font-weight:500}
+.trew{font-size:12px;color:var(--green);font-weight:600}
+.inp{width:100%;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.05);border:1px solid var(--border);color:#fff;font-size:14px;font-family:'Poppins',sans-serif;outline:none;margin-bottom:10px}
+.inp:focus{border-color:var(--acc)}
+.lbl{font-size:12px;color:var(--dim);margin-bottom:8px;font-weight:500}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px}
+.chip{padding:9px 14px;border-radius:12px;border:1px solid var(--border);background:rgba(255,255,255,.04);color:var(--dim);font-size:13px;font-family:'Poppins',sans-serif;cursor:pointer}
+.chip.sel{border-color:var(--acc);color:#fff;background:rgba(139,92,246,.2);font-weight:600}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;text-align:center}
+.gnum{font-size:20px;font-weight:700}
+.glbl{font-size:11px;color:var(--dim)}
+.row{display:flex;justify-content:space-between;align-items:center;padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)}
+.row:last-child{border-bottom:none}
+.rt{font-size:14px;font-weight:500}
+.rd{font-size:11px;color:var(--dim)}
+.ok{color:var(--green)}
+.empty{font-size:13px;color:var(--dim);text-align:center;padding:8px 0}
+.note{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5}
+.linkbox{width:100%;font-size:11px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;padding:12px;color:#c4b5fd;outline:none;word-break:break-all}
+.hint{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.06);font-size:13px}
+.hint:last-child{border-bottom:none}
+.hint span:first-child{font-size:18px}
+.hint .pts{margin-left:auto;color:var(--green);font-weight:600;font-size:13px}
+nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(100% - 32px);max-width:448px;display:flex;background:rgba(16,14,30,.94);border:1px solid var(--border);border-radius:22px;padding:8px;backdrop-filter:blur(14px);z-index:50;box-shadow:0 8px 30px rgba(0,0,0,.5)}
+.nav-btn{flex:1;padding:7px 0;border-radius:16px;text-align:center;font-size:10px;color:var(--dim);background:none;border:none;font-family:'Poppins',sans-serif;cursor:pointer}
+.nav-btn span{display:block;font-size:19px;margin-bottom:1px}
+.nav-btn.active{background:linear-gradient(135deg,rgba(139,92,246,.35),rgba(217,70,239,.35));color:#fff;font-weight:600}
+.amtwrap{position:relative}
+.maxb{position:absolute;right:10px;top:50%;transform:translateY(-50%);background:rgba(139,92,246,.25);border:1px solid var(--acc);color:#c4b5fd;font-size:11px;font-weight:700;padding:5px 10px;border-radius:8px;cursor:pointer;font-family:'Poppins',sans-serif}
+</style>
 </head>
-<body class="bg-gray-950 text-white">
-<main class="max-w-md mx-auto p-5 pb-12">
+<body>
+<main>
+<div id="loading" class="empty" style="margin-top:180px">Loading…</div>
+<div id="nottg" class="hide empty" style="margin-top:180px">Please open this app inside Telegram 🙂</div>
 
-<div id="loading" class="text-center text-gray-400 mt-40">Loading…</div>
-<div id="nottg" class="hidden text-center text-gray-400 mt-40">Please open this app inside Telegram 🙂</div>
-
-<div id="app" class="hidden">
-  <div class="flex items-center gap-3 mb-6">
-    <div id="avatar" class="w-11 h-11 rounded-full bg-blue-600 flex items-center justify-center text-lg font-bold">?</div>
+<div id="app" class="hide">
+  <div class="header">
+    <div class="avatar" id="avatar">?</div>
     <div>
-      <p class="font-semibold" id="hello">Hi 👋</p>
-      <p class="text-sm text-gray-400">Invite friends, earn points</p>
+      <p class="hname" id="hello">Hi 👋</p>
+      <p class="hsub">Let's earn some points</p>
     </div>
+    <div class="streakchip" id="streakChip">🔥 0</div>
   </div>
 
-  <div class="rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-center mb-2">
-    <p class="text-sm text-blue-100">Your balance</p>
-    <p class="text-4xl font-bold mt-1" id="points">0 pts</p>
-  </div>
-
-  <div class="text-center text-xs text-gray-600 mb-4" id="dbg"></div>
-
-  <div class="rounded-2xl bg-gray-900 p-4 mb-6">
-    <p class="text-sm text-gray-400 mb-2">Your referral link</p>
-    <input id="link" readonly class="w-full text-xs bg-gray-800 rounded-lg p-3 text-gray-300 outline-none">
-    <div class="flex gap-2 mt-3">
-      <button onclick="copyLink()" class="flex-1 py-2.5 rounded-xl bg-gray-800 font-medium">📋 Copy</button>
-      <button onclick="shareLink()" class="flex-1 py-2.5 rounded-xl bg-blue-600 font-medium">🚀 Share</button>
+  <!-- ============ HOME ============ -->
+  <section id="tab-home">
+    <div class="hero">
+      <p class="hero-label">TOTAL BALANCE</p>
+      <p class="hero-amt" id="points">0</p>
+      <p class="hero-usd" id="usd">≈ $0.00</p>
     </div>
-  </div>
 
-  <div class="grid grid-cols-2 gap-3 mb-6">
-    <div class="rounded-2xl bg-gray-900 p-4">
-      <p class="text-2xl font-bold" id="refCount">0</p>
-      <p class="text-sm text-gray-400">Friends joined</p>
+    <div class="card">
+      <p class="ctitle">🔥 Daily Streak</p>
+      <div class="dots" id="dots"></div>
+      <button class="btn btn-primary" id="checkinBtn" onclick="doCheckin()">Claim</button>
     </div>
-    <div class="rounded-2xl bg-gray-900 p-4">
-      <p class="text-2xl font-bold" id="refPoints">0</p>
-      <p class="text-sm text-gray-400">Points earned</p>
+
+    <div class="card">
+      <p class="ctitle">⚡ Ways to earn</p>
+      <div class="hint"><span>👥</span><span>Invite a friend</span><span class="pts">+100</span></div>
+      <div class="hint"><span>✅</span><span>Complete tasks</span><span class="pts">+150</span></div>
+      <div class="hint"><span>🔥</span><span>Daily check-in</span><span class="pts">up to +50/day</span></div>
     </div>
-  </div>
 
-  <div class="rounded-2xl bg-gray-900 p-4 mb-6">
-    <p class="text-sm text-gray-400 mb-2">Your friends</p>
-    <div id="refList" class="text-sm text-gray-500">No referrals yet — share your link! 📣</div>
-  </div>
+    <button class="btn btn-primary" onclick="switchTab('friends')">📣 Invite Friends & Earn</button>
+  </section>
 
-  <button onclick="withdraw()" id="wdBtn" class="w-full py-3.5 rounded-2xl bg-green-600 font-semibold">
-    Withdraw (min 500 pts)
-  </button>
+  <!-- ============ TASKS ============ -->
+  <section id="tab-tasks" class="hide">
+    <div class="card">
+      <p class="ctitle">✅ Tasks <span style="color:var(--dim);font-weight:400">— complete all for +150 pts</span></p>
+      <div id="taskList"></div>
+      <p class="note">💡 Tap <b>Start</b> to open, join/follow, come back and tap <b>Verify</b>.</p>
+    </div>
+  </section>
+
+  <!-- ============ FRIENDS ============ -->
+  <section id="tab-friends" class="hide">
+    <div class="card">
+      <p class="ctitle">🔗 Your referral link</p>
+      <input id="link" class="linkbox" readonly>
+      <div class="row2" style="margin-top:12px">
+        <button class="btn btn-ghost" onclick="copyLink()">📋 Copy</button>
+        <button class="btn btn-primary" onclick="shareLink()">🚀 Share</button>
+      </div>
+      <p class="note">You get <b style="color:var(--green)">+100 pts</b> per friend. They get <b style="color:var(--green)">+25 pts</b> welcome bonus. Referrals only count for first-time users.</p>
+    </div>
+
+    <div class="card">
+      <div class="grid3">
+        <div><p class="gnum" id="refCount">0</p><p class="glbl">Friends</p></div>
+        <div><p class="gnum" id="refEarned">0</p><p class="glbl">Pts earned</p></div>
+        <div><p class="gnum">∞</p><p class="glbl">Potential</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="ctitle">👥 Your friends</p>
+      <div id="refList"><p class="empty">No referrals yet — share your link! 📣</p></div>
+    </div>
+  </section>
+
+  <!-- ============ WALLET ============ -->
+  <section id="tab-wallet" class="hide">
+    <div class="card">
+      <div class="grid3">
+        <div><p class="gnum" id="wBalance">0</p><p class="glbl">Balance (pts)</p></div>
+        <div><p class="gnum" id="wUsd">$0</p><p class="glbl">≈ Value</p></div>
+        <div><p class="gnum">500</p><p class="glbl">Min withdraw</p></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <p class="ctitle">💵 Request Withdrawal</p>
+      <p class="lbl">AMOUNT</p>
+      <div class="amtwrap">
+        <input id="amt" type="number" class="inp" placeholder="500" inputmode="numeric">
+        <button class="maxb" onclick="maxAmt()">MAX</button>
+      </div>
+      <p class="lbl">METHOD</p>
+      <div class="chips" id="methods"></div>
+      <p class="lbl">YOUR ACCOUNT</p>
+      <input id="acct" class="inp" placeholder="">
+      <button class="btn btn-primary" onclick="doWithdraw()">Request Withdrawal 💸</button>
+      <p class="note">⏳ Payments are processed manually within 24–48 hours. Make sure your account details are correct.</p>
+    </div>
+
+    <div class="card">
+      <p class="ctitle">🧾 History</p>
+      <div id="history"><p class="empty">No withdrawals yet</p></div>
+    </div>
+  </section>
+
+  <nav>
+    <button class="nav-btn active" data-t="home" onclick="switchTab('home')"><span>🏠</span>Home</button>
+    <button class="nav-btn" data-t="tasks" onclick="switchTab('tasks')"><span>✅</span>Tasks</button>
+    <button class="nav-btn" data-t="friends" onclick="switchTab('friends')"><span>👥</span>Friends</button>
+    <button class="nav-btn" data-t="wallet" onclick="switchTab('wallet')"><span>👛</span>Wallet</button>
+  </nav>
 </div>
 </main>
 
 <script>
-// ⚠️ EDIT THE NEXT LINE — put YOUR bot username here (without @)
 const BOT_USERNAME = "EbSupabaseBot";
 const APP_NAME = "refer";
+const RATE = 0.001; // 1000 pts = $1
+const MIN_WD = 500;
+const STREAK_REWARDS = [10, 15, 20, 25, 30, 35, 50];
+const TASKS = [
+  { key: 'channel', icon: '📢', title: 'Join our Channel', reward: 50, link: 'https://t.me/ebtry0' },
+  { key: 'group',   icon: '💬', title: 'Join our Group',   reward: 50, link: 'https://t.me/ebatest' },
+  { key: 'x',       icon: '𝕏',  title: 'Follow @prime_ebisa on X', reward: 50, link: 'https://x.com/prime_ebisa' }
+];
+const METHODS = {
+  telebirr: { label: 'Telebirr', ph: 'Phone number e.g. 09xxxxxxxx' },
+  cbe:      { label: 'CBE Bank', ph: 'Bank account number' },
+  paypal:   { label: 'PayPal',   ph: 'PayPal email address' },
+  usdt:     { label: 'USDT',     ph: 'Binance Pay ID / wallet address' }
+};
 
 const tg = window.Telegram?.WebApp;
-let myPoints = 0;
+let me = null, doneTasks = new Set(), startedTasks = new Set(), selMethod = 'telebirr';
+
+function $(id){ return document.getElementById(id); }
+function fmt(n){ return Number(n || 0).toLocaleString('en-US'); }
+function todayUTC(){ return new Date().toISOString().slice(0, 10); }
+function notify(m){ if (tg && tg.showAlert) tg.showAlert(m); else alert(m); }
+function haptic(t){ try { tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(t); } catch(e){} }
 
 if (!tg || !tg.initData) {
-  document.getElementById('loading').classList.add('hidden');
-  document.getElementById('nottg').classList.remove('hidden');
+  $('loading').classList.add('hide');
+  $('nottg').classList.remove('hide');
 } else {
   start();
 }
 
 async function start() {
+  tg.ready();
+  tg.expand();
   try {
-    tg.ready();
-    tg.expand();
-
-    const sp = (tg.initDataUnsafe && tg.initDataUnsafe.start_param) ? tg.initDataUnsafe.start_param : 'NONE';
-
-    const res = await fetch('/api/auth', {
+    const r = await fetch('/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        initData: tg.initData,
-        startParam: sp === 'NONE' ? '' : sp
-      })
+      body: JSON.stringify({ initData: tg.initData, startParam: tg.initDataUnsafe?.start_param || '' })
     });
-    const data = await res.json();
-    document.getElementById('dbg').textContent = 'start_param: ' + sp + ' • new: ' + (data.isNew ? 'YES' : 'no');
-    if (!data.user) throw new Error(data.error || 'Login failed');
-
-    const meRes = await fetch('/api/me', { headers: { 'x-init-data': tg.initData } });
-    const me = await meRes.json();
-
-    myPoints = data.user.points;
-    document.getElementById('hello').textContent = 'Hi, ' + (data.user.first_name || 'Friend') + ' 👋';
-    document.getElementById('avatar').textContent = (data.user.first_name || '?')[0].toUpperCase();
-    document.getElementById('points').textContent = myPoints + ' pts';
-    document.getElementById('link').value = 'https://t.me/' + BOT_USERNAME + '/' + APP_NAME + '?startapp=' + data.user.referral_code;
-
-    if (me.referrals && me.referrals.length > 0) {
-      document.getElementById('refCount').textContent = me.referrals.length;
-      document.getElementById('refPoints').textContent = me.referrals.length * 100;
-      document.getElementById('refList').innerHTML = me.referrals.map(r =>
-        '<div class="flex justify-between py-2 border-b border-gray-800 text-gray-200">' +
-        '<span>' + (r.first_name || 'Anonymous') + '</span>' +
-        '<span class="text-green-400">+100</span></div>'
-      ).join('');
-    }
-
-    updateBtn();
-    document.getElementById('loading').classList.add('hidden');
-    document.getElementById('app').classList.remove('hidden');
+    const a = await r.json();
+    if (!a.user) throw new Error(a.error || 'Login failed');
+    await loadMe();
+    $('loading').classList.add('hide');
+    $('app').classList.remove('hide');
   } catch (e) {
-    document.getElementById('loading').textContent = 'Error: ' + e.message;
+    $('loading').textContent = 'Error: ' + e.message;
   }
 }
 
-function updateBtn() {
-  document.getElementById('wdBtn').disabled = myPoints < 500;
+async function loadMe() {
+  const r = await fetch('/api/me', { headers: { 'x-init-data': tg.initData } });
+  me = await r.json();
+  doneTasks = new Set(me.tasks || []);
+  renderAll();
 }
+
+function renderAll() {
+  $('hello').textContent = 'Hi, ' + (me.first_name || 'Friend') + ' 👋';
+  $('avatar').textContent = (me.first_name || '?')[0].toUpperCase();
+  $('streakChip').textContent = '🔥 ' + (me.streak || 0);
+  $('points').textContent = fmt(me.points);
+  $('usd').textContent = '≈ $' + (me.points * RATE).toFixed(2);
+  $('link').value = 'https://t.me/' + BOT_USERNAME + '/' + APP_NAME + '?startapp=' + (me.referral_code || me.code || '');
+
+  const refs = me.referrals || [];
+  $('refCount').textContent = refs.length;
+  $('refEarned').textContent = fmt(refs.length * 100);
+  $('refList').innerHTML = refs.length
+    ? refs.map(r => '<div class="row"><span class="rt">' + (r.first_name || 'Anonymous') + '</span><span class="pts" style="color:var(--green);font-weight:600">+100</span></div>').join('')
+    : '<p class="empty">No referrals yet — share your link! 📣</p>';
+
+  renderStreak();
+  renderTasks();
+  renderMethods();
+  $('wBalance').textContent = fmt(me.points);
+  $('wUsd').textContent = '$' + (me.points * RATE).toFixed(2);
+  renderHistory();
+}
+
+function renderStreak() {
+  const s = me.streak || 0;
+  let html = '';
+  for (let i = 0; i < 7; i++) {
+    html += '<div class="dot' + (i < Math.min(s, 7) ? ' on' : '') + '"><b>D' + (i + 1) + '</b>' + STREAK_REWARDS[i] + '</div>';
+  }
+  $('dots').innerHTML = html;
+  const btn = $('checkinBtn');
+  if (me.last_checkin === todayUTC()) {
+    btn.textContent = '✓ Claimed today — come back tomorrow';
+    btn.disabled = true;
+    btn.className = 'btn btn-ghost';
+  } else {
+    btn.textContent = '🔥 Claim +' + STREAK_REWARDS[Math.min(s, 6)] + ' pts';
+    btn.disabled = false;
+    btn.className = 'btn btn-primary';
+  }
+}
+
+function renderTasks() {
+  $('taskList').innerHTML = TASKS.map(t => {
+    const done = doneTasks.has(t.key);
+    let btn;
+    if (done) btn = '<span class="done">✓ Done</span>';
+    else if (startedTasks.has(t.key)) btn = '<button class="btn btn-verify btn-sm" onclick="taskVerify(\'' + t.key + '\')">Verify ✓</button>';
+    else btn = '<button class="btn btn-primary btn-sm" onclick="taskStart(\'' + t.key + '\')">Start ➜</button>';
+    return '<div class="task" style="padding:10px 0;border-bottom:1px solid rgba(255,255,255,.06)">' +
+      '<div class="ticon">' + t.icon + '</div>' +
+      '<div class="tinfo"><p class="ttitle">' + t.title + '</p><p class="trew">+' + t.reward + ' pts</p></div>' +
+      btn + '</div>';
+  }).join('');
+}
+
+function renderMethods() {
+  $('methods').innerHTML = Object.keys(METHODS).map(k =>
+    '<button class="chip' + (selMethod === k ? ' sel' : '') + '" onclick="setMethod(\'' + k + '\')">' + METHODS[k].label + '</button>'
+  ).join('');
+  $('acct').placeholder = METHODS[selMethod].ph;
+}
+
+function renderHistory() {
+  const h = me.withdrawals || [];
+  $('history').innerHTML = h.length
+    ? h.map(w => '<div class="row"><div><p class="rt">' + ((METHODS[w.method] || {}).label || w.method || '—') + '</p><p class="rd">' + String(w.created_at || '').slice(0, 10) + '</p></div><div style="text-align:right"><p class="rt">-' + fmt(w.points) + ' pts</p><p class="rd ' + (w.status === 'done' ? 'ok' : '') + '">' + (w.status === 'done' ? 'Paid ✓' : 'Pending ⏳') + '</p></div></div>').join('')
+    : '<p class="empty">No withdrawals yet</p>';
+}
+
+function switchTab(t) {
+  ['home', 'tasks', 'friends', 'wallet'].forEach(x => $('tab-' + x).classList.toggle('hide', x !== t));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.t === t));
+  window.scrollTo(0, 0);
+}
+
+async function doCheckin() {
+  try {
+    const r = await fetch('/api/checkin', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initData: tg.initData })
+    });
+    const d = await r.json();
+    if (d.already) { notify('Already claimed today — come back tomorrow 🔥'); return; }
+    me.points += d.reward;
+    me.streak = d.streak;
+    me.last_checkin = todayUTC();
+    haptic('success');
+    notify('🎉 +' + d.reward + ' pts! Streak: ' + d.streak + ' day(s)');
+    renderAll();
+  } catch (e) { notify('Error: ' + e.message); }
+}
+
+function taskStart(k) {
+  const t = TASKS.find(x => x.key === k);
+  startedTasks.add(k);
+  if (t.link.includes('t.me')) tg.openTelegramLink(t.link); else tg.openLink(t.link);
+  renderTasks();
+}
+
+async function taskVerify(k) {
+  try {
+    const r = await fetch('/api/tasks', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initData: tg.initData, task: k })
+    });
+    const d = await r.json();
+    if (r.ok) {
+      doneTasks.add(k);
+      me.points += d.reward;
+      haptic('success');
+      notify('✅ +' + d.reward + ' pts!');
+      renderAll();
+    } else notify(d.error || 'Verification failed');
+  } catch (e) { notify('Error: ' + e.message); }
+}
+
+function setMethod(m) { selMethod = m; renderMethods(); }
+function maxAmt() { $('amt').value = me.points; }
 
 async function copyLink() {
-  const link = document.getElementById('link').value;
-  try {
-    await navigator.clipboard.writeText(link);
-    alert('Link copied! ✅');
-  } catch {
-    document.getElementById('link').select();
-    alert('Long-press the link, then copy it');
-  }
-  if (tg.HapticFeedback) tg.HapticFeedback.notificationOccurred('success');
+  try { await navigator.clipboard.writeText($('link').value); alert('Link copied! ✅'); }
+  catch (e) { $('link').select(); alert('Long-press the link, then copy it'); }
+  haptic('success');
 }
 
 function shareLink() {
-  const link = document.getElementById('link').value;
   const text = '🎁 Join me and get 25 free points instantly!';
-  tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text));
+  tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent($('link').value) + '&text=' + encodeURIComponent(text));
 }
 
-async function withdraw() {
-  const btn = document.getElementById('wdBtn');
-  btn.disabled = true;
-  const res = await fetch('/api/withdraw', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ initData: tg.initData })
-  });
-  const data = await res.json();
-  if (res.ok) {
-    myPoints -= 500;
-    document.getElementById('points').textContent = myPoints + ' pts';
-    alert('🎉 Withdrawal requested!');
-  } else {
-    alert(data.error || 'Failed');
-  }
-  updateBtn();
+async function doWithdraw() {
+  const amt = parseInt($('amt').value, 10);
+  const acct = $('acct').value.trim();
+  if (!amt || amt < MIN_WD) return notify('Minimum withdrawal is ' + MIN_WD + ' pts');
+  if (amt > me.points) return notify('Amount exceeds your balance');
+  if (!acct || acct.length < 5) return notify('Enter your ' + METHODS[selMethod].label + ' account');
+  try {
+    const r = await fetch('/api/withdraw', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initData: tg.initData, amount: amt, method: selMethod, account: acct })
+    });
+    const d = await r.json();
+    if (r.ok) {
+      me.points = d.balance;
+      $('amt').value = ''; $('acct').value = '';
+      me.withdrawals.unshift({ points: amt, method: selMethod, status: 'pending', created_at: new Date().toISOString() });
+      haptic('success');
+      notify('🎉 Withdrawal of ' + fmt(amt) + ' pts requested!');
+      renderAll();
+    } else notify(d.error || 'Failed');
+  } catch (e) { notify('Error: ' + e.message); }
 }
 </script>
 </body>
