@@ -29,20 +29,32 @@ module.exports = async (req, res) => {
     if (!u || !u.id) return res.status(400).json({ error: 'No user' });
 
     let { data: user } = await supabase.from('users').select('*').eq('telegram_id', u.id).maybeSingle();
-    if (user) return res.status(200).json({ user, isNew: false });
+
+    if (user) {
+      // keep name & photo fresh on every login
+      if (user.photo_url !== (u.photo_url || null) || user.first_name !== (u.first_name || 'Friend')) {
+        await supabase.from('users').update({
+          photo_url: u.photo_url || null,
+          first_name: u.first_name || 'Friend',
+          username: u.username || null
+        }).eq('telegram_id', u.id);
+      }
+      return res.status(200).json({ user, isNew: false });
+    }
 
     const { data: newUser, error } = await supabase.from('users').insert({
       telegram_id: u.id,
       first_name: u.first_name || 'Friend',
       username: u.username || null,
+      photo_url: u.photo_url || null,
       referral_code: crypto.randomBytes(4).toString('hex'),
       points: 25
     }).select().single();
     if (error) return res.status(500).json({ error: error.message });
     user = newUser;
 
-    // save who invited them — but NO points yet.
-    // +100 goes to the referrer only after this user completes ALL tasks (checked in api/tasks.js)
+    // save who invited them — NO points yet.
+    // referrer gets +100 only when this user completes ALL active tasks (api/tasks.js)
     if (startParam) {
       const { data: referrer } = await supabase.from('users')
         .select('telegram_id').eq('referral_code', startParam).maybeSingle();
