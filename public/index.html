@@ -8,16 +8,28 @@
 <style>
 :root{--bg:#000;--card:#1C1C1E;--card2:#2C2C2E;--sep:#38383A;--txt:#fff;--dim:#98989F;--acc:#0A84FF;--green:#30D158;--orange:#FF9F0A;--red:#FF453A}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding-bottom:96px}
+body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding-bottom:110px}
 main{max-width:480px;margin:0 auto;padding:16px}
 .hide{display:none!important}
 .ic{display:inline-flex;width:20px;height:20px;color:#fff;flex-shrink:0}
 .ic svg{width:100%;height:100%}
-.ic.lg{width:24px;height:24px}
 .ic.sm{width:16px;height:16px}
-.ic.green{color:var(--green)}.ic.orange{color:var(--orange)}.ic.dim{color:var(--dim)}.ic.dark{color:#000}
+.ic.orange{color:var(--orange)}.ic.dark{color:#000}
+/* splash */
+#splash{position:fixed;inset:0;background:#000;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .35s}
+#splash.off{opacity:0;pointer-events:none}
+.s-logo{width:88px;height:88px;border-radius:26px;background:#fff;display:flex;align-items:center;justify-content:center;animation:spulse 1.4s ease-in-out infinite;box-shadow:0 0 60px rgba(255,255,255,.15)}
+.s-logo .ic{width:40px;height:40px;color:#000}
+@keyframes spulse{0%,100%{transform:scale(1);border-radius:26px}50%{transform:scale(.9) rotate(5deg);border-radius:34px}}
+.s-name{margin-top:20px;font-size:15px;font-weight:800;letter-spacing:6px;color:#fff}
+.s-bar{width:130px;height:4px;border-radius:99px;background:#1C1C1E;overflow:hidden;margin-top:18px}
+.s-bar i{display:block;width:40%;height:100%;border-radius:99px;background:#fff;animation:sbar 1.1s ease-in-out infinite}
+@keyframes sbar{0%{transform:translateX(-110%)}100%{transform:translateX(330%)}}
+.s-txt{margin-top:14px;font-size:12px;color:#6E6E73}
+/* header */
 .header{display:flex;align-items:center;gap:11px;margin-bottom:16px}
-.avatar{width:44px;height:44px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex-shrink:0}
+.avatar{width:44px;height:44px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex-shrink:0;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
 .hname{font-weight:700;font-size:16px}
 .hsub{font-size:13px;color:var(--dim)}
 .chipbtn{margin-left:auto;background:var(--card);color:#fff;font-size:13px;font-weight:700;padding:8px 14px;border-radius:999px;display:flex;align-items:center;gap:6px}
@@ -35,8 +47,7 @@ main{max-width:480px;margin:0 auto;padding:16px}
 .btn-blue{background:rgba(10,132,255,.16);color:var(--acc)}
 .btn-sm{width:auto;padding:9px 16px;font-size:13px;border-radius:11px}
 .done{color:var(--green);font-weight:700;font-size:13px;padding:9px 14px}
-.row2{display:flex;gap:10px}
-.row2>*{flex:1}
+.row2{display:flex;gap:10px}.row2>*{flex:1}
 .dots{display:flex;gap:6px;margin-bottom:12px}
 .dot{flex:1;text-align:center;padding:9px 2px;border-radius:11px;background:var(--card2);font-size:10px;color:var(--dim);font-weight:600}
 .dot b{display:block;font-size:12px;font-weight:800}
@@ -51,29 +62,37 @@ main{max-width:480px;margin:0 auto;padding:16px}
 .inp::placeholder{color:#6E6E73}
 .lbl{font-size:12px;color:var(--dim);margin-bottom:7px;font-weight:600;letter-spacing:.3px}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.chip{padding:9px 15px;border-radius:11px;border:none;background:var(--card2);color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+.chip{display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:12px;border:none;background:var(--card2);color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
 .chip.sel{background:#fff;color:#000}
+.mlogo{display:inline-flex;width:18px;height:18px;flex-shrink:0}
+.mlogo svg{width:100%;height:100%;display:block}
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
 .gnum{font-size:20px;font-weight:800}
 .glbl{font-size:11px;color:var(--dim);margin-top:2px}
 .row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--sep)}
 .row:last-child{border-bottom:none}
+.ruser{display:flex;align-items:center;gap:10px}
+.rpic{width:30px;height:30px;border-radius:50%;background:var(--card2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--dim)}
+.rpic img{width:100%;height:100%;object-fit:cover}
 .rt{font-size:14px;font-weight:600}
 .rd{font-size:11px;color:var(--dim);margin-top:1px}
-.ok{color:var(--green)}
-.bad{color:var(--red)}
-.warn{color:var(--orange)}
+.ok{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--orange)}
 .empty{font-size:13px;color:var(--dim);text-align:center;padding:10px 0}
 .note{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5}
 .linkbox{width:100%;font-size:11px;background:var(--card2);border-radius:12px;padding:12px;color:#fff;outline:none;word-break:break-all;border:none;font-family:inherit}
 .hint{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--sep);font-size:13px;font-weight:500}
 .hint:last-child{border-bottom:none}
 .hint .pts{margin-left:auto;color:var(--green);font-weight:700;font-size:13px}
-nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;display:flex;background:rgba(10,10,10,.96);backdrop-filter:blur(16px);border-top:1px solid var(--sep);padding:8px 4px 12px;z-index:50}
-.nav-btn{flex:1;padding:4px 0;border-radius:12px;text-align:center;font-size:10px;font-weight:600;color:rgba(255,255,255,.4);background:none;border:none;font-family:inherit;cursor:pointer}
-.nav-btn .ic{width:22px;height:22px;margin:0 auto 2px}
-.nav-btn.active{color:#fff}
-.nav-btn.active .ic{color:#fff}
+/* floating tab bar */
+nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:452px;display:flex;align-items:flex-end;background:rgba(20,20,22,.92);border:1px solid #2C2C2E;border-radius:26px;padding:9px 8px;backdrop-filter:blur(18px);box-shadow:0 12px 36px rgba(0,0,0,.65);z-index:50}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0;border-radius:17px;font-size:9.5px;font-weight:700;color:#6E6E73;background:none;border:none;font-family:inherit;cursor:pointer}
+.nav-btn .ic{width:21px;height:21px}
+.nav-btn.active{color:#fff;background:var(--card2)}
+.nav-fab{flex:1;display:flex;flex-direction:column;align-items:center;margin-top:-30px}
+.fab{width:54px;height:54px;border-radius:50%;background:#fff;color:#000;border:4px solid #000;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(255,255,255,.25);cursor:pointer;transition:transform .15s}
+.fab .ic{width:24px;height:24px}
+.fab:active{transform:scale(.92)}
+.flbl{font-size:9.5px;font-weight:700;color:var(--green);margin-top:4px}
 .amtwrap{position:relative}
 .maxb{position:absolute;right:9px;top:9px;background:#fff;color:#000;border:none;font-size:11px;font-weight:800;padding:6px 11px;border-radius:8px;cursor:pointer;font-family:inherit}
 /* wheel */
@@ -87,10 +106,17 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 </style>
 </head>
 <body>
-<main>
-<div id="loading" class="empty" style="margin-top:180px">Loading…</div>
+
+<div id="splash">
+  <div class="s-logo"><i class="ic" data-ic="zap"></i></div>
+  <p class="s-name">EARNAPP</p>
+  <div class="s-bar"><i></i></div>
+  <p class="s-txt" id="splashTxt">Connecting to Telegram…</p>
+</div>
+
 <div id="nottg" class="hide empty" style="margin-top:180px">Please open this app inside Telegram</div>
 
+<main>
 <div id="app" class="hide">
   <div class="header">
     <div class="avatar" id="avatar">?</div>
@@ -118,7 +144,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
     <div class="card">
       <p class="ctitle"><i class="ic" data-ic="zap"></i> Ways to earn</p>
       <div class="hint"><i class="ic" data-ic="users"></i><span>Invite a friend</span><span class="pts">+100</span></div>
-      <div class="hint"><i class="ic" data-ic="check"></i><span>Complete tasks</span><span class="pts">+150</span></div>
+      <div class="hint"><i class="ic" data-ic="check"></i><span>Complete tasks</span><span class="pts" id="taskSum">+0</span></div>
       <div class="hint"><i class="ic" data-ic="game"></i><span>Play Lucky Wheel</span><span class="pts">up to x3</span></div>
       <div class="hint"><i class="ic" data-ic="flame"></i><span>Daily check-in</span><span class="pts">up to +50/day</span></div>
     </div>
@@ -226,7 +252,10 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
   <nav>
     <button class="nav-btn active" data-t="home" onclick="switchTab('home')"><i class="ic" data-ic="home"></i>Home</button>
     <button class="nav-btn" data-t="tasks" onclick="switchTab('tasks')"><i class="ic" data-ic="check"></i>Tasks</button>
-    <button class="nav-btn" data-t="game" onclick="switchTab('game')"><i class="ic" data-ic="game"></i>Game</button>
+    <div class="nav-fab">
+      <button class="fab" data-t="game" onclick="switchTab('game')"><i class="ic" data-ic="game"></i></button>
+      <span class="flbl">GAME</span>
+    </div>
     <button class="nav-btn" data-t="friends" onclick="switchTab('friends')"><i class="ic" data-ic="users"></i>Friends</button>
     <button class="nav-btn" data-t="wallet" onclick="switchTab('wallet')"><i class="ic" data-ic="wallet"></i>Wallet</button>
   </nav>
@@ -239,19 +268,19 @@ const APP_NAME = "refer";
 const RATE = 0.001;
 const MIN_WD = 500;
 const STREAK_REWARDS = [10, 15, 20, 25, 30, 35, 50];
-const TASKS = [
-  { key: 'channel', icon: 'mega', title: 'Join our Channel', reward: 50, link: 'https://t.me/ebtry0' },
-  { key: 'group',   icon: 'chat', title: 'Join our Group',   reward: 50, link: 'https://t.me/ebatest' },
-  { key: 'x',       icon: 'x',    title: 'Follow @prime_ebisa on X', reward: 50, link: 'https://x.com/prime_ebisa' }
-];
+
 const METHODS = {
-  telebirr: { label: 'Telebirr', ph: 'Phone number e.g. 09xxxxxxxx' },
-  cbe:      { label: 'CBE Bank', ph: 'Bank account number' },
-  paypal:   { label: 'PayPal',   ph: 'PayPal email address' },
-  usdt:     { label: 'USDT',     ph: 'Binance Pay ID / wallet address' }
+  telebirr: { label: 'Telebirr', ph: 'Phone number e.g. 09xxxxxxxx',
+    logo: '<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#00A99D"/><text x="12" y="17.5" font-size="14" font-weight="800" text-anchor="middle" fill="#fff" font-family="inherit">t</text></svg>' },
+  cbe: { label: 'CBE Bank', ph: 'Bank account number',
+    logo: '<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#8C1B2F"/><path d="M12 4.5 3.5 9h17L12 4.5z" fill="#fff"/><rect x="5.6" y="10.2" width="2.4" height="6" fill="#fff"/><rect x="10.8" y="10.2" width="2.4" height="6" fill="#fff"/><rect x="16" y="10.2" width="2.4" height="6" fill="#fff"/><rect x="4" y="17.5" width="16" height="2" fill="#fff"/></svg>' },
+  paypal: { label: 'PayPal', ph: 'PayPal email address',
+    logo: '<svg viewBox="0 0 24 24"><rect width="24" height="24" rx="6" fill="#fff" stroke="#3a3a3c" stroke-width="1"/><text x="8.2" y="17" font-size="13" font-weight="800" font-style="italic" fill="#003087" font-family="inherit">P</text><text x="12.2" y="18" font-size="13" font-weight="800" font-style="italic" fill="#009CDE" font-family="inherit">P</text></svg>' },
+  usdt: { label: 'USDT', ph: 'Binance Pay ID / wallet address',
+    logo: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#26A17B"/><rect x="6.5" y="7.2" width="11" height="2.4" fill="#fff"/><rect x="6.5" y="10.8" width="11" height="1.6" fill="#fff"/><rect x="10.7" y="7.2" width="2.6" height="11" fill="#fff"/></svg>' }
 };
 
-/* ---------- white SVG icon set ---------- */
+/* ---------- SVG icon set ---------- */
 const IC = {
   home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/>',
   check:'<circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/>',
@@ -263,12 +292,22 @@ const IC = {
   link:'<path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>',
   mega:'<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
   chat:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
-  x:'<path d="M4 4l16 16M20 4 4 20"/>',
+  x:'<path d="M5 4l14 16M19 4 5 20"/>',
   dollar:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5H11a2 2 0 1 0 0 4h2a2 2 0 1 1 0 4H8.5"/><path d="M12 6.5v11"/>',
   list:'<path d="M8 6h13M8 12h13M8 18h13"/><path d="M3 6h.01M3 12h.01M3 18h.01"/>',
-  gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/>'
+  gift:'<rect x="3" y="8" width="18" height="4" rx="1"/><path d="M12 8v13"/><path d="M19 12v7a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2v-7"/><path d="M7.5 8a2.5 2.5 0 0 1 0-5C11 3 12 8 12 8s1-5 4.5-5a2.5 2.5 0 0 1 0 5"/>',
+  share:'<path d="M12 15V3"/><path d="m7 8 5-5 5 5"/><path d="M5 13v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/>',
+  star:'<path d="m12 3 2.7 5.8 6.3.7-4.7 4.3 1.3 6.2-5.6-3.2-5.6 3.2 1.3-6.2L3 9.5l6.3-.7L12 3z"/>',
+  globe:'<circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 1 0 18 15 15 0 0 1 0-18z"/>',
+  heart:'<path d="M12 20s-7-4.6-9.5-9A5.5 5.5 0 0 1 12 6a5.5 5.5 0 0 1 9.5 5c-2.5 4.4-9.5 9-9.5 9z"/>',
+  bell:'<path d="M18 9a6 6 0 1 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"/><path d="M10 21a2 2 0 0 0 4 0"/>',
+  yt:'<rect x="2.5" y="6" width="19" height="13" rx="3.5"/><path d="m10.5 9.7 4.5 2.8-4.5 2.8z"/>',
+  tg:'<path d="m21 4-18 7.5 5.5 2L10 19l3-3.5 4.5 3z"/>',
+  camera:'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/>',
+  note:'<path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>',
+  coin:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5h5M9.5 14.5h5"/>'
 };
-function icon(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + IC[n] + '</svg>'; }
+function icon(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IC[n] || IC.star) + '</svg>'; }
 document.querySelectorAll('[data-ic]').forEach(el => { el.innerHTML = icon(el.dataset.ic); });
 
 /* ---------- app state ---------- */
@@ -281,10 +320,12 @@ function todayUTC(){ return new Date().toISOString().slice(0, 10); }
 function notify(m){ if (tg && tg.showAlert) tg.showAlert(m); else alert(m); }
 function haptic(t){ try { tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(t); } catch(e){} }
 function tick(){ try { tg.HapticFeedback && tg.HapticFeedback.selectionChanged(); } catch(e){} }
+function splashDone(){ const s = $('splash'); s.classList.add('off'); setTimeout(() => s.style.display = 'none', 400); }
 
 if (!tg || !tg.initData) {
-  $('loading').classList.add('hide');
-  $('nottg').classList.remove('hide');
+  $('splashTxt').textContent = 'Please open this app inside Telegram';
+  document.querySelector('.s-bar').style.display = 'none';
+  setTimeout(() => { splashDone(); $('nottg').classList.remove('hide'); }, 900);
 } else {
   start();
 }
@@ -292,6 +333,7 @@ if (!tg || !tg.initData) {
 async function start() {
   tg.ready();
   tg.expand();
+  $('splashTxt').textContent = 'Verifying your account…';
   try {
     const r = await fetch('/api/auth', {
       method: 'POST',
@@ -300,24 +342,31 @@ async function start() {
     });
     const a = await r.json();
     if (!a.user) throw new Error(a.error || 'Login failed');
+    $('splashTxt').textContent = 'Loading your balance…';
     await loadMe();
-    $('loading').classList.add('hide');
+    splashDone();
     $('app').classList.remove('hide');
   } catch (e) {
-    $('loading').textContent = 'Error: ' + e.message;
+    document.querySelector('.s-bar').style.display = 'none';
+    $('splashTxt').textContent = 'Error: ' + e.message;
   }
 }
 
 async function loadMe() {
   const r = await fetch('/api/me', { headers: { 'x-init-data': tg.initData } });
   me = await r.json();
-  doneTasks = new Set(me.tasks || []);
+  doneTasks = new Set(me.tasks_done || []);
   renderAll();
+}
+
+function avatarHtml(pic, name, cls) {
+  if (pic) return '<span class="' + cls + '"><img src="' + pic + '" alt=""></span>';
+  return '<span class="' + cls + '">' + ((name || '?')[0] || '?').toUpperCase() + '</span>';
 }
 
 function renderAll() {
   $('hello').textContent = 'Hi, ' + (me.first_name || 'Friend');
-  $('avatar').textContent = (me.first_name || '?')[0].toUpperCase();
+  $('avatar').innerHTML = me.photo_url ? '<img src="' + me.photo_url + '">' : (me.first_name || '?')[0].toUpperCase();
   $('streakVal').textContent = me.streak || 0;
   $('points').textContent = fmt(me.points);
   $('usd').textContent = '≈ $' + (me.points * RATE).toFixed(2);
@@ -328,7 +377,9 @@ function renderAll() {
   $('refPending').textContent = me.pending || 0;
   $('refEarned').textContent = fmt(refs.length * 100);
   $('refList').innerHTML = refs.length
-    ? refs.map(r => '<div class="row"><span class="rt">' + (r.first_name || 'Anonymous') + '</span><span style="color:var(--green);font-weight:700">+100</span></div>').join('')
+    ? refs.map(r => '<div class="row"><span class="ruser">' + avatarHtml(r.photo_url, r.first_name, 'rpic') +
+        '<span class="rt">' + (r.first_name || 'Anonymous') + '</span></span>' +
+        '<span style="color:var(--green);font-weight:700">+100</span></div>').join('')
     : '<p class="empty">No referrals yet — share your link</p>';
 
   renderStreak();
@@ -359,12 +410,19 @@ function renderStreak() {
 }
 
 function renderTasks() {
-  $('taskList').innerHTML = TASKS.map(t => {
-    const done = doneTasks.has(t.key);
+  const list = me.tasks || [];
+  const total = list.reduce((a, t) => a + (t.reward || 0), 0);
+  $('taskSum').textContent = '+' + total;
+  if (!list.length) {
+    $('taskList').innerHTML = '<p class="empty">No tasks available right now</p>';
+    return;
+  }
+  $('taskList').innerHTML = list.map(t => {
+    const done = doneTasks.has(String(t.id));
     let btn;
     if (done) btn = '<span class="done">Done</span>';
-    else if (startedTasks.has(t.key)) btn = '<button class="btn btn-blue btn-sm" onclick="taskVerify(\'' + t.key + '\')">Verify</button>';
-    else btn = '<button class="btn btn-sm" onclick="taskStart(\'' + t.key + '\')">Start</button>';
+    else if (startedTasks.has(String(t.id))) btn = '<button class="btn btn-blue btn-sm" onclick="taskVerify(' + t.id + ')">Verify</button>';
+    else btn = '<button class="btn btn-sm" onclick="taskStart(' + t.id + ')">Start</button>';
     return '<div class="task"><div class="ticon"><i class="ic">' + icon(t.icon) + '</i></div>' +
       '<div class="tinfo"><p class="ttitle">' + t.title + '</p><p class="trew">+' + t.reward + ' pts</p></div>' +
       btn + '</div>';
@@ -373,7 +431,8 @@ function renderTasks() {
 
 function renderMethods() {
   $('methods').innerHTML = Object.keys(METHODS).map(k =>
-    '<button class="chip' + (selMethod === k ? ' sel' : '') + '" onclick="setMethod(\'' + k + '\')">' + METHODS[k].label + '</button>'
+    '<button class="chip' + (selMethod === k ? ' sel' : '') + '" onclick="setMethod(\'' + k + '\')">' +
+    '<span class="mlogo">' + METHODS[k].logo + '</span>' + METHODS[k].label + '</button>'
   ).join('');
   $('acct').placeholder = METHODS[selMethod].ph;
 }
@@ -382,10 +441,12 @@ function renderHistory() {
   const h = me.withdrawals || [];
   $('history').innerHTML = h.length
     ? h.map(w => {
+        const M = METHODS[w.method];
         const lbl = w.status === 'done' ? '<span class="ok">Paid</span>'
           : (w.status === 'rejected' ? '<span class="bad">Rejected</span>' : '<span class="warn">Pending</span>');
-        return '<div class="row"><div><p class="rt">' + ((METHODS[w.method] || {}).label || w.method || '—') + '</p>' +
-          '<p class="rd">' + String(w.created_at || '').slice(0, 10) + '</p></div>' +
+        return '<div class="row"><span class="ruser"><span class="mlogo">' + (M ? M.logo : '') + '</span>' +
+          '<span><p class="rt">' + (M ? M.label : (w.method || '—')) + '</p>' +
+          '<p class="rd">' + String(w.created_at || '').slice(0, 10) + '</p></span></span>' +
           '<div style="text-align:right"><p class="rt">-' + fmt(w.points) + ' pts</p><p class="rd">' + lbl + '</p></div></div>';
       }).join('')
     : '<p class="empty">No withdrawals yet</p>';
@@ -393,7 +454,7 @@ function renderHistory() {
 
 function switchTab(t) {
   ['home', 'tasks', 'game', 'friends', 'wallet'].forEach(x => $('tab-' + x).classList.toggle('hide', x !== t));
-  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.t === t));
+  document.querySelectorAll('nav [data-t]').forEach(b => b.classList.toggle('active', b.dataset.t === t));
   window.scrollTo(0, 0);
 }
 
@@ -414,25 +475,26 @@ async function doCheckin() {
   } catch (e) { notify('Error: ' + e.message); }
 }
 
-function taskStart(k) {
-  const t = TASKS.find(x => x.key === k);
-  startedTasks.add(k);
+function taskStart(id) {
+  const t = (me.tasks || []).find(x => x.id === id);
+  if (!t) return;
+  startedTasks.add(String(id));
   if (t.link.includes('t.me')) tg.openTelegramLink(t.link); else tg.openLink(t.link);
   renderTasks();
 }
 
-async function taskVerify(k) {
+async function taskVerify(id) {
   try {
     const r = await fetch('/api/tasks', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ initData: tg.initData, task: k })
+      body: JSON.stringify({ initData: tg.initData, task: id })
     });
     const d = await r.json();
     if (r.ok) {
-      doneTasks.add(k);
+      doneTasks.add(String(id));
       me.points += d.reward;
       haptic('success');
-      notify('+' + d.reward + ' pts!' + (doneTasks.size === TASKS.length ? ' All tasks done — your inviter just got the bonus!' : ''));
+      notify('+' + d.reward + ' pts!' + (doneTasks.size === (me.tasks || []).length ? ' All tasks done — your inviter just got the bonus!' : ''));
       await loadMe();
     } else notify(d.error || 'Verification failed');
   } catch (e) { notify('Error: ' + e.message); }
@@ -478,15 +540,13 @@ async function doWithdraw() {
 }
 
 /* ================= LUCKY WHEEL (SVG) ================= */
-const SEG = [0, 1.5, 0, 3, 0, 2, 0, 1.5];          // segment multipliers, 45deg each
+const SEG = [0, 1.5, 0, 3, 0, 2, 0, 1.5];
 const SEG_COLOR = { 0: '#232327', 1.5: '#0A84FF', 2: '#FF9F0A', 3: '#30D158' };
 let wheelR = 0, spinning = false, gameHistory = [];
 
 function buildWheel() {
   const cx = 130, cy = 130, r = 118;
   let svg = '';
-
-  // segments
   for (let i = 0; i < 8; i++) {
     const a0 = (i * 45 - 90) * Math.PI / 180;
     const a1 = ((i + 1) * 45 - 90) * Math.PI / 180;
@@ -495,7 +555,6 @@ function buildWheel() {
     svg += '<path d="M ' + cx + ' ' + cy + ' L ' + x0.toFixed(2) + ' ' + y0.toFixed(2) +
       ' A ' + r + ' ' + r + ' 0 0 1 ' + x1.toFixed(2) + ' ' + y1.toFixed(2) + ' Z" fill="' + SEG_COLOR[SEG[i]] + '"/>';
   }
-  // labels
   for (let i = 0; i < 8; i++) {
     const m = SEG[i];
     const txt = m === 0 ? '×' : 'x' + m;
@@ -504,15 +563,12 @@ function buildWheel() {
     svg += '<text x="130" y="54" text-anchor="middle" font-size="' + size + '" font-weight="800" fill="' + fill +
       '" transform="rotate(' + (i * 45 + 22.5) + ' 130 130)" font-family="inherit">' + txt + '</text>';
   }
-  // pins
   for (let i = 0; i < 8; i++) {
     const a = (i * 45 - 90) * Math.PI / 180;
     svg += '<circle cx="' + (cx + 107 * Math.cos(a)).toFixed(2) + '" cy="' + (cy + 107 * Math.sin(a)).toFixed(2) +
       '" r="3" fill="#fff" opacity=".9"/>';
   }
-  // outer ring
   svg += '<circle cx="130" cy="130" r="124" fill="none" stroke="#3A3A3C" stroke-width="6"/>';
-
   $('wheel').innerHTML = svg;
 }
 buildWheel();
@@ -545,7 +601,6 @@ async function playGame() {
     $('usd').textContent = '≈ $' + (me.points * RATE).toFixed(2);
     $('wUsd').textContent = '$' + (me.points * RATE).toFixed(2);
 
-    // aim at a segment matching the server result
     const idxs = SEG.map((m, i) => m === d.mult ? i : -1).filter(i => i >= 0);
     const idx = idxs[Math.floor(Math.random() * idxs.length)];
     const a = idx * 45 + 22.5 + (Math.random() * 16 - 8);
@@ -553,7 +608,6 @@ async function playGame() {
     wheelR += 4 * 360 + corr;
     $('wheel').style.transform = 'rotate(' + wheelR + 'deg)';
 
-    // tick sounds-feel via haptics, slowing down
     [80, 200, 360, 560, 800, 1080, 1400, 1780, 2220, 2720, 3280, 3900].forEach(t => setTimeout(tick, t));
 
     setTimeout(() => {
