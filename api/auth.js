@@ -17,23 +17,25 @@ function valid(initData) {
   return calc === hash && t && Date.now() / 1000 - t < 86400;
 }
 
-function tgId(initData) {
-  return JSON.parse(new URLSearchParams(initData).get('user') || 'null')?.id;
+function tgUser(initData) {
+  return JSON.parse(new URLSearchParams(initData).get('user') || 'null');
 }
 
 module.exports = async (req, res) => {
   try {
     const { initData, startParam } = req.body || {};
     if (!valid(initData)) return res.status(401).json({ error: 'Unauthorized' });
-    const id = tgId(initData);
-    if (!id) return res.status(400).json({ error: 'No user' });
 
-    let { data: user } = await supabase.from('users').select('*').eq('telegram_id', id).maybeSingle();
-    if (user) return res.status(200).json({ user });
+    const u = tgUser(initData);
+    if (!u || !u.id) return res.status(400).json({ error: 'No user' });
+
+    let { data: user } = await supabase.from('users').select('*').eq('telegram_id', u.id).maybeSingle();
+    if (user) return res.status(200).json({ user, isNew: false });
 
     const { data: newUser, error } = await supabase.from('users').insert({
-      telegram_id: id,
-      first_name: 'Friend',
+      telegram_id: u.id,
+      first_name: u.first_name || 'Friend',
+      username: u.username || null,
       referral_code: crypto.randomBytes(4).toString('hex'),
       points: 25
     }).select().single();
@@ -43,15 +45,18 @@ module.exports = async (req, res) => {
     if (startParam) {
       const { data: referrer } = await supabase.from('users')
         .select('telegram_id').eq('referral_code', startParam).maybeSingle();
-      if (referrer && referrer.telegram_id !== id) {
-        await supabase.from('users').update({ referred_by: referrer.telegram_id }).eq('telegram_id', id);
+      if (referrer && referrer.telegram_id !== u.id) {
+        await supabase.from('users').update({ referred_by: referrer.telegram_id }).eq('telegram_id', u.id);
         await supabase.rpc('add_points', { p_telegram_id: referrer.telegram_id, p_amount: 100 });
         await supabase.from('referrals').insert({
-          referrer_id: referrer.telegram_id, referred_id: id, reward_points: 100
+          referrer_id: referrer.telegram_id,
+          referred_id: u.id,
+          reward_points: 100
         });
       }
     }
-    return res.status(200).json({ user });
+
+    return res.status(200).json({ user, isNew: true });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
