@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
     const id = tgId(initData);
 
     const { data: user } = await supabase.from('users')
-      .select('points, streak, last_checkin, first_name, referral_code').eq('telegram_id', id).maybeSingle();
+      .select('points, streak, last_checkin, first_name, referral_code, photo_url').eq('telegram_id', id).maybeSingle();
     if (!user) return res.status(404).json({ error: 'Not found' });
 
     const { data: refs } = await supabase.from('referrals')
@@ -36,10 +36,11 @@ module.exports = async (req, res) => {
     let referrals = [];
     if (refs && refs.length) {
       const ids = refs.map(r => r.referred_id);
-      const { data: us } = await supabase.from('users').select('telegram_id, first_name').in('telegram_id', ids);
+      const { data: us } = await supabase.from('users')
+        .select('telegram_id, first_name, photo_url').in('telegram_id', ids);
       referrals = refs.map(r => {
         const u = (us || []).find(x => x.telegram_id === r.referred_id);
-        return { first_name: u ? u.first_name : null };
+        return { first_name: u ? u.first_name : null, photo_url: u ? u.photo_url : null };
       });
     }
 
@@ -51,6 +52,9 @@ module.exports = async (req, res) => {
       const paidSet = new Set((refs || []).map(r => r.referred_id));
       pending = invited.filter(p => !paidSet.has(p.telegram_id)).length;
     }
+
+    const { data: activeTasks } = await supabase.from('tasks')
+      .select('id, title, icon, reward, link').eq('active', true).order('id');
 
     const { data: tdone } = await supabase.from('task_completions')
       .select('task_key').eq('user_id', id);
@@ -65,7 +69,9 @@ module.exports = async (req, res) => {
       last_checkin: user.last_checkin,
       first_name: user.first_name,
       referral_code: user.referral_code,
-      tasks: (tdone || []).map(t => t.task_key),
+      photo_url: user.photo_url,
+      tasks: activeTasks || [],
+      tasks_done: (tdone || []).map(t => t.task_key),
       referrals,
       pending,
       withdrawals: hist || []
