@@ -22,10 +22,12 @@
     </div>
   </div>
 
-  <div class="rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-center mb-6">
+  <div class="rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 p-6 text-center mb-2">
     <p class="text-sm text-blue-100">Your balance</p>
     <p class="text-4xl font-bold mt-1" id="points">0 pts</p>
   </div>
+
+  <div class="text-center text-xs text-gray-600 mb-4" id="dbg"></div>
 
   <div class="rounded-2xl bg-gray-900 p-4 mb-6">
     <p class="text-sm text-gray-400 mb-2">Your referral link</p>
@@ -61,7 +63,7 @@
 <script>
 // ⚠️ EDIT THE NEXT LINE — put YOUR bot username here (without @)
 const BOT_USERNAME = "EbSupabaseBot";
-const APP_NAME = "refer"; // don't change this
+const APP_NAME = "refer";
 
 const tg = window.Telegram?.WebApp;
 let myPoints = 0;
@@ -78,15 +80,18 @@ async function start() {
     tg.ready();
     tg.expand();
 
+    const sp = (tg.initDataUnsafe && tg.initDataUnsafe.start_param) ? tg.initDataUnsafe.start_param : 'NONE';
+
     const res = await fetch('/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         initData: tg.initData,
-        startParam: tg.initDataUnsafe?.start_param || ''
+        startParam: sp === 'NONE' ? '' : sp
       })
     });
     const data = await res.json();
+    document.getElementById('dbg').textContent = 'start_param: ' + sp + ' • new: ' + (data.isNew ? 'YES' : 'no');
     if (!data.user) throw new Error(data.error || 'Login failed');
 
     const meRes = await fetch('/api/me', { headers: { 'x-init-data': tg.initData } });
