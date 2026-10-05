@@ -41,26 +41,13 @@ module.exports = async (req, res) => {
     if (error) return res.status(500).json({ error: error.message });
     user = newUser;
 
+    // save who invited them — but NO points yet.
+    // +100 goes to the referrer only after this user completes ALL tasks (checked in api/tasks.js)
     if (startParam) {
       const { data: referrer } = await supabase.from('users')
         .select('telegram_id').eq('referral_code', startParam).maybeSingle();
       if (referrer && referrer.telegram_id !== u.id) {
         await supabase.from('users').update({ referred_by: referrer.telegram_id }).eq('telegram_id', u.id);
-        await supabase.rpc('add_points', { p_telegram_id: referrer.telegram_id, p_amount: 100 });
-        await supabase.from('referrals').insert({
-          referrer_id: referrer.telegram_id, referred_id: u.id, reward_points: 100
-        });
-        // 🔔 notify the referrer via bot
-        try {
-          await fetch('https://api.telegram.org/bot' + process.env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              chat_id: referrer.telegram_id,
-              text: '🎉 ' + (u.first_name || 'Someone') + ' just joined with your referral link!\n💰 +100 points added to your balance.'
-            })
-          });
-        } catch (e) { /* ignore */ }
       }
     }
 
