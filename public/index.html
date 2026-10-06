@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <title>EarnApp</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script src="https://sad.adsgram.ai/sdk/sad.min.js"></script>
 <style>
 :root{--bg:#000;--card:#1C1C1E;--card2:#2C2C2E;--sep:#38383A;--txt:#fff;--dim:#98989F;--acc:#0A84FF;--green:#30D158;--orange:#FF9F0A;--red:#FF453A}
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -546,11 +545,27 @@ async function doWithdraw() {
 }
 
 /* ================= WATCH & EARN (AdsGram) ================= */
-const AD_BLOCK_ID = 49344;        // your AdsGram block ID
-const AD_REWARD = 15;             // points per ad (must match api/ad.js)
+const AD_BLOCK_ID = 49344;        // your real block ID (set to 123 only to test with demo ad)
+const AD_REWARD = 15;             // must match api/ad.js
 const AD_DAILY_LIMIT = 10;        // must match api/ad.js
 IC.play = '<path d="m7 4 13 8-13 8z"/>';
-let adCtl = null, adBusy = false;
+let adCtl = null, adBusy = false, adSdkLoading = null;
+
+function loadAdSdk() {
+  if (window.AdsGram) return Promise.resolve(true);
+  if (adSdkLoading) return adSdkLoading;
+  adSdkLoading = new Promise(resolve => {
+    const s = document.createElement('script');
+    s.src = 'https://sad.adsgram.ai/sdk/sad.min.js';
+    s.onload = () => resolve(!!window.AdsGram);
+    s.onerror = () => { adSdkLoading = null; resolve(false); };
+    document.head.appendChild(s);
+    setTimeout(() => {
+      if (!window.AdsGram) { adSdkLoading = null; resolve(false); }
+    }, 10000);
+  });
+  return adSdkLoading;
+}
 
 function renderAd() {
   const el = $('adCard');
@@ -568,10 +583,20 @@ function renderAd() {
 
 async function watchAd() {
   if (adBusy) return;
-  if (!window.AdsGram) return notify('Ad module not loaded — check your connection');
   adBusy = true;
   const btn = $('adBtn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Loading ad…'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Connecting to ad server…'; }
+
+  const sdkOk = await loadAdSdk();
+  if (!sdkOk) {
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="ic dark sm" data-ic="play"></i> Watch Ad — +' + AD_REWARD + ' pts'; }
+    document.querySelectorAll('#adCard [data-ic]').forEach(x => { x.innerHTML = icon(x.dataset.ic); });
+    adBusy = false;
+    haptic('error');
+    return notify('Ad server unreachable right now.\n\nCheck your internet (or try Wi-Fi / another network) and tap again.');
+  }
+
+  if (btn) btn.textContent = 'Loading ad…';
   try {
     if (!adCtl) adCtl = window.AdsGram.init(AD_BLOCK_ID);
     await adCtl.show();
