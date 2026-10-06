@@ -2,9 +2,6 @@ const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-const METHODS = ['telebirr', 'cbe', 'paypal', 'usdt'];
-const MIN_WD = 500;
-
 function valid(initData) {
   if (!initData) return false;
   const params = new URLSearchParams(initData);
@@ -25,45 +22,66 @@ function tgId(initData) {
 
 module.exports = async (req, res) => {
   try {
-    const { initData, amount, method, account } = req.body || {};
+    const initData = req.headers['x-init-data'];
     if (!valid(initData)) return res.status(401).json({ error: 'Unauthorized' });
     const id = tgId(initData);
 
     const { data: user } = await supabase.from('users')
-      .select('points, first_name, username').eq('telegram_id', id).maybeSingle();
-    if (!user) return res.status(404).json({ error: 'User not found' });
+      .select('points, streak, last_checkin, first_name, referral_code, photo_url, ads_watched, last_ad_date')
+      .eq('telegram_id', id).maybeSingle();
+    if (!user) return res.status(404).json({ error: 'Not found' });
 
-    const amt = Number(amount);
-    if (!Number.isInteger(amt) || amt < MIN_WD) return res.status(400).json({ error: 'Minimum withdrawal is ' + MIN_WD + ' pts' });
-    if (amt > user.points) return res.status(400).json({ error: 'Amount exceeds your balance' });
-    if (!METHODS.includes(method)) return res.status(400).json({ error: 'Choose a valid method' });
-    if (!account || String(account).trim().length < 5) return res.status(400).json({ error: 'Enter your account details' });
+    const { data: refs } = await supabase.from('referrals')
+      .select('referred_id, created_at').eq('referrer_id', id).order('created_at', { ascending: false });
 
-    await supabase.rpc('add_points', { p_telegram_id: id, p_amount: -amt });
-    const { data: wd } = await supabase.from('withdrawals')
-      .insert({ user_id: id, points: amt, method, account: String(account).trim() })
-      .select().single();
-
-    // 🆕 log to the activity feed (negative points = shown without green)
-    await supabase.from('activities').insert({ user_id: id, icon: 'dollar', title: 'Withdrawal Request', points: -amt });
-
-    // 🔔 instant notification to admin
-    try {
-      await fetch('https://api.telegram.org/bot' + process.env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          chat_id: process.env.ADMIN_TELEGRAM_ID,
-          text: '🔔 NEW WITHDRAWAL REQUEST\n\nID: #' + wd.id +
-            '\n👤 ' + (user.first_name || 'User') + (user.username ? ' (@' + user.username + ')' : '') +
-            '\n💰 ' + amt + ' pts' +
-            '\n💳 ' + method + ': ' + wd.account +
-            '\n\n✅ Approve: /paid ' + wd.id + '\n❌ Reject: /reject ' + wd.id
-        })
+    let referrals = [];
+    if (refs && refs.length) {
+      const ids = refs.map(r => r.referred_id);
+      const { data: us } = await supabase.from('users')
+        .select('telegram_id, first_name, photo_url').in('telegram_id', ids);
+      referrals = refs.map(r => {
+        const u = (us || []).find(x => x.telegram_id === r.referred_id);
+        return { first_name: u ? u.first_name : null, photo_url: u ? u.photo_url : null };
       });
-    } catch (e) {}
+    }
 
-    return res.status(200).json({ ok: true, balance: user.points - amt });
+    let pending = 0;
+    const { data: invited } = await supabase.from('users').select('telegram_id').eq('referred_by', id);
+    if (invited && invited.length) {
+      const paidSet = new Set((refs || []).map(r => r.referred_id));
+      pending = invited.filter(p => !paidSet.has(p.telegram_id)).length;
+    }
+
+    const { data: activeTasks } = await supabase.from('tasks')
+      .select('id, title, icon, reward, link').eq('active', true).order('id');
+
+    const { data: tdone } = await supabase.from('task_completions').select('task_key').eq('user_id', id);
+
+    const { data: hist } = await supabase.from('withdrawals')
+      .select('points, method, status, created_at').eq('user_id', id)
+      .order('created_at', { ascending: false }).limit(10);
+
+    const { data: acts } = await supabase.from('activities')
+      .select('icon, title, points, created_at').eq('user_id', id)
+      .order('created_at', { ascending: false }).limit(20);
+
+    const todayISO = new Date().toISOString().slice(0, 10);
+
+    return res.status(200).json({
+      points: user.points,
+      streak: user.streak || 0,
+      last_checkin: user.last_checkin,
+      first_name: user.first_name,
+      referral_code: user.referral_code,
+      photo_url: user.photo_url,
+      ads: { watched: user.last_ad_date === todayISO ? (user.ads_watched || 0) : 0, limit: 10 },
+      tasks: activeTasks || [],
+      tasks_done: (tdone || []).map(t => t.task_key),
+      referrals,
+      pending,
+      withdrawals: hist || [],
+      activities: acts || []
+    });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
