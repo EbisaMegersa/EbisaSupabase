@@ -44,8 +44,6 @@ module.exports = async (req, res) => {
     await supabase.from('users')
       .update({ ads_watched: newWatched, last_ad_date: today }).eq('telegram_id', id);
     await supabase.rpc('add_points', { p_telegram_id: id, p_amount: AD_REWARD });
-
-    // 🆕 log to the activity feed
     await supabase.from('activities').insert({ user_id: id, icon: 'play', title: 'Ad Watch Reward', points: AD_REWARD });
 
     const { data: u2 } = await supabase.from('users').select('points').eq('telegram_id', id).maybeSingle();
