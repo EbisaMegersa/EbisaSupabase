@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-const REQUIRED_TASKS = 3;   // ⬅️ invitee must complete ANY 3 tasks to unlock referrer's +100
+const REQUIRED_TASKS = 3;
 
 function valid(initData) {
   if (!initData) return false;
@@ -54,7 +54,6 @@ module.exports = async (req, res) => {
       user_id: id, icon: 'check', title: taskRow.title, points: taskRow.reward
     });
 
-    // ---- qualified referral: ANY 3 tasks completed ----
     const { count: doneCount } = await supabase.from('task_completions')
       .select('id', { count: 'exact', head: true }).eq('user_id', id);
 
