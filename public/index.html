@@ -6,100 +6,112 @@
 <title>EarnApp</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <style>
-:root{--bg:#000;--card:#1C1C1E;--card2:#2C2C2E;--sep:#38383A;--txt:#fff;--dim:#98989F;--acc:#0A84FF;--green:#30D158;--orange:#FF9F0A;--red:#FF453A}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{--bg:#08080B;--card:#121218;--card2:#1C1C24;--sep:rgba(255,255,255,.07);--txt:#FAFAFA;--dim:#8A8A96;--lime:#C9F73A;--green:#30D158;--orange:#FF9F0A;--red:#FF453A;--blue:#0A84FF}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea{-webkit-user-select:text!important;user-select:text!important}
+img{-webkit-user-drag:none;pointer-events:none}
 body{background:var(--bg);color:var(--txt);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding-bottom:110px}
 main{max-width:480px;margin:0 auto;padding:16px}
 .hide{display:none!important}
 .ic{display:inline-flex;width:20px;height:20px;color:#fff;flex-shrink:0}
 .ic svg{width:100%;height:100%}
 .ic.sm{width:16px;height:16px}
-.ic.orange{color:var(--orange)}.ic.dark{color:#000}
-/* full-screen messages (locked / error / not-in-tg) */
-.screen{position:fixed;inset:0;background:#000;z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px}
+.ic.orange{color:var(--orange)}.ic.dark{color:#000}.ic.lime{color:var(--lime)}
+/* full screens (locked / error / not-in-tg) */
+.screen{position:fixed;inset:0;background:var(--bg);z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px}
 .screen .bigic{width:72px;height:72px;color:var(--red)}
 .screen .bigic.neutral{color:var(--dim)}
-.screen h2{font-size:18px;font-weight:800;margin-top:20px}
+.screen h2{font-size:19px;font-weight:800;margin-top:20px}
 .screen p{font-size:13px;color:var(--dim);margin-top:10px;line-height:1.6;max-width:300px}
 /* header */
 .header{display:flex;align-items:center;gap:11px;margin-bottom:16px}
-.avatar{width:44px;height:44px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex-shrink:0;overflow:hidden}
+.avatar{width:46px;height:46px;border-radius:50%;background:var(--card2);color:var(--lime);display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex-shrink:0;overflow:hidden;border:2px solid rgba(201,247,58,.25)}
 .avatar img{width:100%;height:100%;object-fit:cover}
-.hname{font-weight:700;font-size:16px}
-.hsub{font-size:13px;color:var(--dim)}
-.chipbtn{margin-left:auto;background:var(--card);color:#fff;font-size:13px;font-weight:700;padding:8px 14px;border-radius:999px;display:flex;align-items:center;gap:6px}
-.hero{background:#fff;border-radius:22px;padding:24px 20px;text-align:center;margin-bottom:14px}
-.hero-label{font-size:11px;letter-spacing:2px;color:rgba(0,0,0,.45);font-weight:700}
-.hero-amt{font-size:42px;font-weight:800;color:#000;margin:4px 0 2px}
-.hero-usd{font-size:13px;color:rgba(0,0,0,.45);font-weight:500}
-.card{background:var(--card);border-radius:18px;padding:16px;margin-bottom:14px}
-.ctitle{font-size:15px;font-weight:700;margin-bottom:12px;display:flex;align-items:center;gap:9px}
-.btn{width:100%;padding:14px;border-radius:14px;border:none;font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;color:#000;background:#fff;transition:opacity .15s;display:flex;align-items:center;justify-content:center;gap:8px}
-.btn:active{opacity:.7}
-.btn:disabled{opacity:.4;cursor:default}
-.btn-green{background:var(--green);color:#000}
+.hname{font-weight:800;font-size:17px}
+.hsub{font-size:12px;color:var(--dim)}
+.chipbtn{margin-left:auto;background:rgba(201,247,58,.1);border:1px solid rgba(201,247,58,.3);color:var(--lime);font-size:13px;font-weight:800;padding:8px 14px;border-radius:999px;display:flex;align-items:center;gap:6px}
+/* hero */
+.hero{background:var(--lime);border-radius:26px;padding:26px 20px;text-align:center;margin-bottom:14px;box-shadow:0 10px 40px rgba(201,247,58,.15)}
+.hero-label{font-size:10px;letter-spacing:3px;color:rgba(0,0,0,.55);font-weight:800}
+.hero-amt{font-size:46px;font-weight:900;color:#000;margin:6px 0 2px;letter-spacing:-1px}
+.hero-usd{font-size:13px;color:rgba(0,0,0,.55);font-weight:700}
+/* cards */
+.card{background:var(--card);border:1px solid var(--sep);border-radius:22px;padding:18px 16px;margin-bottom:14px}
+.ctitle{font-size:15px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:9px}
+/* buttons */
+.btn{width:100%;padding:15px;border-radius:16px;border:none;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer;color:#000;background:var(--lime);transition:opacity .15s, transform .1s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn:active{opacity:.75;transform:scale(.985)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn-green{background:var(--lime);color:#000}
 .btn-ghost{background:var(--card2);color:#fff}
-.btn-blue{background:rgba(10,132,255,.16);color:var(--acc)}
-.btn-sm{width:auto;padding:9px 16px;font-size:13px;border-radius:11px}
-.done{color:var(--green);font-weight:700;font-size:13px;padding:9px 14px}
+.btn-blue{background:transparent;border:1.5px solid var(--lime);color:var(--lime)}
+.btn-sm{width:auto;padding:9px 18px;font-size:13px;border-radius:12px}
+.done{color:var(--lime);font-weight:800;font-size:13px;padding:9px 14px}
 .row2{display:flex;gap:10px}.row2>*{flex:1}
-.dots{display:flex;gap:6px;margin-bottom:12px}
-.dot{flex:1;text-align:center;padding:9px 2px;border-radius:11px;background:var(--card2);font-size:10px;color:var(--dim);font-weight:600}
+/* streak dots */
+.dots{display:flex;gap:6px;margin-bottom:14px}
+.dot{flex:1;text-align:center;padding:10px 2px;border-radius:12px;background:var(--card2);font-size:10px;color:var(--dim);font-weight:700}
 .dot b{display:block;font-size:12px;font-weight:800}
-.dot.on{background:var(--green);color:#000}
+.dot.on{background:var(--lime);color:#000}
+/* tasks */
 .task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--sep)}
 .task:last-child{border-bottom:none}
-.ticon{width:44px;height:44px;border-radius:12px;background:var(--card2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ticon{width:46px;height:46px;border-radius:14px;background:var(--card2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .tinfo{flex:1}
-.ttitle{font-size:14px;font-weight:600}
-.trew{font-size:12px;color:var(--green);font-weight:700}
-.inp{width:100%;padding:13px 14px;border-radius:13px;background:var(--card2);border:none;color:#fff;font-size:15px;font-family:inherit;outline:none;margin-bottom:10px}
-.inp::placeholder{color:#6E6E73}
-.lbl{font-size:12px;color:var(--dim);margin-bottom:7px;font-weight:600;letter-spacing:.3px}
+.ttitle{font-size:14px;font-weight:700}
+.trew{font-size:12px;color:var(--lime);font-weight:800}
+/* inputs */
+.inp{width:100%;padding:14px;border-radius:15px;background:var(--card2);border:1px solid var(--sep);color:#fff;font-size:15px;font-family:inherit;outline:none;margin-bottom:10px}
+.inp:focus{border-color:var(--lime)}
+.inp::placeholder{color:#5C5C66}
+.lbl{font-size:11px;color:var(--dim);margin-bottom:8px;font-weight:800;letter-spacing:1.5px}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.chip{display:flex;align-items:center;gap:7px;padding:9px 14px;border-radius:12px;border:none;background:var(--card2);color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
-.chip.sel{background:#fff;color:#000}
+.chip{display:flex;align-items:center;gap:7px;padding:10px 15px;border-radius:13px;border:1px solid var(--sep);background:var(--card2);color:#fff;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer}
+.chip.sel{background:var(--lime);border-color:var(--lime);color:#000}
 .mlogo{display:inline-flex;width:18px;height:18px;flex-shrink:0}
 .mlogo svg{width:100%;height:100%;display:block}
+/* stats */
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
-.gnum{font-size:20px;font-weight:800}
-.glbl{font-size:11px;color:var(--dim);margin-top:2px}
-.row{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--sep)}
+.gnum{font-size:22px;font-weight:900}
+.glbl{font-size:11px;color:var(--dim);margin-top:2px;font-weight:600}
+.row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--sep)}
 .row:last-child{border-bottom:none}
 .ruser{display:flex;align-items:center;gap:10px}
-.rpic{width:30px;height:30px;border-radius:50%;background:var(--card2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:var(--dim)}
+.rpic{width:32px;height:32px;border-radius:50%;background:var(--card2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--dim)}
 .rpic img{width:100%;height:100%;object-fit:cover}
-.rt{font-size:14px;font-weight:600}
+.rt{font-size:14px;font-weight:700}
 .rd{font-size:11px;color:var(--dim);margin-top:1px}
-.ok{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--orange)}
+.ok{color:var(--lime)}.bad{color:var(--red)}.warn{color:var(--orange)}
 .empty{font-size:13px;color:var(--dim);text-align:center;padding:10px 0}
 .note{font-size:11px;color:var(--dim);margin-top:10px;line-height:1.5}
-.linkbox{width:100%;font-size:11px;background:var(--card2);border-radius:12px;padding:12px;color:#fff;outline:none;word-break:break-all;border:none;font-family:inherit}
-.hint{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--sep);font-size:13px;font-weight:500}
+.linkbox{width:100%;font-size:11px;background:var(--card2);border:1px solid var(--sep);border-radius:13px;padding:13px;color:var(--lime);outline:none;word-break:break-all;font-family:inherit}
+.hint{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--sep);font-size:13px;font-weight:600}
 .hint:last-child{border-bottom:none}
-.hint .pts{margin-left:auto;color:var(--green);font-weight:700;font-size:13px}
+.hint .pts{margin-left:auto;color:var(--lime);font-weight:800;font-size:13px}
+/* ad progress */
 .adbar{height:8px;border-radius:99px;background:var(--card2);overflow:hidden;margin-bottom:8px}
-.adbar i{display:block;height:100%;background:var(--green);border-radius:99px;transition:width .4s}
+.adbar i{display:block;height:100%;background:var(--lime);border-radius:99px;transition:width .4s}
 /* floating tab bar */
-nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:452px;display:flex;align-items:flex-end;background:rgba(20,20,22,.92);border:1px solid #2C2C2E;border-radius:26px;padding:9px 8px;backdrop-filter:blur(18px);box-shadow:0 12px 36px rgba(0,0,0,.65);z-index:50}
-.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0;border-radius:17px;font-size:9.5px;font-weight:700;color:#6E6E73;background:none;border:none;font-family:inherit;cursor:pointer}
+nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:452px;display:flex;align-items:flex-end;background:rgba(12,12,16,.94);border:1px solid rgba(255,255,255,.08);border-radius:26px;padding:9px 8px;backdrop-filter:blur(18px);box-shadow:0 12px 40px rgba(0,0,0,.7);z-index:50}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;padding:7px 0;border-radius:17px;font-size:9.5px;font-weight:700;color:#5C5C66;background:none;border:none;font-family:inherit;cursor:pointer}
 .nav-btn .ic{width:21px;height:21px}
-.nav-btn.active{color:#fff;background:var(--card2)}
-.nav-fab{flex:1;display:flex;flex-direction:column;align-items:center;margin-top:-30px}
-.fab{width:54px;height:54px;border-radius:50%;background:#fff;color:#000;border:4px solid #000;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(255,255,255,.25);cursor:pointer;transition:transform .15s}
+.nav-btn.active{color:var(--lime);background:rgba(201,247,58,.1)}
+.nav-fab{flex:1;display:flex;flex-direction:column;align-items:center;margin-top:-32px}
+.fab{width:56px;height:56px;border-radius:50%;background:var(--lime);color:#000;border:4px solid var(--bg);display:flex;align-items:center;justify-content:center;box-shadow:0 0 28px rgba(201,247,58,.4);cursor:pointer;transition:transform .15s}
 .fab .ic{width:24px;height:24px}
-.fab:active{transform:scale(.92)}
-.flbl{font-size:9.5px;font-weight:700;color:var(--green);margin-top:4px}
+.fab:active{transform:scale(.9)}
+.flbl{font-size:9.5px;font-weight:800;color:var(--lime);margin-top:4px;letter-spacing:1px}
 .amtwrap{position:relative}
-.maxb{position:absolute;right:9px;top:9px;background:#fff;color:#000;border:none;font-size:11px;font-weight:800;padding:6px 11px;border-radius:8px;cursor:pointer;font-family:inherit}
+.maxb{position:absolute;right:9px;top:9px;background:var(--lime);color:#000;border:none;font-size:11px;font-weight:800;padding:7px 12px;border-radius:9px;cursor:pointer;font-family:inherit}
 /* wheel */
 .wheelwrap{position:relative;width:272px;height:272px;margin:8px auto 6px}
 #wheel{width:100%;height:100%;display:block;transition:transform 4.2s cubic-bezier(.12,.67,.16,1);will-change:transform}
-.pointer{position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:22px solid #fff;z-index:3;filter:drop-shadow(0 2px 4px rgba(0,0,0,.7))}
-.hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:80px;height:80px;border-radius:50%;background:#000;border:3px solid #fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:15px;color:#fff;z-index:2;letter-spacing:1px}
+.pointer{position:absolute;top:-4px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:12px solid transparent;border-right:12px solid transparent;border-top:22px solid var(--lime);z-index:3;filter:drop-shadow(0 2px 6px rgba(0,0,0,.8))}
+.hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:82px;height:82px;border-radius:50%;background:#000;border:3px solid var(--lime);display:flex;align-items:center;justify-content:center;font-weight:900;font-size:15px;color:#fff;z-index:2;letter-spacing:1px}
 .gres{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
-.gtag{font-size:11px;font-weight:700;padding:6px 10px;border-radius:8px;background:var(--card2);color:var(--dim)}
-.gtag.win{color:var(--green)}
+.gtag{font-size:11px;font-weight:800;padding:6px 11px;border-radius:9px;background:var(--card2);color:var(--dim)}
+.gtag.win{color:#000;background:var(--lime)}
 </style>
 </head>
 <body>
@@ -133,7 +145,7 @@ nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(10
       <p class="hname" id="hello">Hi</p>
       <p class="hsub">Let's earn some points</p>
     </div>
-    <div class="chipbtn"><i class="ic sm orange" data-ic="flame"></i><span id="streakVal">0</span></div>
+    <div class="chipbtn"><i class="ic sm" data-ic="flame"></i><span id="streakVal">0</span></div>
   </div>
 
   <!-- ============ HOME ============ -->
@@ -145,15 +157,15 @@ nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(10
     </div>
 
     <div class="card">
-      <p class="ctitle"><i class="ic" data-ic="flame"></i> Daily Streak</p>
+      <p class="ctitle"><i class="ic lime" data-ic="flame"></i> Daily Streak</p>
       <div class="dots" id="dots"></div>
-      <button class="btn btn-green" id="checkinBtn" onclick="doCheckin()" disabled>Loading…</button>
+      <button class="btn" id="checkinBtn" onclick="doCheckin()" disabled>Loading…</button>
     </div>
 
     <div id="adCard"></div>
 
     <div class="card">
-      <p class="ctitle"><i class="ic" data-ic="zap"></i> Ways to earn</p>
+      <p class="ctitle"><i class="ic lime" data-ic="zap"></i> Ways to earn</p>
       <div class="hint"><i class="ic" data-ic="users"></i><span>Invite a friend</span><span class="pts">+100</span></div>
       <div class="hint"><i class="ic" data-ic="check"></i><span>Complete tasks</span><span class="pts" id="taskSum">+0</span></div>
       <div class="hint"><i class="ic" data-ic="game"></i><span>Play Lucky Wheel</span><span class="pts">up to x3</span></div>
@@ -166,20 +178,20 @@ nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(10
   <!-- ============ TASKS ============ -->
   <section id="tab-tasks" class="hide">
     <div class="card">
-      <p class="ctitle"><i class="ic" data-ic="check"></i> Tasks</p>
+      <p class="ctitle"><i class="ic lime" data-ic="check"></i> Tasks</p>
       <div id="taskList"><p class="empty">Loading…</p></div>
       <p class="note">Tap Start, join/follow, come back and tap Verify.</p>
     </div>
     <div class="card">
-      <p class="ctitle"><i class="ic" data-ic="gift"></i> Referral bonus</p>
-      <p style="font-size:13px;line-height:1.6;color:var(--dim)">Complete <b style="color:#fff">all tasks above</b> to unlock your inviter's <b style="color:var(--green)">+100 pts</b>. Fair rewards for real members.</p>
+      <p class="ctitle"><i class="ic lime" data-ic="gift"></i> Referral bonus</p>
+      <p style="font-size:13px;line-height:1.6;color:var(--dim)">Complete <b style="color:#fff">all tasks above</b> to unlock your inviter's <b style="color:var(--lime)">+100 pts</b>. Fair rewards for real members.</p>
     </div>
   </section>
 
   <!-- ============ GAME ============ -->
   <section id="tab-game" class="hide">
     <div class="card">
-      <p class="ctitle"><i class="ic" data-ic="game"></i> Lucky Wheel</p>
+      <p class="ctitle"><i class="ic lime" data-ic="game"></i> Lucky Wheel</p>
       <div class="wheelwrap">
         <div class="pointer"></div>
         <svg id="wheel" viewBox="0 0 260 260"></svg>
@@ -199,20 +211,20 @@ nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(10
       </div>
       <button class="btn" id="spinBtn" onclick="playGame()">Spin the Wheel</button>
       <div class="gres" id="gres"></div>
-      <p class="note">Multipliers: <b style="color:var(--acc)">x1.5</b> · <b style="color:var(--orange)">x2</b> · <b style="color:var(--green)">x3</b> — results are decided on the server and cannot be manipulated. Play for fun.</p>
+      <p class="note">Multipliers: <b style="color:var(--blue)">x1.5</b> · <b style="color:var(--orange)">x2</b> · <b style="color:var(--lime)">x3</b> — results are decided on the server and cannot be manipulated. Play for fun.</p>
     </div>
   </section>
 
   <!-- ============ FRIENDS ============ -->
   <section id="tab-friends" class="hide">
     <div class="card">
-      <p class="ctitle"><i class="ic" data-ic="link"></i> Your referral link</p>
+      <p class="ctitle"><i class="ic lime" data-ic="link"></i> Your referral link</p>
       <input id="link" class="linkbox" readonly>
       <div class="row2" style="margin-top:12px">
         <button class="btn btn-ghost" onclick="copyLink()">Copy</button>
         <button class="btn" onclick="shareLink()">Share</button>
       </div>
-      <p class="note">You get <b style="color:var(--green)">+100 pts</b> when your friend <b style="color:#fff">completes all tasks</b>. They get <b style="color:var(--green)">+25 pts</b> welcome bonus.</p>
+      <p class="note">You get <b style="color:var(--lime)">+100 pts</b> when your friend <b style="color:#fff">completes all tasks</b>. They get <b style="color:var(--lime)">+25 pts</b> welcome bonus.</p>
     </div>
 
     <div class="card">
@@ -224,7 +236,7 @@ nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(10
     </div>
 
     <div class="card">
-      <p class="ctitle"><i class="ic" data-ic="users"></i> Your friends</p>
+      <p class="ctitle"><i class="ic lime" data-ic="users"></i> Your friends</p>
       <div id="refList"><p class="empty">No referrals yet — share your link</p></div>
     </div>
   </section>
@@ -240,7 +252,7 @@ nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(10
     </div>
 
     <div class="card">
-      <p class="ctitle"><i class="ic" data-ic="dollar"></i> Request Withdrawal</p>
+      <p class="ctitle"><i class="ic lime" data-ic="dollar"></i> Request Withdrawal</p>
       <p class="lbl">AMOUNT</p>
       <div class="amtwrap">
         <input id="amt" type="number" class="inp" placeholder="500" inputmode="numeric">
@@ -250,12 +262,12 @@ nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(10
       <div class="chips" id="methods"></div>
       <p class="lbl">YOUR ACCOUNT</p>
       <input id="acct" class="inp" placeholder="">
-      <button class="btn btn-green" onclick="doWithdraw()">Request Withdrawal</button>
+      <button class="btn" onclick="doWithdraw()">Request Withdrawal</button>
       <p class="note">Processed manually within 24–48 hours. Double-check your account details.</p>
     </div>
 
     <div class="card">
-      <p class="ctitle"><i class="ic" data-ic="list"></i> History</p>
+      <p class="ctitle"><i class="ic lime" data-ic="list"></i> History</p>
       <div id="history"><p class="empty">No withdrawals yet</p></div>
     </div>
   </section>
@@ -333,7 +345,7 @@ function haptic(t){ try { tg.HapticFeedback && tg.HapticFeedback.notificationOcc
 function tick(){ try { tg.HapticFeedback && tg.HapticFeedback.selectionChanged(); } catch(e){} }
 function showScreen(id){ ['locked','errscreen','nottg'].forEach(s => $(s).classList.toggle('hide', s !== id)); }
 
-/* hidden device fingerprint — survives IP changes, cleared only if user wipes app storage */
+/* hidden device fingerprint — survives IP changes */
 function getDeviceId(){
   try {
     let d = localStorage.getItem('ea_did');
@@ -408,7 +420,7 @@ function renderAll() {
   $('refList').innerHTML = refs.length
     ? refs.map(r => '<div class="row"><span class="ruser">' + avatarHtml(r.photo_url, r.first_name, 'rpic') +
         '<span class="rt">' + (r.first_name || 'Anonymous') + '</span></span>' +
-        '<span style="color:var(--green);font-weight:700">+100</span></div>').join('')
+        '<span style="color:var(--lime);font-weight:800">+100</span></div>').join('')
     : '<p class="empty">No referrals yet — share your link</p>';
 
   renderStreak();
@@ -435,7 +447,7 @@ function renderStreak() {
   } else {
     btn.textContent = 'Claim +' + STREAK_REWARDS[Math.min(s, 6)] + ' pts';
     btn.disabled = false;
-    btn.className = 'btn btn-green';
+    btn.className = 'btn';
   }
 }
 
@@ -631,7 +643,7 @@ function renderAd() {
   const btn = left > 0
     ? '<button class="btn" id="adBtn" onclick="watchAd()"><i class="ic dark sm" data-ic="play"></i> Watch Ad — +' + AD_REWARD + ' pts</button>'
     : '<button class="btn btn-ghost" disabled>Daily limit reached — back tomorrow</button>';
-  el.innerHTML = '<div class="card"><p class="ctitle"><i class="ic" data-ic="play"></i> Watch & Earn</p>' +
+  el.innerHTML = '<div class="card"><p class="ctitle"><i class="ic lime" data-ic="play"></i> Watch & Earn</p>' +
     '<div class="adbar"><i style="width:' + Math.min(100, a.watched / a.limit * 100) + '%"></i></div>' +
     '<p class="note" style="margin:0 0 12px">' + a.watched + '/' + a.limit + ' ads today • ' + left + ' left • watch a short video, get points</p>' + btn + '</div>';
   el.querySelectorAll('[data-ic]').forEach(x => { x.innerHTML = icon(x.dataset.ic); });
@@ -678,7 +690,7 @@ async function watchAd() {
 
 /* ================= LUCKY WHEEL (SVG) ================= */
 const SEG = [0, 1.5, 0, 3, 0, 2, 0, 1.5];
-const SEG_COLOR = { 0: '#232327', 1.5: '#0A84FF', 2: '#FF9F0A', 3: '#30D158' };
+const SEG_COLOR = { 0: '#191921', 1.5: '#0A84FF', 2: '#FF9F0A', 3: '#8FCC1E' };
 let wheelR = 0, spinning = false, gameHistory = [];
 
 function buildWheel() {
@@ -695,7 +707,7 @@ function buildWheel() {
   for (let i = 0; i < 8; i++) {
     const m = SEG[i];
     const txt = m === 0 ? '×' : 'x' + m;
-    const fill = m === 0 ? '#6E6E73' : '#fff';
+    const fill = m === 0 ? '#5C5C66' : '#fff';
     const size = m === 0 ? 18 : 15;
     svg += '<text x="130" y="54" text-anchor="middle" font-size="' + size + '" font-weight="800" fill="' + fill +
       '" transform="rotate(' + (i * 45 + 22.5) + ' 130 130)" font-family="inherit">' + txt + '</text>';
@@ -703,9 +715,9 @@ function buildWheel() {
   for (let i = 0; i < 8; i++) {
     const a = (i * 45 - 90) * Math.PI / 180;
     svg += '<circle cx="' + (cx + 107 * Math.cos(a)).toFixed(2) + '" cy="' + (cy + 107 * Math.sin(a)).toFixed(2) +
-      '" r="3" fill="#fff" opacity=".9"/>';
+      '" r="3" fill="#fff" opacity=".8"/>';
   }
-  svg += '<circle cx="130" cy="130" r="124" fill="none" stroke="#3A3A3C" stroke-width="6"/>';
+  svg += '<circle cx="130" cy="130" r="124" fill="none" stroke="#24242C" stroke-width="6"/>';
   $('wheel').innerHTML = svg;
 }
 buildWheel();
