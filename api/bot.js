@@ -19,7 +19,6 @@ function guessIcon(link) {
   if (l.includes('youtube.com') || l.includes('youtu.be')) return 'yt';
   if (l.includes('instagram.com')) return 'camera';
   if (l.includes('tiktok.com')) return 'note';
-  if (l.includes('facebook.com')) return 'globe';
   return 'star';
 }
 
@@ -31,18 +30,15 @@ module.exports = async (req, res) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
 
-    // ---- regular users ----
     if (chatId !== ADMIN_ID) {
       if (text.startsWith('/start')) {
         await tg('sendMessage', {
           chat_id: chatId,
-          text: '👋 Welcome!\n\nTap the 📋 Menu button (bottom-left) to open the app and start earning!'
+          text: '👋 Welcome!\n\nTap the Menu button (bottom-left) to open the app and start earning!'
         });
       }
       return res.status(200).json({ ok: true });
     }
-
-    // ---- ADMIN ONLY ----
 
     if (text === '/pending') {
       const { data: list } = await supabase.from('withdrawals')
@@ -70,7 +66,7 @@ module.exports = async (req, res) => {
       if (!wid) { await tg('sendMessage', { chat_id: chatId, text: 'Usage: /paid 3' }); return res.status(200).json({ ok: true }); }
       const { data: w } = await supabase.from('withdrawals').select('*').eq('id', wid).maybeSingle();
       if (!w) { await tg('sendMessage', { chat_id: chatId, text: '❌ #' + wid + ' not found.' }); return res.status(200).json({ ok: true }); }
-      if (w.status !== 'pending') { await tg('sendMessage', { chat_id: chatId, text: '⚠️ #' + wid + ' is already ' + w.status + '.' }); return res.status(200).json({ ok: true }); }
+      if (w.status !== 'pending') { await tg('sendMessage', { chat_id: chatId, text: '⚠️ Already ' + w.status + '.' }); return res.status(200).json({ ok: true }); }
       await supabase.from('withdrawals').update({ status: 'done' }).eq('id', wid);
       try {
         await tg('sendMessage', { chat_id: w.user_id, text: '🎉 Payment sent!\n\nYour withdrawal of ' + w.points + ' pts has been PAID to your ' + w.method + ' account:\n' + w.account });
@@ -84,7 +80,7 @@ module.exports = async (req, res) => {
       if (!wid) { await tg('sendMessage', { chat_id: chatId, text: 'Usage: /reject 3' }); return res.status(200).json({ ok: true }); }
       const { data: w } = await supabase.from('withdrawals').select('*').eq('id', wid).maybeSingle();
       if (!w) { await tg('sendMessage', { chat_id: chatId, text: '❌ #' + wid + ' not found.' }); return res.status(200).json({ ok: true }); }
-      if (w.status !== 'pending') { await tg('sendMessage', { chat_id: chatId, text: '⚠️ #' + wid + ' is already ' + w.status + '.' }); return res.status(200).json({ ok: true }); }
+      if (w.status !== 'pending') { await tg('sendMessage', { chat_id: chatId, text: '⚠️ Already ' + w.status + '.' }); return res.status(200).json({ ok: true }); }
       await supabase.from('withdrawals').update({ status: 'rejected' }).eq('id', wid);
       await supabase.rpc('add_points', { p_telegram_id: w.user_id, p_amount: w.points });
       try {
@@ -103,7 +99,7 @@ module.exports = async (req, res) => {
       let out = '📋 TASKS\n\n';
       for (const t of list) {
         out += '#' + t.id + ' +' + t.reward + ' pts — ' + t.title +
-          '\n   ' + (t.active ? '🟢 active' : '⚪ hidden') + ' • ' + t.verify + '\n   ' + t.link + '\n\n';
+          '\n   ' + (t.active ? '🟢 active' : '⚪ hidden') + '\n   ' + t.link + '\n\n';
       }
       out += 'Hide: /rmtask ID • Restore: /undotask ID';
       await tg('sendMessage', { chat_id: chatId, text: out });
@@ -117,7 +113,7 @@ module.exports = async (req, res) => {
       const title = (segs[1] || '').trim();
       if (!left || !title) {
         await tg('sendMessage', { chat_id: chatId,
-          text: 'Usage:\n/addtask 50 https://t.me/ebtry0 | Join our Channel\n\n• t.me links = auto-verified join check\n• other links (x.com, youtube…) = honor system (user taps Verify)\n• optional icon: /addtask 50 star https://… | Title\nIcons: star tg mega chat x yt camera note globe heart bell gift zap coin' });
+          text: 'Usage:\n/addtask 50 https://t.me/ebtry0 | Join our Channel' });
         return res.status(200).json({ ok: true });
       }
       const parts = left.split(/\s+/);
@@ -128,7 +124,7 @@ module.exports = async (req, res) => {
         if (/^[a-z]+$/i.test(p) && icon === null) { icon = p.toLowerCase(); continue; }
       }
       if (!pts || !link) {
-        await tg('sendMessage', { chat_id: chatId, text: '❌ Could not parse. Need at least: points + link + | + title' });
+        await tg('sendMessage', { chat_id: chatId, text: '❌ Could not parse. Need: points + link + | + title' });
         return res.status(200).json({ ok: true });
       }
       if (!icon) icon = guessIcon(link);
@@ -137,16 +133,16 @@ module.exports = async (req, res) => {
       if (link.includes('t.me/')) {
         const uname = link.split('t.me/')[1].split(/[/?#]/)[0];
         if (uname.startsWith('+')) {
-          note = '\n⚠️ Private invite link — cannot auto-verify, set as honor task.';
+          note = '\n⚠️ Private link — set as honor task.';
         } else {
           verify = 'telegram:@' + uname;
-          note = '\n🤖 Auto-verified: bot must be ADMIN in @' + uname;
+          note = '\n🤖 Auto-verified (bot must be admin in @' + uname + ')';
         }
       }
       const { data: t } = await supabase.from('tasks')
         .insert({ title, icon, reward: pts, link, verify }).select().single();
       await tg('sendMessage', { chat_id: chatId,
-        text: '✅ Task #' + t.id + ' added:\n\n' + title + '\n+' + pts + ' pts • icon: ' + icon + '\n' + link + note });
+        text: '✅ Task #' + t.id + ' added:\n\n' + title + '\n+' + pts + ' pts\n' + link + note });
       return res.status(200).json({ ok: true });
     }
 
@@ -154,7 +150,7 @@ module.exports = async (req, res) => {
       const tid = parseInt(text.split(/\s+/)[1], 10);
       if (!tid) { await tg('sendMessage', { chat_id: chatId, text: 'Usage: /rmtask 4' }); return res.status(200).json({ ok: true }); }
       await supabase.from('tasks').update({ active: false }).eq('id', tid);
-      await tg('sendMessage', { chat_id: chatId, text: '⚪ Task #' + tid + ' hidden from the app. Restore: /undotask ' + tid });
+      await tg('sendMessage', { chat_id: chatId, text: '⚪ Task #' + tid + ' hidden. Restore: /undotask ' + tid });
       return res.status(200).json({ ok: true });
     }
 
@@ -167,7 +163,7 @@ module.exports = async (req, res) => {
     }
 
     await tg('sendMessage', { chat_id: chatId,
-      text: '👑 ADMIN COMMANDS\n\n/pending — pending withdrawals\n/paid 3 — approve & notify\n/reject 3 — reject & refund\n\n/tasks — list tasks\n/addtask 50 https://t.me/ebtry0 | Join our Channel\n/rmtask 4 — hide task\n/undotask 4 — restore task' });
+      text: '👑 ADMIN COMMANDS\n\n/pending\n/paid 3\n/reject 3\n\n/tasks\n/addtask 50 https://t.me/ebtry0 | Title\n/rmtask 4\n/undotask 4' });
     return res.status(200).json({ ok: true });
   } catch (e) {
     return res.status(200).json({ ok: true });
