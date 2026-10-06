@@ -10,41 +10,56 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#000000;--card:#101010;--card2:#181818;--card3:#141414;--sep:#1E1E1E;--txt:#FFFFFF;--dim:#A0A0A0;--acc:#7FFF00;--red:#FF453A}
-*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;
-  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+:root{--bg:#000;--card:#141414;--card2:#1C1C1C;--sep:#242424;--txt:#fff;--dim:#A0A0A0;--acc:#4ADE80;--org:#FF8C42;--red:#FF453A}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
 input,textarea{-webkit-user-select:text!important;user-select:text!important}
 img{-webkit-user-drag:none;pointer-events:none}
-html{-webkit-font-smoothing:antialiased}
-body{background:var(--bg);color:var(--txt);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding-bottom:104px}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;padding-bottom:104px;-webkit-font-smoothing:antialiased}
 main{max-width:480px;margin:0 auto;padding:16px}
 .hide{display:none!important}
-/* icons — always pure white unless .dark on accent bg */
-.ic{display:inline-flex;width:20px;height:20px;color:#FFFFFF;flex-shrink:0}
+.ic{display:inline-flex;width:20px;height:20px;color:#fff;flex-shrink:0}
 .ic svg{width:100%;height:100%}
 .ic.sm{width:16px;height:16px}
-.ic.dark{color:#000000}
-/* full screens */
+.ic.lg{width:26px;height:26px}
+.ic.org{color:var(--org)}.ic.dark{color:#000}
+/* screens */
 .screen{position:fixed;inset:0;background:var(--bg);z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px}
-.bigwrap{width:88px;height:88px;border-radius:50%;background:var(--card3);border:1px solid var(--sep);display:flex;align-items:center;justify-content:center}
+.bigwrap{width:88px;height:88px;border-radius:50%;background:var(--card);border:1px solid var(--sep);display:flex;align-items:center;justify-content:center}
 .bigwrap .ic{width:36px;height:36px}
-.screen h2{font-size:18px;font-weight:800;margin-top:22px;color:#fff}
+.screen h2{font-size:18px;font-weight:800;margin-top:22px}
 .screen p{font-size:13px;color:var(--dim);margin-top:10px;line-height:1.65;max-width:300px}
 /* header */
 .header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
-.avatar{width:44px;height:44px;border-radius:50%;background:var(--card2);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;flex-shrink:0;overflow:hidden;border:1px solid var(--sep)}
+.avatar{width:50px;height:50px;border-radius:50%;background:var(--org);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;flex-shrink:0;overflow:hidden}
 .avatar img{width:100%;height:100%;object-fit:cover}
-.hname{font-weight:800;font-size:16px;color:#fff}
-.hsub{font-size:12px;color:var(--dim);margin-top:1px}
-.chipbtn{margin-left:auto;background:var(--acc);color:#000;font-size:12px;font-weight:800;padding:7px 13px;border-radius:999px;display:flex;align-items:center;gap:5px}
-/* balance card */
-.balance{background:var(--card3);border:1px solid rgba(127,255,0,.28);border-radius:20px;padding:26px 20px;text-align:center;margin-bottom:14px}
-.hero-label{font-size:10px;letter-spacing:2.5px;color:var(--dim);font-weight:700}
-.hero-amt{font-size:44px;font-weight:900;color:#fff;margin:8px 0 4px;letter-spacing:-.5px;font-variant-numeric:tabular-nums;line-height:1}
-.hero-usd{font-size:13px;color:var(--dim);font-weight:500}
+.hname{font-weight:800;font-size:19px}
+.hsub{font-size:13px;color:var(--dim);margin-top:1px}
+.chipbtn{margin-left:auto;background:var(--card);border:1px solid var(--sep);color:#fff;font-size:12.5px;font-weight:600;padding:9px 14px;border-radius:999px;display:flex;align-items:center;gap:7px;white-space:nowrap}
+.chipbtn b{font-weight:800}
+/* balance */
+.balance{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--sep);border-radius:20px;padding:20px;margin-bottom:18px}
+.deco{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:112px;height:112px;pointer-events:none}
+.balrow{display:flex;align-items:center;gap:8px}
+.hero-label{font-size:14px;color:var(--dim);font-weight:500}
+.eyeb{background:none;border:none;padding:0;cursor:pointer;color:var(--dim);display:flex}
+.hero-amt{font-size:42px;font-weight:900;color:#fff;letter-spacing:-.5px;line-height:1.15;font-variant-numeric:tabular-nums}
+.hero-amt .ptsfx{font-size:19px;color:var(--dim);font-weight:600;margin-left:8px;letter-spacing:0}
+.hero-usd{font-size:14px;color:var(--dim);font-weight:500;margin-top:2px}
+.hero-usd b{color:var(--acc);font-weight:700}
+/* section heads */
+.sechead{display:flex;align-items:center;justify-content:space-between;margin:2px 2px 12px}
+.sechead h3{font-size:16px;font-weight:800}
+.viewall{color:var(--acc);font-size:12.5px;font-weight:700;background:none;border:none;font-family:inherit;cursor:pointer;padding:4px}
+/* quick actions */
+.qa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.qa{background:var(--card);border:1px solid var(--sep);border-radius:16px;padding:18px 8px 15px;text-align:center;cursor:pointer;font-family:inherit;color:#fff;transition:opacity .15s}
+.qa:active{opacity:.7}
+.qa .ic{margin:0 auto 10px}
+.qa b{display:block;font-size:12.5px;font-weight:800}
+.qa span{display:block;font-size:10.5px;color:var(--dim);margin-top:3px}
 /* cards */
 .card{background:var(--card);border:1px solid var(--sep);border-radius:18px;padding:16px;margin-bottom:14px}
-.ctitle{font-size:14px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:9px;color:#fff}
+.ctitle{font-size:14px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:9px}
 /* buttons */
 .btn{width:100%;padding:14px;border-radius:14px;border:none;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;color:#000;background:var(--acc);transition:opacity .15s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px}
 .btn:active{opacity:.8;transform:scale(.985)}
@@ -52,23 +67,23 @@ main{max-width:480px;margin:0 auto;padding:16px}
 .btn-ghost{background:var(--card2);color:#fff;border:1px solid var(--sep)}
 .btn-outline{background:transparent;border:1.5px solid var(--acc);color:var(--acc)}
 .btn-sm{width:auto;padding:8px 16px;font-size:12px;border-radius:11px}
-/* status pills */
+/* pills */
 .pill{display:inline-block;padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700}
 .pill.paid{background:var(--acc);color:#000}
 .pill.pending{background:var(--card2);color:var(--dim)}
-.pill.rejected{background:rgba(255,69,58,.1);color:var(--red)}
+.pill.rejected{background:rgba(255,69,58,.12);color:var(--red)}
 .done{display:inline-block;background:var(--acc);color:#000;font-weight:800;font-size:11px;padding:6px 13px;border-radius:999px}
 /* streak */
 .dots{display:flex;gap:5px;margin-bottom:14px}
 .dot{flex:1;text-align:center;padding:10px 2px;border-radius:12px;background:var(--card2);font-size:9px;color:var(--dim);font-weight:600}
 .dot b{display:block;font-size:12px;font-weight:800;margin-bottom:1px}
-.dot.on{background:var(--acc);color:#FFFFFF}
+.dot.on{background:var(--acc);color:#fff}
 /* tasks */
 .task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--sep)}
 .task:last-child{border-bottom:none}
 .ticon{width:44px;height:44px;border-radius:13px;background:var(--card2);border:1px solid var(--sep);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .tinfo{flex:1}
-.ttitle{font-size:13.5px;font-weight:700;color:#fff}
+.ttitle{font-size:13.5px;font-weight:700}
 .trew{font-size:12px;color:var(--acc);font-weight:800;margin-top:1px}
 /* inputs */
 .inp{width:100%;padding:14px;border-radius:14px;background:var(--card2);border:1px solid var(--sep);color:#fff;font-size:15px;font-family:inherit;outline:none;margin-bottom:10px}
@@ -80,36 +95,46 @@ main{max-width:480px;margin:0 auto;padding:16px}
 .chip.sel{background:var(--acc);border-color:var(--acc);color:#000}
 .mlogo{display:inline-flex;width:18px;height:18px;flex-shrink:0}
 .mlogo svg{width:100%;height:100%;display:block}
-/* stats */
+/* stats / rows */
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
-.gnum{font-size:21px;font-weight:900;color:#fff;font-variant-numeric:tabular-nums}
+.gnum{font-size:21px;font-weight:900;font-variant-numeric:tabular-nums}
+.gnum.ok{color:var(--acc)}
 .glbl{font-size:11px;color:var(--dim);margin-top:3px;font-weight:500}
-.ok{color:var(--acc)}
 .row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--sep)}
 .row:last-child{border-bottom:none}
 .ruser{display:flex;align-items:center;gap:10px}
 .rpic{width:32px;height:32px;border-radius:50%;background:var(--card2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--dim)}
 .rpic img{width:100%;height:100%;object-fit:cover}
-.rt{font-size:13.5px;font-weight:700;color:#fff}
+.rt{font-size:13.5px;font-weight:700}
 .rd{font-size:11px;color:var(--dim);margin-top:1px}
 .empty{font-size:13px;color:var(--dim);text-align:center;padding:12px 0}
 .note{font-size:11px;color:var(--dim);margin-top:12px;line-height:1.55}
 .linkbox{width:100%;font-size:11px;background:var(--card2);border:1px solid var(--sep);border-radius:13px;padding:13px;color:#fff;outline:none;word-break:break-all;font-family:inherit}
 .linkbox:focus{border-color:var(--acc)}
-.hint{display:flex;align-items:center;gap:11px;padding:12px 0;border-bottom:1px solid var(--sep);font-size:13px;font-weight:600;color:#EDEDED}
-.hint:last-child{border-bottom:none}
-.hint .pts{margin-left:auto;color:var(--acc);font-weight:800;font-size:12.5px}
-/* segmented progress bar — 10 pills */
+/* activity feed */
+.act{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--sep);border-radius:16px;padding:13px 14px;margin-bottom:8px}
+.aic{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.aic.pos{background:var(--acc)}
+.aic.neu{background:var(--card2);border:1px solid var(--sep)}
+.ainfo{flex:1;min-width:0}
+.at{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad2{font-size:11px;color:var(--dim);margin-top:2px}
+.apt{text-align:right;flex-shrink:0}
+.apv{font-size:15px;font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums}
+.apv.neg{color:#fff}
+.apl{font-size:10.5px;color:var(--dim);font-weight:500}
+/* ad progress — 10 segments */
 .segbar{display:flex;gap:4px;margin-bottom:10px}
 .segbar span{flex:1;height:7px;border-radius:99px;background:var(--card2)}
 .segbar span.on{background:var(--acc)}
-/* bottom navigation — flat premium */
+.flash{border-color:var(--acc)!important}
+/* bottom nav */
 nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;display:flex;background:#000;border-top:1px solid var(--sep);padding:8px 4px calc(8px + env(safe-area-inset-bottom));z-index:50}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0;font-size:10px;font-weight:600;color:var(--dim);background:none;border:none;font-family:inherit;cursor:pointer}
 .navic{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;transition:background .15s}
 .nav-btn .ic{width:21px;height:21px}
 .nav-btn.active{color:var(--acc);font-weight:700}
-.nav-btn.active .navic{background:rgba(127,255,0,.16)}
+.nav-btn.active .navic{background:rgba(74,222,128,.16)}
 .amtwrap{position:relative}
 .maxb{position:absolute;right:9px;top:9px;background:var(--acc);color:#000;border:none;font-size:10px;font-weight:800;padding:7px 12px;border-radius:9px;cursor:pointer;font-family:inherit}
 /* wheel */
@@ -124,21 +149,18 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 </head>
 <body>
 
-<!-- locked screen -->
 <div id="locked" class="screen hide">
   <div class="bigwrap"><i class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><circle cx="12" cy="16" r="1.5"/></svg></i></div>
   <h2>Multiple Accounts Detected</h2>
   <p>Multiple accounts detected by IP. This device or network already has the maximum of 2 registered accounts — you cannot create more here.</p>
 </div>
 
-<!-- error screen -->
 <div id="errscreen" class="screen hide">
   <div class="bigwrap"><i class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></i></div>
   <h2>Something went wrong</h2>
   <p id="errMsg">Please close and reopen the app.</p>
 </div>
 
-<!-- not in telegram -->
 <div id="nottg" class="screen hide">
   <div class="bigwrap"><i class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 4-18 7.5 5.5 2L10 19l3-3.5 4.5 3z"/></svg></i></div>
   <h2>Open in Telegram</h2>
@@ -153,15 +175,34 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
       <p class="hname" id="hello">Hi</p>
       <p class="hsub">Let's earn some points</p>
     </div>
-    <div class="chipbtn"><i class="ic sm dark" data-ic="flame"></i><span id="streakVal">0</span></div>
+    <div class="chipbtn"><i class="ic sm org" data-ic="flame"></i><span><b id="streakVal">0</b> day streak</span></div>
   </div>
 
   <!-- ============ HOME ============ -->
   <section id="tab-home">
     <div class="balance">
-      <p class="hero-label">TOTAL BALANCE</p>
-      <p class="hero-amt" id="points">…</p>
+      <svg class="deco" viewBox="0 0 120 120">
+        <defs>
+          <pattern id="dg" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="#3A3A3A"/></pattern>
+          <radialGradient id="rg"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient>
+          <mask id="dm"><rect width="120" height="120" fill="url(#rg)"/></mask>
+        </defs>
+        <rect width="120" height="120" fill="url(#dg)" mask="url(#dm)"/>
+        <path d="M62 46l4.2 11.3L77.5 61.5l-11.3 4.2L62 77l-4.2-11.3L46.5 61.5l11.3-4.2z" fill="#4ADE80"/>
+      </svg>
+      <div class="balrow">
+        <p class="hero-label">Your Balance</p>
+        <button class="eyeb" onclick="toggleBal()"><i class="ic sm" id="eyeIc" data-ic="eye"></i></button>
+      </div>
+      <p class="hero-amt"><span id="points">…</span><span class="ptsfx">points</span></p>
       <p class="hero-usd" id="usd">&nbsp;</p>
+    </div>
+
+    <div class="sechead"><h3>Quick Actions</h3></div>
+    <div class="qa-grid">
+      <button class="qa" onclick="doCheckin()"><i class="ic lg" data-ic="calcheck"></i><b>Daily Check-in</b><span>Claim your points</span></button>
+      <button class="qa" onclick="gotoAds()"><i class="ic lg" data-ic="play"></i><b>Watch Ads</b><span>Earn points instantly</span></button>
+      <button class="qa" onclick="switchTab('friends')"><i class="ic lg" data-ic="userplus"></i><b>Invite Friends</b><span>Earn together</span></button>
     </div>
 
     <div class="card">
@@ -172,15 +213,8 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 
     <div id="adCard"></div>
 
-    <div class="card">
-      <p class="ctitle"><i class="ic" data-ic="zap"></i> Ways to earn</p>
-      <div class="hint"><i class="ic" data-ic="users"></i><span>Invite a friend</span><span class="pts">+100</span></div>
-      <div class="hint"><i class="ic" data-ic="check"></i><span>Complete tasks</span><span class="pts" id="taskSum">+0</span></div>
-      <div class="hint"><i class="ic" data-ic="game"></i><span>Play Lucky Wheel</span><span class="pts">up to x3</span></div>
-      <div class="hint"><i class="ic" data-ic="flame"></i><span>Daily check-in</span><span class="pts">up to +50/day</span></div>
-    </div>
-
-    <button class="btn" onclick="switchTab('friends')"><i class="ic dark sm" data-ic="share"></i> Invite Friends & Earn</button>
+    <div class="sechead"><h3>Recent Activity</h3><button class="viewall" id="viewAllBtn" onclick="toggleViewAll()" style="display:none">View all</button></div>
+    <div id="actList"></div>
   </section>
 
   <!-- ============ TASKS ============ -->
@@ -192,7 +226,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
     </div>
     <div class="card">
       <p class="ctitle"><i class="ic" data-ic="gift"></i> Referral bonus</p>
-      <p style="font-size:13px;line-height:1.65;color:var(--dim)">Complete <b style="color:#fff">all tasks above</b> to unlock your inviter's <b style="color:var(--acc)">+100 pts</b>. Fair rewards for real members.</p>
+      <p style="font-size:13px;line-height:1.65;color:var(--dim)">Complete <b style="color:#fff">any 3 tasks above</b> to unlock your inviter's <b style="color:var(--acc)">+100 pts</b>. Fair rewards for real members.</p>
     </div>
   </section>
 
@@ -228,11 +262,11 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
     <div class="card">
       <p class="ctitle"><i class="ic" data-ic="link"></i> Your referral link</p>
       <input id="link" class="linkbox" readonly>
-      <div class="row2" style="margin-top:12px;display:flex;gap:10px">
+      <div style="display:flex;gap:10px;margin-top:12px">
         <button class="btn btn-ghost" onclick="copyLink()">Copy</button>
         <button class="btn" onclick="shareLink()">Share</button>
       </div>
-      <p class="note">You get <b style="color:var(--acc)">+100 pts</b> when your friend <b style="color:#fff">completes all tasks</b>. They get <b style="color:var(--acc)">+25 pts</b> welcome bonus.</p>
+      <p class="note">You get <b style="color:var(--acc)">+100 pts</b> when your friend <b style="color:#fff">completes any 3 tasks</b>. They get <b style="color:var(--acc)">+25 pts</b> welcome bonus.</p>
     </div>
 
     <div class="card">
@@ -308,7 +342,6 @@ const METHODS = {
     logo: '<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#26A17B"/><rect x="6.5" y="7.2" width="11" height="2.4" fill="#fff"/><rect x="6.5" y="10.8" width="11" height="1.6" fill="#fff"/><rect x="10.7" y="7.2" width="2.6" height="11" fill="#fff"/></svg>' }
 };
 
-/* ---------- SVG icon set (pure white) ---------- */
 const IC = {
   home:'<path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M9 21v-6h6v6"/>',
   check:'<circle cx="12" cy="12" r="9"/><path d="m8.5 12.5 2.5 2.5 5-5.5"/>',
@@ -333,14 +366,19 @@ const IC = {
   tg:'<path d="m21 4-18 7.5 5.5 2L10 19l3-3.5 4.5 3z"/>',
   camera:'<rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1"/>',
   note:'<path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/>',
-  coin:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5h5M9.5 14.5h5"/>'
+  coin:'<circle cx="12" cy="12" r="9"/><path d="M12 7v10M9.5 9.5h5M9.5 14.5h5"/>',
+  play:'<circle cx="12" cy="12" r="9"/><path d="m10 8.5 5 3.5-5 3.5z"/>',
+  calcheck:'<rect x="3" y="4.5" width="18" height="17" rx="3"/><path d="M8 2.5v4M16 2.5v4M3 9.5h18"/><path d="m9 15 2 2 4-4.5"/>',
+  userplus:'<circle cx="10" cy="8" r="4"/><path d="M2.5 20a7.5 7.5 0 0 1 13-5.1"/><path d="M19 8v6M16 11h6"/>',
+  eye:'<path d="M2 12s3.5-6.5 10-6.5S22 12 22 12s-3.5 6.5-10 6.5S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
+  eyeoff:'<path d="M17.94 17.94A10.4 10.4 0 0 1 12 19.5C5.5 19.5 2 13 2 13a18.4 18.4 0 0 1 5.06-5.94M9.9 4.24A9.8 9.8 0 0 1 12 4.5c6.5 0 10 6.5 10 6.5a18.6 18.6 0 0 1-2.16 3.19"/><path d="M14.12 14.12A3 3 0 1 1 9.88 9.88"/><path d="M2 2l20 20"/>'
 };
 function icon(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IC[n] || IC.star) + '</svg>'; }
 document.querySelectorAll('[data-ic]').forEach(el => { el.innerHTML = icon(el.dataset.ic); });
 
-/* ---------- app state ---------- */
 const tg = window.Telegram?.WebApp;
 let me = null, doneTasks = new Set(), startedTasks = new Set(), selMethod = 'telebirr';
+let hideBal = false, showAllActs = false;
 
 function $(id){ return document.getElementById(id); }
 function fmt(n){ return Number(n || 0).toLocaleString('en-US'); }
@@ -381,14 +419,12 @@ async function start() {
       })
     });
     const a = await r.json();
-
     if (a.error === 'MULTI_ACCOUNT') {
       document.getElementById('app').classList.add('hide');
       showScreen('locked');
       return;
     }
     if (!a.user) throw new Error(a.error || 'Login failed');
-
     await loadMe();
   } catch (e) {
     document.getElementById('app').classList.add('hide');
@@ -413,8 +449,7 @@ function renderAll() {
   $('hello').textContent = 'Hi, ' + (me.first_name || 'Friend');
   $('avatar').innerHTML = me.photo_url ? '<img src="' + me.photo_url + '">' : (me.first_name || '?')[0].toUpperCase();
   $('streakVal').textContent = me.streak || 0;
-  $('points').textContent = fmt(me.points);
-  $('usd').textContent = '≈ $' + (me.points * RATE).toFixed(2);
+  renderBalance();
   $('link').value = 'https://t.me/' + BOT_USERNAME + '/' + APP_NAME + '?startapp=' + (me.referral_code || '');
 
   const refs = me.referrals || [];
@@ -430,11 +465,20 @@ function renderAll() {
   renderStreak();
   renderTasks();
   renderMethods();
-  $('wBalance').textContent = fmt(me.points);
-  $('wUsd').textContent = '$' + (me.points * RATE).toFixed(2);
+  $('wBalance').textContent = hideBal ? '••••' : fmt(me.points);
+  $('wUsd').textContent = hideBal ? '•••' : '$' + (me.points * RATE).toFixed(2);
   renderHistory();
   renderAd();
+  renderActivity();
 }
+
+function renderBalance() {
+  $('points').textContent = hideBal ? '•••••' : fmt(me.points);
+  $('usd').innerHTML = hideBal ? '&nbsp;' : '≈ <b>$' + (me.points * RATE).toFixed(2) + '</b> USD';
+  const eye = $('eyeIc');
+  if (eye) eye.innerHTML = icon(hideBal ? 'eyeoff' : 'eye');
+}
+function toggleBal(){ hideBal = !hideBal; haptic('light'); renderBalance(); }
 
 function renderStreak() {
   const s = me.streak || 0;
@@ -457,8 +501,6 @@ function renderStreak() {
 
 function renderTasks() {
   const list = me.tasks || [];
-  const total = list.reduce((a, t) => a + (t.reward || 0), 0);
-  $('taskSum').textContent = '+' + total;
   if (!list.length) {
     $('taskList').innerHTML = '<p class="empty">No tasks available right now</p>';
     return;
@@ -493,15 +535,48 @@ function renderHistory() {
         return '<div class="row"><span class="ruser"><span class="mlogo">' + (M ? M.logo : '') + '</span>' +
           '<span><p class="rt">' + (M ? M.label : (w.method || '—')) + '</p>' +
           '<p class="rd">' + String(w.created_at || '').slice(0, 10) + '</p></span></span>' +
-          '<div style="text-align:right"><p class="rt" style="color:#fff">-' + fmt(w.points) + ' pts</p><p class="rd" style="margin-top:4px">' + lbl + '</p></div></div>';
+          '<div style="text-align:right"><p class="rt">-' + fmt(w.points) + ' pts</p><p class="rd" style="margin-top:4px">' + lbl + '</p></div></div>';
       }).join('')
     : '<p class="empty">No withdrawals yet</p>';
+}
+
+function toggleViewAll(){ showAllActs = !showAllActs; renderActivity(); }
+
+function renderActivity() {
+  const list = me.activities || [];
+  const el = $('actList');
+  const btn = $('viewAllBtn');
+  if (!list.length) {
+    btn.style.display = 'none';
+    el.innerHTML = '<div class="act"><span class="aic neu"><i class="ic sm">' + icon('star') + '</i></span>' +
+      '<div class="ainfo"><p class="at">No activity yet</p><p class="ad2">Claim your streak or watch an ad to get started</p></div></div>';
+    return;
+  }
+  btn.style.display = '';
+  const lim = showAllActs ? list.length : 4;
+  el.innerHTML = list.slice(0, lim).map(a => {
+    const pos = a.points >= 0;
+    const d = new Date(a.created_at);
+    const ds = d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) + ' • ' +
+               d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+    return '<div class="act"><span class="aic ' + (pos ? 'pos' : 'neu') + '"><i class="ic sm">' + icon(a.icon || 'star') + '</i></span>' +
+      '<div class="ainfo"><p class="at">' + a.title + '</p><p class="ad2">' + ds + '</p></div>' +
+      '<div class="apt"><p class="apv' + (pos ? '' : ' neg') + '">' + (pos ? '+' : '') + fmt(a.points) + '</p><p class="apl">points</p></div></div>';
+  }).join('');
 }
 
 function switchTab(t) {
   ['home', 'tasks', 'game', 'friends', 'wallet'].forEach(x => $('tab-' + x).classList.toggle('hide', x !== t));
   document.querySelectorAll('nav [data-t]').forEach(b => b.classList.toggle('active', b.dataset.t === t));
   window.scrollTo(0, 0);
+}
+
+function gotoAds() {
+  const el = $('adCard');
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+  const card = el.querySelector('.card');
+  if (card) { card.classList.add('flash'); setTimeout(() => card.classList.remove('flash'), 1200); }
 }
 
 async function doCheckin() {
@@ -517,7 +592,7 @@ async function doCheckin() {
     me.last_checkin = todayUTC();
     haptic('success');
     notify('+' + d.reward + ' pts! Streak: ' + d.streak + ' day(s)');
-    renderAll();
+    await loadMe();
   } catch (e) { notify('Error: ' + e.message); }
 }
 
@@ -540,7 +615,7 @@ async function taskVerify(id) {
       doneTasks.add(String(id));
       me.points += d.reward;
       haptic('success');
-      notify('+' + d.reward + ' pts!' + (doneTasks.size === (me.tasks || []).length ? ' All tasks done — your inviter just got the bonus!' : ''));
+      notify('+' + d.reward + ' pts!' + (doneTasks.size >= 3 ? ' 3 tasks done — your inviter just got the bonus!' : ''));
       await loadMe();
     } else notify(d.error || 'Verification failed');
   } catch (e) { notify('Error: ' + e.message); }
@@ -580,7 +655,7 @@ async function doWithdraw() {
       me.withdrawals.unshift({ points: amt, method: selMethod, status: 'pending', created_at: new Date().toISOString() });
       haptic('success');
       notify('Withdrawal of ' + fmt(amt) + ' pts requested');
-      renderAll();
+      await loadMe();
     } else notify(d.error || 'Failed');
   } catch (e) { notify('Error: ' + e.message); }
 }
@@ -589,9 +664,8 @@ async function doWithdraw() {
 const AD_ZONE = '10937696';
 const AD_FUNC = 'show_' + AD_ZONE;
 const AD_SDK_URL = 'https://libtl.com/sdk.js';
-const AD_REWARD = 15;                       // must match api/ad.js
-const AD_DAILY_LIMIT = 10;                  // must match api/ad.js
-IC.play = '<path d="m7 4 13 8-13 8z"/>';
+const AD_REWARD = 15;
+const AD_DAILY_LIMIT = 10;
 
 let adBusy = false, adLoading = null;
 
@@ -681,7 +755,7 @@ async function watchAd() {
       me.ads = { watched: d.watched, limit: d.limit };
       haptic('success');
       notify('+' + d.reward + ' pts! ' + (d.limit - d.watched) + ' ads left today');
-      renderAll();
+      await loadMe();
     } else {
       notify(d.error || 'Failed to credit reward');
       if (btn) { btn.disabled = false; btn.textContent = 'Watch Ad — +' + AD_REWARD + ' pts'; }
@@ -695,7 +769,7 @@ async function watchAd() {
 
 /* ================= LUCKY WHEEL (SVG) ================= */
 const SEG = [0, 1.5, 0, 3, 0, 2, 0, 1.5];
-const SEG_COLOR = { 0: '#151515', 1.5: '#3D3D3D', 2: '#FFFFFF', 3: '#7FFF00' };
+const SEG_COLOR = { 0: '#151515', 1.5: '#3D3D3D', 2: '#FFFFFF', 3: '#4ADE80' };
 let wheelR = 0, spinning = false, gameHistory = [];
 
 function buildWheel() {
@@ -750,9 +824,8 @@ async function playGame() {
     }
 
     me.points = d.balance;
-    $('points').textContent = fmt(me.points);
+    renderBalance();
     $('wBalance').textContent = fmt(me.points);
-    $('usd').textContent = '≈ $' + (me.points * RATE).toFixed(2);
     $('wUsd').textContent = '$' + (me.points * RATE).toFixed(2);
 
     const idxs = SEG.map((m, i) => m === d.mult ? i : -1).filter(i => i >= 0);
