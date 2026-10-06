@@ -4,7 +4,6 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SER
 
 const MIN_BET = 10;
 const MAX_BET = 5000;
-// weighted outcomes — total return ~96% (4% house edge so the economy doesn't inflate)
 const TABLE = [
   { m: 0,   w: 52 },
   { m: 1.5, w: 20 },
@@ -44,7 +43,6 @@ module.exports = async (req, res) => {
     if (!user) return res.status(404).json({ error: 'User not found' });
     if (amt > user.points) return res.status(400).json({ error: 'Not enough points' });
 
-    // pick outcome by weight
     let r = Math.random() * 100;
     let mult = 0;
     for (const o of TABLE) {
@@ -56,11 +54,9 @@ module.exports = async (req, res) => {
     const net = win - amt;
     await supabase.rpc('add_points', { p_telegram_id: id, p_amount: net });
 
-    return res.status(200).json({
-      mult,
-      win,
-      balance: user.points + net
-    });
+    const { data: u2 } = await supabase.from('users').select('points').eq('telegram_id', id).maybeSingle();
+
+    return res.status(200).json({ mult, win, balance: u2.points });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
