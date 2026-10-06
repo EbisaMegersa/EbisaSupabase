@@ -45,6 +45,9 @@ module.exports = async (req, res) => {
     await supabase.from('users').update({ last_checkin: today, streak }).eq('telegram_id', id);
     await supabase.rpc('add_points', { p_telegram_id: id, p_amount: reward });
 
+    // 🆕 log to the activity feed
+    await supabase.from('activities').insert({ user_id: id, icon: 'check', title: 'Daily Check-in', points: reward });
+
     return res.status(200).json({ already: false, reward, streak });
   } catch (e) {
     return res.status(500).json({ error: e.message });
