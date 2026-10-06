@@ -2,6 +2,8 @@ const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
+const REQUIRED_TASKS = 3;   // ⬅️ invitee must complete ANY 3 tasks to unlock referrer's +100
+
 function valid(initData) {
   if (!initData) return false;
   const params = new URLSearchParams(initData);
@@ -48,14 +50,15 @@ module.exports = async (req, res) => {
       user_id: id, task_key: String(taskRow.id), reward: taskRow.reward
     });
     await supabase.rpc('add_points', { p_telegram_id: id, p_amount: taskRow.reward });
+    await supabase.from('activities').insert({
+      user_id: id, icon: 'check', title: taskRow.title, points: taskRow.reward
+    });
 
-    // ---- qualified referral: completed ALL active tasks? ----
+    // ---- qualified referral: ANY 3 tasks completed ----
     const { count: doneCount } = await supabase.from('task_completions')
       .select('id', { count: 'exact', head: true }).eq('user_id', id);
-    const { count: activeCount } = await supabase.from('tasks')
-      .select('id', { count: 'exact', head: true }).eq('active', true);
 
-    if (activeCount && doneCount >= activeCount) {
+    if (doneCount >= REQUIRED_TASKS) {
       const { data: me2 } = await supabase.from('users')
         .select('referred_by, first_name').eq('telegram_id', id).maybeSingle();
 
@@ -68,13 +71,16 @@ module.exports = async (req, res) => {
             referrer_id: me2.referred_by, referred_id: id, reward_points: 100
           });
           await supabase.rpc('add_points', { p_telegram_id: me2.referred_by, p_amount: 100 });
+          await supabase.from('activities').insert({
+            user_id: me2.referred_by, icon: 'userplus', title: 'Friend Invite Bonus', points: 100
+          });
           try {
             await fetch('https://api.telegram.org/bot' + process.env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 chat_id: me2.referred_by,
-                text: '🎉 ' + (me2.first_name || 'Your friend') + ' completed all tasks!\n💰 Your +100 referral points have been added.'
+                text: '🎉 ' + (me2.first_name || 'Your friend') + ' completed 3 tasks!\n💰 Your +100 referral points have been added.'
               })
             });
           } catch (e) {}
