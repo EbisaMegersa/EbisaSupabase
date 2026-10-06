@@ -46,8 +46,7 @@ module.exports = async (req, res) => {
     }
 
     let pending = 0;
-    const { data: invited } = await supabase.from('users')
-      .select('telegram_id').eq('referred_by', id);
+    const { data: invited } = await supabase.from('users').select('telegram_id').eq('referred_by', id);
     if (invited && invited.length) {
       const paidSet = new Set((refs || []).map(r => r.referred_id));
       pending = invited.filter(p => !paidSet.has(p.telegram_id)).length;
@@ -56,12 +55,15 @@ module.exports = async (req, res) => {
     const { data: activeTasks } = await supabase.from('tasks')
       .select('id, title, icon, reward, link').eq('active', true).order('id');
 
-    const { data: tdone } = await supabase.from('task_completions')
-      .select('task_key').eq('user_id', id);
+    const { data: tdone } = await supabase.from('task_completions').select('task_key').eq('user_id', id);
 
     const { data: hist } = await supabase.from('withdrawals')
       .select('points, method, status, created_at').eq('user_id', id)
       .order('created_at', { ascending: false }).limit(10);
+
+    const { data: acts } = await supabase.from('activities')
+      .select('icon, title, points, created_at').eq('user_id', id)
+      .order('created_at', { ascending: false }).limit(20);
 
     const todayISO = new Date().toISOString().slice(0, 10);
 
@@ -72,15 +74,13 @@ module.exports = async (req, res) => {
       first_name: user.first_name,
       referral_code: user.referral_code,
       photo_url: user.photo_url,
-      ads: {
-        watched: user.last_ad_date === todayISO ? (user.ads_watched || 0) : 0,
-        limit: 10
-      },
+      ads: { watched: user.last_ad_date === todayISO ? (user.ads_watched || 0) : 0, limit: 10 },
       tasks: activeTasks || [],
       tasks_done: (tdone || []).map(t => t.task_key),
       referrals,
       pending,
-      withdrawals: hist || []
+      withdrawals: hist || [],
+      activities: acts || []
     });
   } catch (e) {
     return res.status(500).json({ error: e.message });
