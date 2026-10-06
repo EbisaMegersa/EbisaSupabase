@@ -44,10 +44,8 @@ module.exports = async (req, res) => {
       .insert({ user_id: id, points: amt, method, account: String(account).trim() })
       .select().single();
 
-    // 🆕 log to the activity feed (negative points = shown without green)
     await supabase.from('activities').insert({ user_id: id, icon: 'dollar', title: 'Withdrawal Request', points: -amt });
 
-    // 🔔 instant notification to admin
     try {
       await fetch('https://api.telegram.org/bot' + process.env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
         method: 'POST',
