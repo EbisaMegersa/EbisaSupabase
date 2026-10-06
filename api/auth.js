@@ -75,8 +75,11 @@ module.exports = async (req, res) => {
     if (error) return res.status(500).json({ error: error.message });
     user = newUser;
 
+    // 🆕 log welcome bonus to the activity feed
+    await supabase.from('activities').insert({ user_id: u.id, icon: 'star', title: 'Welcome Bonus', points: 25 });
+
     // save who invited them — NO points yet.
-    // referrer gets +100 only when this user completes ALL active tasks (api/tasks.js)
+    // referrer gets +100 only when this user completes 3 tasks (api/tasks.js)
     if (startParam) {
       const { data: referrer } = await supabase.from('users')
         .select('telegram_id').eq('referral_code', startParam).maybeSingle();
