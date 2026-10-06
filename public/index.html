@@ -545,39 +545,60 @@ async function doWithdraw() {
 }
 
 /* ================= WATCH & EARN (AdsGram) ================= */
-const AD_BLOCK_ID = 49344;        // your real block ID (set to 123 only to test with demo ad)
+const AD_BLOCK_ID = 49344;        // your real block ID (set to 123 only to test with the official demo ad)
 const AD_REWARD = 15;             // must match api/ad.js
 const AD_DAILY_LIMIT = 10;        // must match api/ad.js
+const AD_SDK_URL = 'https://sad.adsgram.ai/sdk/sad.min.js';
 IC.play = '<path d="m7 4 13 8-13 8z"/>';
-let adCtl = null, adBusy = false, adSdkLoading = null;
 
-function loadAdSdk() {
-  if (window.AdsGram) return Promise.resolve(true);
-  if (adSdkLoading) return adSdkLoading;
-  adSdkLoading = new Promise(resolve => {
+let adCtl = null, adBusy = false, adLoading = null, sdkReady = false;
+
+function tryLoadSdkOnce(timeoutMs) {
+  return new Promise(resolve => {
+    if (window.AdsGram) return resolve(true);
+    let done = false;
     const s = document.createElement('script');
-    s.src = 'https://sad.adsgram.ai/sdk/sad.min.js';
-    s.onload = () => resolve(!!window.AdsGram);
-    s.onerror = () => { adSdkLoading = null; resolve(false); };
+    s.src = AD_SDK_URL + '?t=' + Date.now();   // fresh download, no cache
+    const finish = ok => { if (!done) { done = true; resolve(ok); } };
+    s.onload = () => finish(!!window.AdsGram);
+    s.onerror = () => { s.remove(); finish(false); };
     document.head.appendChild(s);
-    setTimeout(() => {
-      if (!window.AdsGram) { adSdkLoading = null; resolve(false); }
-    }, 10000);
+    setTimeout(() => finish(!!window.AdsGram), timeoutMs);
   });
-  return adSdkLoading;
 }
+
+async function loadAdSdk() {
+  if (window.AdsGram) { sdkReady = true; return true; }
+  if (adLoading) return adLoading;
+  adLoading = (async () => {
+    for (let i = 0; i < 3; i++) {              // 3 attempts, 15s each
+      const ok = await tryLoadSdkOnce(15000);
+      if (ok) { sdkReady = true; adLoading = null; return true; }
+      await new Promise(r => setTimeout(r, 1000));
+    }
+    adLoading = null;
+    return false;
+  })();
+  return adLoading;
+}
+
+// silently preload the moment the app opens
+setTimeout(() => loadAdSdk().then(() => { if (me) renderAd(); }), 1200);
 
 function renderAd() {
   const el = $('adCard');
   if (!el) return;
   const a = me.ads || { watched: 0, limit: AD_DAILY_LIMIT };
   const left = a.limit - a.watched;
+  const st = window.AdsGram
+    ? '<span class="ok">ad server: ready ✓</span>'
+    : '<span class="warn">ad server: connecting…</span>';
   const btn = left > 0
     ? '<button class="btn" id="adBtn" onclick="watchAd()"><i class="ic dark sm" data-ic="play"></i> Watch Ad — +' + AD_REWARD + ' pts</button>'
     : '<button class="btn btn-ghost" disabled>Daily limit reached — back tomorrow</button>';
   el.innerHTML = '<div class="card"><p class="ctitle"><i class="ic" data-ic="play"></i> Watch & Earn</p>' +
     '<div class="adbar"><i style="width:' + Math.min(100, a.watched / a.limit * 100) + '%"></i></div>' +
-    '<p class="note" style="margin:0 0 12px">' + a.watched + '/' + a.limit + ' ads today • ' + left + ' left • watch a short video, get points</p>' + btn + '</div>';
+    '<p class="note" style="margin:0 0 12px">' + a.watched + '/' + a.limit + ' ads today • ' + left + ' left • ' + st + '</p>' + btn + '</div>';
   el.querySelectorAll('[data-ic]').forEach(x => { x.innerHTML = icon(x.dataset.ic); });
 }
 
@@ -593,7 +614,7 @@ async function watchAd() {
     document.querySelectorAll('#adCard [data-ic]').forEach(x => { x.innerHTML = icon(x.dataset.ic); });
     adBusy = false;
     haptic('error');
-    return notify('Ad server unreachable right now.\n\nCheck your internet (or try Wi-Fi / another network) and tap again.');
+    return notify('Ad server unreachable after 3 attempts.\n\nYour network may be blocking it. Try Wi-Fi instead of mobile data, then tap again.');
   }
 
   if (btn) btn.textContent = 'Loading ad…';
