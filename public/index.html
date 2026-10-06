@@ -544,36 +544,50 @@ async function doWithdraw() {
   } catch (e) { notify('Error: ' + e.message); }
 }
 
-/* ================= WATCH & EARN (AdsGram) ================= */
-const AD_BLOCK_ID = 49344;        // your real block ID (set to 123 only to test with the official demo ad)
-const AD_REWARD = 15;             // must match api/ad.js
-const AD_DAILY_LIMIT = 10;        // must match api/ad.js
-const AD_SDK_URL = 'https://sad.adsgram.ai/sdk/sad.min.js';
+/* ================= WATCH & EARN (Monetag) ================= */
+const AD_ZONE = '10937696';                 // your Monetag zone ID
+const AD_FUNC = 'show_' + AD_ZONE;          // global function the SDK registers
+const AD_SDK_URL = 'https://libtl.com/sdk.js';
+const AD_REWARD = 15;                       // must match api/ad.js
+const AD_DAILY_LIMIT = 10;                  // must match api/ad.js
 IC.play = '<path d="m7 4 13 8-13 8z"/>';
 
-let adCtl = null, adBusy = false, adLoading = null, sdkReady = false;
+let adBusy = false, adLoading = null;
+
+function sdkLoaded(){ return typeof window[AD_FUNC] === 'function'; }
 
 function tryLoadSdkOnce(timeoutMs) {
   return new Promise(resolve => {
-    if (window.AdsGram) return resolve(true);
+    if (sdkLoaded()) return resolve(true);
     let done = false;
     const s = document.createElement('script');
-    s.src = AD_SDK_URL + '?t=' + Date.now();   // fresh download, no cache
+    s.src = AD_SDK_URL + '?t=' + Date.now();  // fresh download, no cache
+    s.setAttribute('data-zone', AD_ZONE);
+    s.setAttribute('data-sdk', AD_FUNC);
+    s.async = true;
     const finish = ok => { if (!done) { done = true; resolve(ok); } };
-    s.onload = () => finish(!!window.AdsGram);
+    s.onload = () => {
+      // SDK registers show_xxx shortly after load — poll for it
+      let tries = 0;
+      const chk = setInterval(() => {
+        tries++;
+        if (sdkLoaded()) { clearInterval(chk); finish(true); }
+        else if (tries > 24) { clearInterval(chk); finish(false); }
+      }, 250);
+    };
     s.onerror = () => { s.remove(); finish(false); };
     document.head.appendChild(s);
-    setTimeout(() => finish(!!window.AdsGram), timeoutMs);
+    setTimeout(() => finish(sdkLoaded()), timeoutMs);
   });
 }
 
 async function loadAdSdk() {
-  if (window.AdsGram) { sdkReady = true; return true; }
+  if (sdkLoaded()) return true;
   if (adLoading) return adLoading;
   adLoading = (async () => {
-    for (let i = 0; i < 3; i++) {              // 3 attempts, 15s each
-      const ok = await tryLoadSdkOnce(15000);
-      if (ok) { sdkReady = true; adLoading = null; return true; }
+    for (let i = 0; i < 3; i++) {            // 3 attempts
+      const ok = await tryLoadSdkOnce(20000);
+      if (ok) { adLoading = null; return true; }
       await new Promise(r => setTimeout(r, 1000));
     }
     adLoading = null;
@@ -582,7 +596,7 @@ async function loadAdSdk() {
   return adLoading;
 }
 
-// silently preload the moment the app opens
+// silently preload shortly after the app opens
 setTimeout(() => loadAdSdk().then(() => { if (me) renderAd(); }), 1200);
 
 function renderAd() {
@@ -590,7 +604,7 @@ function renderAd() {
   if (!el) return;
   const a = me.ads || { watched: 0, limit: AD_DAILY_LIMIT };
   const left = a.limit - a.watched;
-  const st = window.AdsGram
+  const st = sdkLoaded()
     ? '<span class="ok">ad server: ready ✓</span>'
     : '<span class="warn">ad server: connecting…</span>';
   const btn = left > 0
@@ -608,8 +622,8 @@ async function watchAd() {
   const btn = $('adBtn');
   if (btn) { btn.disabled = true; btn.textContent = 'Connecting to ad server…'; }
 
-  const sdkOk = await loadAdSdk();
-  if (!sdkOk) {
+  const ok = await loadAdSdk();
+  if (!ok) {
     if (btn) { btn.disabled = false; btn.innerHTML = '<i class="ic dark sm" data-ic="play"></i> Watch Ad — +' + AD_REWARD + ' pts'; }
     document.querySelectorAll('#adCard [data-ic]').forEach(x => { x.innerHTML = icon(x.dataset.ic); });
     adBusy = false;
@@ -619,8 +633,9 @@ async function watchAd() {
 
   if (btn) btn.textContent = 'Loading ad…';
   try {
-    if (!adCtl) adCtl = window.AdsGram.init(AD_BLOCK_ID);
-    await adCtl.show();
+    // Monetag rewarded interstitial — resolves ONLY after the user finishes the ad
+    await window[AD_FUNC]();
+
     const r = await fetch('/api/ad', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ initData: tg.initData })
@@ -638,7 +653,7 @@ async function watchAd() {
     }
   } catch (e) {
     haptic('error');
-    notify('No ad available right now — try again in a minute');
+    notify('Ad not available or closed early — no reward this time');
     if (btn) { btn.disabled = false; btn.textContent = 'Watch Ad — +' + AD_REWARD + ' pts'; }
   } finally { adBusy = false; }
 }
