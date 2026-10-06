@@ -15,17 +15,12 @@ main{max-width:480px;margin:0 auto;padding:16px}
 .ic svg{width:100%;height:100%}
 .ic.sm{width:16px;height:16px}
 .ic.orange{color:var(--orange)}.ic.dark{color:#000}
-/* splash */
-#splash{position:fixed;inset:0;background:#000;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity .35s}
-#splash.off{opacity:0;pointer-events:none}
-.s-logo{width:88px;height:88px;border-radius:26px;background:#fff;display:flex;align-items:center;justify-content:center;animation:spulse 1.4s ease-in-out infinite;box-shadow:0 0 60px rgba(255,255,255,.15)}
-.s-logo .ic{width:40px;height:40px;color:#000}
-@keyframes spulse{0%,100%{transform:scale(1);border-radius:26px}50%{transform:scale(.9) rotate(5deg);border-radius:34px}}
-.s-name{margin-top:20px;font-size:15px;font-weight:800;letter-spacing:6px;color:#fff}
-.s-bar{width:130px;height:4px;border-radius:99px;background:#1C1C1E;overflow:hidden;margin-top:18px}
-.s-bar i{display:block;width:40%;height:100%;border-radius:99px;background:#fff;animation:sbar 1.1s ease-in-out infinite}
-@keyframes sbar{0%{transform:translateX(-110%)}100%{transform:translateX(330%)}}
-.s-txt{margin-top:14px;font-size:12px;color:#6E6E73}
+/* full-screen messages (locked / error / not-in-tg) */
+.screen{position:fixed;inset:0;background:#000;z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px}
+.screen .bigic{width:72px;height:72px;color:var(--red)}
+.screen .bigic.neutral{color:var(--dim)}
+.screen h2{font-size:18px;font-weight:800;margin-top:20px}
+.screen p{font-size:13px;color:var(--dim);margin-top:10px;line-height:1.6;max-width:300px}
 /* header */
 .header{display:flex;align-items:center;gap:11px;margin-bottom:16px}
 .avatar{width:44px;height:44px;border-radius:50%;background:#fff;color:#000;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;flex-shrink:0;overflow:hidden}
@@ -109,17 +104,29 @@ nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(10
 </head>
 <body>
 
-<div id="splash">
-  <div class="s-logo"><i class="ic" data-ic="zap"></i></div>
-  <p class="s-name">EARNAPP</p>
-  <div class="s-bar"><i></i></div>
-  <p class="s-txt" id="splashTxt">Connecting to Telegram…</p>
+<!-- locked screen (multi-account) -->
+<div id="locked" class="screen hide">
+  <span class="bigic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><circle cx="12" cy="16" r="1.5"/></svg></span>
+  <h2>Multiple Accounts Detected</h2>
+  <p>Multiple accounts detected by IP. This device or network already has the maximum of 2 registered accounts — you cannot create more here.</p>
 </div>
 
-<div id="nottg" class="hide empty" style="margin-top:180px">Please open this app inside Telegram</div>
+<!-- error screen -->
+<div id="errscreen" class="screen hide">
+  <span class="bigic neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></span>
+  <h2>Something went wrong</h2>
+  <p id="errMsg">Please close and reopen the app.</p>
+</div>
+
+<!-- not in telegram -->
+<div id="nottg" class="screen hide">
+  <span class="bigic neutral"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21 4-18 7.5 5.5 2L10 19l3-3.5 4.5 3z"/></svg></span>
+  <h2>Open in Telegram</h2>
+  <p>Please open this app inside Telegram.</p>
+</div>
 
 <main>
-<div id="app" class="hide">
+<div id="app">
   <div class="header">
     <div class="avatar" id="avatar">?</div>
     <div>
@@ -133,14 +140,14 @@ nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(10
   <section id="tab-home">
     <div class="hero">
       <p class="hero-label">TOTAL BALANCE</p>
-      <p class="hero-amt" id="points">0</p>
-      <p class="hero-usd" id="usd">≈ $0.00</p>
+      <p class="hero-amt" id="points">…</p>
+      <p class="hero-usd" id="usd">&nbsp;</p>
     </div>
 
     <div class="card">
       <p class="ctitle"><i class="ic" data-ic="flame"></i> Daily Streak</p>
       <div class="dots" id="dots"></div>
-      <button class="btn btn-green" id="checkinBtn" onclick="doCheckin()">Claim</button>
+      <button class="btn btn-green" id="checkinBtn" onclick="doCheckin()" disabled>Loading…</button>
     </div>
 
     <div id="adCard"></div>
@@ -160,7 +167,7 @@ nav{position:fixed;bottom:12px;left:50%;transform:translateX(-50%);width:calc(10
   <section id="tab-tasks" class="hide">
     <div class="card">
       <p class="ctitle"><i class="ic" data-ic="check"></i> Tasks</p>
-      <div id="taskList"></div>
+      <div id="taskList"><p class="empty">Loading…</p></div>
       <p class="note">Tap Start, join/follow, come back and tap Verify.</p>
     </div>
     <div class="card">
@@ -324,12 +331,22 @@ function todayUTC(){ return new Date().toISOString().slice(0, 10); }
 function notify(m){ if (tg && tg.showAlert) tg.showAlert(m); else alert(m); }
 function haptic(t){ try { tg.HapticFeedback && tg.HapticFeedback.notificationOccurred(t); } catch(e){} }
 function tick(){ try { tg.HapticFeedback && tg.HapticFeedback.selectionChanged(); } catch(e){} }
-function splashDone(){ const s = $('splash'); s.classList.add('off'); setTimeout(() => s.style.display = 'none', 400); }
+function showScreen(id){ ['locked','errscreen','nottg'].forEach(s => $(s).classList.toggle('hide', s !== id)); }
+
+/* hidden device fingerprint — survives IP changes, cleared only if user wipes app storage */
+function getDeviceId(){
+  try {
+    let d = localStorage.getItem('ea_did');
+    if (!d) {
+      d = (crypto.randomUUID ? crypto.randomUUID() : 'd' + Date.now() + Math.random().toString(36).slice(2, 12));
+      localStorage.setItem('ea_did', d);
+    }
+    return d;
+  } catch(e){ return null; }
+}
 
 if (!tg || !tg.initData) {
-  $('splashTxt').textContent = 'Please open this app inside Telegram';
-  document.querySelector('.s-bar').style.display = 'none';
-  setTimeout(() => { splashDone(); $('nottg').classList.remove('hide'); }, 900);
+  showScreen('nottg');
 } else {
   start();
 }
@@ -337,22 +354,30 @@ if (!tg || !tg.initData) {
 async function start() {
   tg.ready();
   tg.expand();
-  $('splashTxt').textContent = 'Verifying your account…';
   try {
     const r = await fetch('/api/auth', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ initData: tg.initData, startParam: tg.initDataUnsafe?.start_param || '' })
+      body: JSON.stringify({
+        initData: tg.initData,
+        startParam: tg.initDataUnsafe?.start_param || '',
+        deviceId: getDeviceId()
+      })
     });
     const a = await r.json();
+
+    if (a.error === 'MULTI_ACCOUNT') {
+      document.getElementById('app').classList.add('hide');
+      showScreen('locked');
+      return;
+    }
     if (!a.user) throw new Error(a.error || 'Login failed');
-    $('splashTxt').textContent = 'Loading your balance…';
+
     await loadMe();
-    splashDone();
-    $('app').classList.remove('hide');
   } catch (e) {
-    document.querySelector('.s-bar').style.display = 'none';
-    $('splashTxt').textContent = 'Error: ' + e.message;
+    document.getElementById('app').classList.add('hide');
+    $('errMsg').textContent = e.message + ' — please close and reopen the app.';
+    showScreen('errscreen');
   }
 }
 
@@ -545,8 +570,8 @@ async function doWithdraw() {
 }
 
 /* ================= WATCH & EARN (Monetag) ================= */
-const AD_ZONE = '10937696';                 // your Monetag zone ID
-const AD_FUNC = 'show_' + AD_ZONE;          // global function the SDK registers
+const AD_ZONE = '10937696';
+const AD_FUNC = 'show_' + AD_ZONE;
 const AD_SDK_URL = 'https://libtl.com/sdk.js';
 const AD_REWARD = 15;                       // must match api/ad.js
 const AD_DAILY_LIMIT = 10;                  // must match api/ad.js
@@ -561,13 +586,12 @@ function tryLoadSdkOnce(timeoutMs) {
     if (sdkLoaded()) return resolve(true);
     let done = false;
     const s = document.createElement('script');
-    s.src = AD_SDK_URL + '?t=' + Date.now();  // fresh download, no cache
+    s.src = AD_SDK_URL + '?t=' + Date.now();
     s.setAttribute('data-zone', AD_ZONE);
     s.setAttribute('data-sdk', AD_FUNC);
     s.async = true;
     const finish = ok => { if (!done) { done = true; resolve(ok); } };
     s.onload = () => {
-      // SDK registers show_xxx shortly after load — poll for it
       let tries = 0;
       const chk = setInterval(() => {
         tries++;
@@ -585,7 +609,7 @@ async function loadAdSdk() {
   if (sdkLoaded()) return true;
   if (adLoading) return adLoading;
   adLoading = (async () => {
-    for (let i = 0; i < 3; i++) {            // 3 attempts
+    for (let i = 0; i < 3; i++) {
       const ok = await tryLoadSdkOnce(20000);
       if (ok) { adLoading = null; return true; }
       await new Promise(r => setTimeout(r, 1000));
@@ -596,23 +620,20 @@ async function loadAdSdk() {
   return adLoading;
 }
 
-// silently preload shortly after the app opens
-setTimeout(() => loadAdSdk().then(() => { if (me) renderAd(); }), 1200);
+// silent preload
+setTimeout(() => loadAdSdk(), 1200);
 
 function renderAd() {
   const el = $('adCard');
-  if (!el) return;
+  if (!el || !me) return;
   const a = me.ads || { watched: 0, limit: AD_DAILY_LIMIT };
   const left = a.limit - a.watched;
-  const st = sdkLoaded()
-    ? '<span class="ok">ad server: ready ✓</span>'
-    : '<span class="warn">ad server: connecting…</span>';
   const btn = left > 0
     ? '<button class="btn" id="adBtn" onclick="watchAd()"><i class="ic dark sm" data-ic="play"></i> Watch Ad — +' + AD_REWARD + ' pts</button>'
     : '<button class="btn btn-ghost" disabled>Daily limit reached — back tomorrow</button>';
   el.innerHTML = '<div class="card"><p class="ctitle"><i class="ic" data-ic="play"></i> Watch & Earn</p>' +
     '<div class="adbar"><i style="width:' + Math.min(100, a.watched / a.limit * 100) + '%"></i></div>' +
-    '<p class="note" style="margin:0 0 12px">' + a.watched + '/' + a.limit + ' ads today • ' + left + ' left • ' + st + '</p>' + btn + '</div>';
+    '<p class="note" style="margin:0 0 12px">' + a.watched + '/' + a.limit + ' ads today • ' + left + ' left • watch a short video, get points</p>' + btn + '</div>';
   el.querySelectorAll('[data-ic]').forEach(x => { x.innerHTML = icon(x.dataset.ic); });
 }
 
@@ -620,7 +641,7 @@ async function watchAd() {
   if (adBusy) return;
   adBusy = true;
   const btn = $('adBtn');
-  if (btn) { btn.disabled = true; btn.textContent = 'Connecting to ad server…'; }
+  if (btn) { btn.disabled = true; btn.textContent = 'Loading ad…'; }
 
   const ok = await loadAdSdk();
   if (!ok) {
@@ -628,14 +649,11 @@ async function watchAd() {
     document.querySelectorAll('#adCard [data-ic]').forEach(x => { x.innerHTML = icon(x.dataset.ic); });
     adBusy = false;
     haptic('error');
-    return notify('Ad server unreachable after 3 attempts.\n\nYour network may be blocking it. Try Wi-Fi instead of mobile data, then tap again.');
+    return notify('Ad not available right now — try again in a minute');
   }
 
-  if (btn) btn.textContent = 'Loading ad…';
   try {
-    // Monetag rewarded interstitial — resolves ONLY after the user finishes the ad
     await window[AD_FUNC]();
-
     const r = await fetch('/api/ad', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ initData: tg.initData })
