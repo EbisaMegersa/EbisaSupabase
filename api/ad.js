@@ -2,8 +2,8 @@ const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-const AD_REWARD = 15;
-const DAILY_LIMIT = 10;
+const AD_REWARD = 5;
+const DAILY_LIMIT = 25;
 
 function valid(initData) {
   if (!initData) return false;
@@ -30,7 +30,7 @@ module.exports = async (req, res) => {
     const id = tgId(initData);
 
     const { data: user } = await supabase.from('users')
-      .select('ads_watched, last_ad_date').eq('telegram_id', id).maybeSingle();
+      .select('ads_watched, last_ad_date, ads_total').eq('telegram_id', id).maybeSingle();
     if (!user) return res.status(404).json({ error: 'User not found' });
 
     const today = new Date().toISOString().slice(0, 10);
@@ -41,8 +41,11 @@ module.exports = async (req, res) => {
     }
 
     const newWatched = watched + 1;
-    await supabase.from('users')
-      .update({ ads_watched: newWatched, last_ad_date: today }).eq('telegram_id', id);
+    await supabase.from('users').update({
+      ads_watched: newWatched,
+      last_ad_date: today,
+      ads_total: (user.ads_total || 0) + 1
+    }).eq('telegram_id', id);
     await supabase.rpc('add_points', { p_telegram_id: id, p_amount: AD_REWARD });
     await supabase.from('activities').insert({ user_id: id, icon: 'play', title: 'Ad Watch Reward', points: AD_REWARD });
 
