@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-const REWARDS = [10, 15, 20, 25, 30, 35, 50];
+const REWARDS = [10, 30, 40, 60, 70, 80, 100];
 
 function valid(initData) {
   if (!initData) return false;
