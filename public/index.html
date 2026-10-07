@@ -1,3 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="theme-color" content="#000000">
+<title>EarnApp</title>
+<script src="https://telegram.org/js/telegram-web-app.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#000;--card:#141414;--card2:#1C1C1C;--sep:#242424;--txt:#fff;--dim:#A0A0A0;--acc:#4ADE80;--org:#FF8C42;--red:#FF453A;--gold:#FFC24B}
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+input,textarea{-webkit-user-select:text!important;user-select:text!important}
+img{-webkit-user-drag:none}
+body{background:var(--bg);color:var(--txt);font-family:'Inter',-apple-system,BlinkMacSystemFont,sans-serif;padding-bottom:104px;-webkit-font-smoothing:antialiased}
+main{max-width:480px;margin:0 auto;padding:16px}
+.hide{display:none!important}
+.ic{display:inline-flex;width:20px;height:20px;color:#fff;flex-shrink:0}
+.ic svg{width:100%;height:100%}
+.ic.sm{width:16px;height:16px}.ic.lg{width:26px;height:26px}.ic.org{color:var(--org)}.ic.gold{color:var(--gold)}.ic.dark{color:#000}
+.screen{position:fixed;inset:0;background:var(--bg);z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:32px}
+.bigwrap{width:88px;height:88px;border-radius:50%;background:var(--card);border:1px solid var(--sep);display:flex;align-items:center;justify-content:center}
+.bigwrap .ic{width:36px;height:36px}
+.screen h2{font-size:18px;font-weight:800;margin-top:22px}
+.screen p{font-size:13px;color:var(--dim);margin-top:10px;line-height:1.65;max-width:300px}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.avatar{width:50px;height:50px;border-radius:50%;background:var(--org);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:20px;flex-shrink:0;overflow:hidden}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.hname{font-weight:800;font-size:19px}
+.hsub{font-size:13px;color:var(--dim);margin-top:1px}
+.langbtn{margin-left:auto;background:var(--card);border:1px solid var(--sep);color:#fff;font-size:13px;font-weight:700;padding:10px 16px;border-radius:999px;display:flex;align-items:center;gap:7px;font-family:inherit;cursor:pointer}
+.langbtn:active{opacity:.7}
+.balance{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--sep);border-radius:20px;padding:20px;margin-bottom:18px}
+.deco{position:absolute;right:10px;top:50%;transform:translateY(-50%);width:112px;height:112px;pointer-events:none}
+.balrow{display:flex;align-items:center;gap:8px}
+.hero-label{font-size:14px;color:var(--dim);font-weight:500}
+.eyeb{background:none;border:none;padding:0;cursor:pointer;color:var(--dim);display:flex}
+.hero-amt{font-size:42px;font-weight:900;letter-spacing:-.5px;line-height:1.15;font-variant-numeric:tabular-nums}
+.hero-amt .ptsfx{font-size:19px;color:var(--dim);font-weight:600;margin-left:8px}
+.sechead{display:flex;align-items:center;justify-content:space-between;margin:2px 2px 12px}
+.sechead h3{font-size:16px;font-weight:800}
+.viewall{color:var(--acc);font-size:12.5px;font-weight:700;background:none;border:none;font-family:inherit;cursor:pointer;padding:4px}
+.qa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:18px}
+.qa{background:var(--card);border:1px solid var(--sep);border-radius:16px;padding:18px 8px 15px;text-align:center;cursor:pointer;font-family:inherit;color:#fff}
+.qa:active{opacity:.7}
+.qa .ic{margin:0 auto 10px}
+.qa b{display:block;font-size:12.5px;font-weight:800}
+.qa span{display:block;font-size:10.5px;color:var(--dim);margin-top:3px}
+.card{background:var(--card);border:1px solid var(--sep);border-radius:18px;padding:16px;margin-bottom:14px}
+.ctitle{font-size:14px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:9px}
+.btn{width:100%;padding:14px;border-radius:14px;border:none;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;color:#000;background:var(--acc);transition:opacity .15s,transform .1s;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn:active{opacity:.8;transform:scale(.985)}
+.btn:disabled{opacity:.35;cursor:default}
+.btn-ghost{background:var(--card2);color:#fff;border:1px solid var(--sep)}
+.btn-outline{background:transparent;border:1.5px solid var(--acc);color:var(--acc)}
+.btn-sm{width:auto;padding:8px 16px;font-size:12px;border-radius:11px}
+.pill{display:inline-block;padding:4px 11px;border-radius:999px;font-size:11px;font-weight:700}
+.pill.paid{background:var(--acc);color:#000}
+.pill.pending{background:var(--card2);color:var(--dim)}
+.pill.rejected{background:rgba(255,69,58,.12);color:var(--red)}
+.done{display:inline-block;background:var(--acc);color:#000;font-weight:800;font-size:11px;padding:6px 13px;border-radius:999px}
+.dots{display:flex;gap:5px;margin-bottom:14px}
+.dot{flex:1;text-align:center;padding:10px 2px;border-radius:12px;background:var(--card2);font-size:9px;color:var(--dim);font-weight:600}
+.dot b{display:block;font-size:12px;font-weight:800;margin-bottom:1px}
+.dot.on{background:var(--acc);color:#fff}
+.streaknote{font-size:12px;color:var(--dim);font-weight:600}
+.task{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--sep)}
+.task:last-child{border-bottom:none}
+.ticon{width:44px;height:44px;border-radius:13px;background:var(--card2);border:1px solid var(--sep);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.tinfo{flex:1}
+.ttitle{font-size:13.5px;font-weight:700}
+.trew{font-size:12px;color:var(--acc);font-weight:800;margin-top:1px}
+.inp{width:100%;padding:14px;border-radius:14px;background:var(--card2);border:1px solid var(--sep);color:#fff;font-size:15px;font-family:inherit;outline:none;margin-bottom:10px}
+.inp:focus{border-color:var(--acc)}
+.inp::placeholder{color:#5A5A5A}
+.lbl{font-size:10px;color:var(--dim);margin-bottom:8px;font-weight:700;letter-spacing:1.8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.chip{display:flex;align-items:center;gap:7px;padding:10px 14px;border-radius:12px;border:1px solid var(--sep);background:var(--card2);color:#fff;font-size:12.5px;font-weight:700;font-family:inherit;cursor:pointer}
+.chip.sel{background:var(--acc);border-color:var(--acc);color:#000}
+.mgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:14px}
+.mtile{display:flex;flex-direction:column;align-items:center;gap:6px;padding:12px 4px;border-radius:14px;background:var(--card2);border:1.5px solid var(--sep);cursor:pointer;font-family:inherit;color:#fff}
+.mtile img{width:34px;height:34px;border-radius:9px;object-fit:cover}
+.mtile b{font-size:10px;font-weight:700}
+.mtile.sel{border-color:var(--acc);background:rgba(74,222,128,.08)}
+.mimg{width:18px;height:18px;border-radius:5px;object-fit:cover;flex-shrink:0}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
+.gnum{font-size:21px;font-weight:900;font-variant-numeric:tabular-nums}
+.gnum.ok{color:var(--acc)}
+.glbl{font-size:11px;color:var(--dim);margin-top:3px;font-weight:500}
+.row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--sep)}
+.row:last-child{border-bottom:none}
+.ruser{display:flex;align-items:center;gap:10px}
+.rpic{width:32px;height:32px;border-radius:50%;background:var(--card2);overflow:hidden;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:800;color:var(--dim)}
+.rpic img{width:100%;height:100%;object-fit:cover}
+.rt{font-size:13.5px;font-weight:700}
+.rd{font-size:11px;color:var(--dim);margin-top:1px}
+.empty{font-size:13px;color:var(--dim);text-align:center;padding:12px 0}
+.note{font-size:11px;color:var(--dim);margin-top:12px;line-height:1.55}
+.linkbox{width:100%;font-size:11px;background:var(--card2);border:1px solid var(--sep);border-radius:13px;padding:13px;color:#fff;outline:none;word-break:break-all;font-family:inherit}
+.linkbox:focus{border-color:var(--acc)}
+.act{display:flex;align-items:center;gap:12px;background:var(--card);border:1px solid var(--sep);border-radius:16px;padding:13px 14px;margin-bottom:8px}
+.aic{width:38px;height:38px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.aic.pos{background:var(--acc)}
+.aic.neu{background:var(--card2);border:1px solid var(--sep)}
+.ainfo{flex:1;min-width:0}
+.at{font-size:13.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ad2{font-size:11px;color:var(--dim);margin-top:2px}
+.apv{font-size:15px;font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums}
+.apv.neg{color:#fff}
+.apl{font-size:10.5px;color:var(--dim);font-weight:500}
+.rev{background:var(--card);border:1px solid var(--sep);border-radius:16px;padding:13px 14px;margin-bottom:8px}
+.revtop{display:flex;align-items:center;gap:10px}
+.rstars{color:var(--gold);font-size:12px;letter-spacing:1px;margin-top:2px}
+.rago{margin-left:auto;font-size:10.5px;color:var(--dim);flex-shrink:0}
+.rmsg{font-size:13px;color:#DDD;margin-top:9px;line-height:1.5}
+.segbar{display:flex;gap:3px;margin-bottom:10px}
+.segbar span{flex:1;height:6px;border-radius:99px;background:var(--card2)}
+.segbar span.on{background:var(--acc)}
+.whero{background:var(--card);border:1px solid var(--sep);border-radius:20px;padding:22px;text-align:center;margin-bottom:14px}
+.wamt{font-size:38px;font-weight:900;font-variant-numeric:tabular-nums}
+.wamt span{font-size:17px;color:var(--dim);font-weight:600;margin-left:6px}
+.wreqrow{display:flex;justify-content:space-between;align-items:center;font-size:13px;font-weight:600;margin:10px 0 7px}
+.wreqrow b{color:var(--acc);font-variant-numeric:tabular-nums}
+.bar{height:8px;border-radius:99px;background:var(--card2);overflow:hidden;margin-bottom:6px}
+.bar i{display:block;height:100%;background:var(--acc);border-radius:99px;transition:width .4s}
+.wdok{display:flex;align-items:center;gap:8px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.3);color:var(--acc);border-radius:12px;padding:11px 13px;font-size:12.5px;font-weight:700;margin-top:10px}
+.pod{display:flex;align-items:flex-end;gap:8px;margin-bottom:16px}
+.pcol{flex:1;text-align:center;background:var(--card2);border:1px solid var(--sep);border-radius:16px;padding:14px 4px 12px}
+.pcol.p1{border-color:rgba(255,194,75,.45);padding-top:22px}
+.pcol.p2,.pcol.p3{padding-top:16px}
+.pav{width:46px;height:46px;border-radius:50%;margin:0 auto 8px;background:var(--card);overflow:hidden;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:17px;border:2.5px solid var(--sep)}
+.p1 .pav{width:56px;height:56px;border-color:var(--gold)}
+.p2 .pav{border-color:#C7C7CC}
+.p3 .pav{border-color:#CD7F32}
+.pav img{width:100%;height:100%;object-fit:cover}
+.pnm{font-size:11.5px;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ppt{font-size:13px;font-weight:900;color:var(--acc);margin-top:3px;font-variant-numeric:tabular-nums}
+.prk{font-size:15px;margin-top:2px}
+.lbrow{display:flex;align-items:center;gap:11px;padding:11px 0;border-bottom:1px solid var(--sep)}
+.lbrow:last-child{border-bottom:none}
+.lbrk{width:26px;height:26px;border-radius:8px;background:var(--card2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:800;color:var(--dim);flex-shrink:0}
+.lbn{flex:1;min-width:0}
+.lbp{font-size:14px;font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums}
+.youtag{background:var(--acc);color:#000;font-size:9px;font-weight:800;padding:2px 7px;border-radius:99px;margin-left:6px}
+nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:480px;display:flex;background:#000;border-top:1px solid var(--sep);padding:8px 2px calc(8px + env(safe-area-inset-bottom));z-index:50}
+.nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:0;font-size:9.5px;font-weight:600;color:var(--dim);background:none;border:none;font-family:inherit;cursor:pointer}
+.navic{width:37px;height:37px;border-radius:50%;display:flex;align-items:center;justify-content:center}
+.nav-btn .ic{width:20px;height:20px}
+.nav-btn.active{color:var(--acc);font-weight:700}
+.nav-btn.active .navic{background:rgba(74,222,128,.16)}
+.amtwrap{position:relative}
+.maxb{position:absolute;right:9px;top:9px;background:var(--acc);color:#000;border:none;font-size:10px;font-weight:800;padding:7px 12px;border-radius:9px;cursor:pointer;font-family:inherit}
+.wheelwrap{position:relative;width:264px;height:264px;margin:6px auto 4px}
+#wheel{width:100%;height:100%;display:block;transition:transform 4.2s cubic-bezier(.12,.67,.16,1);will-change:transform}
+.pointer{position:absolute;top:-6px;left:50%;transform:translateX(-50%);width:0;height:0;border-left:11px solid transparent;border-right:11px solid transparent;border-top:20px solid var(--acc);z-index:3}
+.hub{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:78px;height:78px;border-radius:50%;background:#000;border:2px solid #2A2A2A;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;z-index:2;letter-spacing:1px}
+.gres{display:flex;gap:6px;flex-wrap:wrap;margin-top:12px}
+.gtag{font-size:11px;font-weight:700;padding:6px 11px;border-radius:999px;background:var(--card2);color:var(--dim)}
+.gtag.win{background:var(--acc);color:#000}
+.flash{border-color:var(--acc)!important}
+</style>
+</head>
+<body>
+
+<div id="locked" class="screen hide">
+  <div class="bigwrap"><i class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><circle cx="12" cy="16" r="1.5"/></svg></i></div>
+  <h2 data-i18n="locked_t">Multiple Accounts Detected</h2>
+  <p data-i18n="locked_p">Multiple accounts detected by IP.</p>
+</div>
+<div id="errscreen" class="screen hide">
+  <div class="bigwrap"><i class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/><path d="M12 16h.01"/></svg></i></div>
+  <h2 data-i18n="err_t">Something went wrong</h2>
+  <p id="errMsg">Please close and reopen the app.</p>
+</div>
+<div id="nottg" class="screen hide">
+  <div class="bigwrap"><i class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m21 4-18 7.5 5.5 2L10 19l3-3.5 4.5 3z"/></svg></i></div>
+  <h2 data-i18n="open_tg">Open in Telegram</h2>
+  <p data-i18n="open_tg_s">Please open this app inside Telegram.</p>
+</div>
+
+<main>
+<div id="app">
+  <div class="header">
+    <div class="avatar" id="avatar">?</div>
+    <div>
+      <p class="hname" id="hello">Hi</p>
+      <p class="hsub" data-i18n="lets_earn">Let's earn together</p>
+    </div>
+    <button class="langbtn" onclick="toggleLang()"><i class="ic sm" data-ic="globe"></i><span id="langLbl">አማርኛ</span></button>
+  </div>
+
+  <!-- HOME -->
+  <section id="tab-home">
+    <div class="balance">
+      <svg class="deco" viewBox="0 0 120 120">
+        <defs><pattern id="dg" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="#3A3A3A"/></pattern>
+        <radialGradient id="rg"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient>
+        <mask id="dm"><rect width="120" height="120" fill="url(#rg)"/></mask></defs>
+        <rect width="120" height="120" fill="url(#dg)" mask="url(#dm)"/>
+        <path d="M62 46l4.2 11.3L77.5 61.5l-11.3 4.2L62 77l-4.2-11.3L46.5 61.5l11.3-4.2z" fill="#4ADE80"/>
+      </svg>
+      <div class="balrow">
+        <p class="hero-label" data-i18n="your_balance">Your Balance</p>
+        <button class="eyeb" onclick="toggleBal()"><i class="ic sm" id="eyeIc" data-ic="eye"></i></button>
+      </div>
+      <p class="hero-amt"><span id="points">…</span><span class="ptsfx">ETB</span></p>
+    </div>
+
+    <div class="sechead"><h3 data-i18n="quick_actions">Quick Actions</h3></div>
+    <div class="qa-grid">
+      <button class="qa" onclick="doCheckin()"><i class="ic lg" data-ic="calcheck"></i><b data-i18n="qa1t">Daily Check-in</b><span data-i18n="qa1s">Claim your reward</span></button>
+      <button class="qa" onclick="gotoAds()"><i class="ic lg" data-ic="play"></i><b data-i18n="qa2t">Watch Ads</b><span data-i18n="qa2s">Earn instantly</span></button>
+      <button class="qa" onclick="switchTab('friends')"><i class="ic lg" data-ic="userplus"></i><b data-i18n="qa3t">Invite Friends</b><span data-i18n="qa3s">Earn together</span></button>
+    </div>
+
+    <div id="adCard"></div>
+
+    <div class="sechead"><h3 data-i18n="recent_activity">Recent Activity</h3><button class="viewall" id="viewAllBtn" onclick="toggleViewAll()" style="display:none" data-i18n="view_all">View all</button></div>
+    <div id="actList"></div>
+
+    <div class="sechead" style="margin-top:18px"><h3 data-i18n="reviews">User Reviews</h3></div>
+    <div id="revList"></div>
+  </section>
+
+  <!-- TASKS -->
+  <section id="tab-tasks" class="hide">
+    <div class="card">
+      <p class="ctitle"><i class="ic" data-ic="flame"></i> <span data-i18n="daily_streak">Daily Streak</span></p>
+      <div class="dots" id="dots2"></div>
+      <button class="btn" id="checkinBtn2" onclick="doCheckin()" disabled>Loading…</button>
+      <p class="streaknote" id="streakNote" style="margin-top:10px"></p>
+    </div>
+    <div class="card">
+      <p class="ctitle"><i class="ic" data-ic="check"></i> <span data-i18n="tasks_t">Tasks</span></p>
+      <div id="taskList"><p class="empty">Loading…</p></div>
+      <p class="note" data-i18n="task_note">Tap Start, join/follow, come back and tap Verify.</p>
+    </div>
+    <div class="card">
+      <p class="ctitle"><i class="ic" data-ic="gift"></i> <span data-i18n="ref_bonus">Referral bonus</span></p>
+      <p style="font-size:13px;line-height:1.65;color:var(--dim)" data-i18n-html="ref_bonus_html">Complete any 3 tasks to unlock your inviter's +50 ETB.</p>
+    </div>
+  </section>
+
+  <!-- GAME -->
+  <section id="tab-game" class="hide">
+    <div class="card">
+      <p class="ctitle"><i class="ic" data-ic="game"></i> Lucky Wheel</p>
+      <div class="wheelwrap">
+        <div class="pointer"></div>
+        <svg id="wheel" viewBox="0 0 260 260"></svg>
+        <div class="hub" id="hub">SPIN</div>
+      </div>
+      <p class="lbl" style="margin-top:16px" data-i18n="your_bet">YOUR BET</p>
+      <div class="amtwrap">
+        <input id="gbet" type="number" class="inp" placeholder="50" inputmode="numeric">
+        <button class="maxb" onclick="maxBet()">MAX 5000</button>
+      </div>
+      <div class="chips">
+        <button class="chip" onclick="setBet(50)">50</button>
+        <button class="chip" onclick="setBet(100)">100</button>
+        <button class="chip" onclick="setBet(500)">500</button>
+        <button class="chip" onclick="setBet(1000)">1000</button>
+        <button class="chip" onclick="setBet(5000)">5000</button>
+      </div>
+      <button class="btn" id="spinBtn" onclick="playGame()" data-i18n="spin_btn">Spin the Wheel</button>
+      <div class="gres" id="gres"></div>
+      <p class="note" data-i18n="game_note">Multipliers: x1.5 · x2 · x3 — results are decided on the server. Play for fun.</p>
+    </div>
+  </section>
+
+  <!-- TOP / LEADERBOARD -->
+  <section id="tab-top" class="hide">
+    <div class="card">
+      <p class="ctitle"><i class="ic gold" data-ic="trophy"></i> <span data-i18n="leaderboard">Top 15 Earners</span></p>
+      <div id="lbPodium"></div>
+      <div id="lbList"></div>
+    </div>
+  </section>
+
+  <!-- FRIENDS -->
+  <section id="tab-friends" class="hide">
+    <div class="card">
+      <p class="ctitle"><i class="ic" data-ic="link"></i> <span data-i18n="ref_link">Your referral link</span></p>
+      <input id="link" class="linkbox" readonly>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="btn btn-ghost" onclick="copyLink()" data-i18n="copy">Copy</button>
+        <button class="btn" onclick="shareLink()" data-i18n="share">Share</button>
+      </div>
+      <p class="note" data-i18n-html="ref_note_html">You get +50 ETB when your friend completes any 3 tasks.</p>
+    </div>
+    <div class="card">
+      <div class="grid3">
+        <div><p class="gnum" id="refCount">0</p><p class="glbl" data-i18n="f_friends">Friends</p></div>
+        <div><p class="gnum" id="refPending">0</p><p class="glbl" data-i18n="f_pending">Pending</p></div>
+        <div><p class="gnum ok" id="refEarned">0</p><p class="glbl" data-i18n="f_earned">ETB earned</p></div>
+      </div>
+    </div>
+    <div class="card">
+      <p class="ctitle"><i class="ic" data-ic="users"></i> <span data-i18n="your_friends">Your friends</span></p>
+      <div id="refList"><p class="empty">…</p></div>
+    </div>
+  </section>
+
+  <!-- WALLET -->
+  <section id="tab-wallet" class="hide">
+    <div class="whero">
+      <p class="hero-label" data-i18n="balance_w">Balance</p>
+      <p class="wamt"><span id="wBalance">0</span><span>ETB</span></p>
+    </div>
+
+    <div class="card">
+      <p class="ctitle"><i class="ic" data-ic="shield"></i> <span data-i18n="wd_req">Withdrawal Requirements</span></p>
+      <div class="wreqrow"><span data-i18n="ads_watched_l">Ads watched</span><b id="rqAdsTxt">0/25</b></div>
+      <div class="bar"><i id="rqAdsBar" style="width:0%"></i></div>
+      <div class="wreqrow"><span data-i18n="friends_invited_l">Friends invited</span><b id="rqRefTxt">0/15</b></div>
+      <div class="bar"><i id="rqRefBar" style="width:0%"></i></div>
+      <div class="wdok hide" id="rqOk"><i class="ic sm" data-ic="check"></i><span data-i18n="wd_req_ok">Requirement met — you can withdraw!</span></div>
+      <p class="note" id="rqNote" data-i18n="wd_req_hint">Watch 25 ads and invite 15 friends (who complete 3 tasks) to unlock withdrawals. These are used up when you withdraw.</p>
+    </div>
+
+    <div class="card">
+      <p class="ctitle"><i class="ic" data-ic="dollar"></i> <span data-i18n="request_wd">Request Withdrawal</span></p>
+      <p class="lbl" data-i18n="amount_l">AMOUNT</p>
+      <div class="amtwrap">
+        <input id="amt" type="number" class="inp" placeholder="1000" inputmode="numeric">
+        <button class="maxb" onclick="maxAmt()">MAX</button>
+      </div>
+      <p class="lbl" data-i18n="method_l">METHOD</p>
+      <div class="mgrid" id="methods"></div>
+      <p class="lbl" data-i18n="account_l">YOUR ACCOUNT</p>
+      <input id="acct" class="inp" placeholder="">
+      <button class="btn" onclick="doWithdraw()" data-i18n="request_wd">Request Withdrawal</button>
+      <p class="note" data-i18n="wd_note">Processed manually within 24–48 hours.</p>
+    </div>
+
+    <div class="card">
+      <p class="ctitle"><i class="ic" data-ic="list"></i> <span data-i18n="history">History</span></p>
+      <div id="history"><p class="empty">…</p></div>
+    </div>
+  </section>
+
+  <nav>
+    <button class="nav-btn active" data-t="home" onclick="switchTab('home')"><span class="navic"><i class="ic" data-ic="home"></i></span><span data-i18n="nav_home">Home</span></button>
+    <button class="nav-btn" data-t="tasks" onclick="switchTab('tasks')"><span class="navic"><i class="ic" data-ic="check"></i></span><span data-i18n="nav_tasks">Tasks</span></button>
+    <button class="nav-btn" data-t="game" onclick="switchTab('game')"><span class="navic"><i class="ic" data-ic="game"></i></span><span data-i18n="nav_game">Game</span></button>
+    <button class="nav-btn" data-t="top" onclick="switchTab('top')"><span class="navic"><i class="ic" data-ic="trophy"></i></span><span data-i18n="nav_top">Top</span></button>
+    <button class="nav-btn" data-t="friends" onclick="switchTab('friends')"><span class="navic"><i class="ic" data-ic="users"></i></span><span data-i18n="nav_friends">Friends</span></button>
+    <button class="nav-btn" data-t="wallet" onclick="switchTab('wallet')"><span class="navic"><i class="ic" data-ic="wallet"></i></span><span data-i18n="nav_wallet">Wallet</span></button>
+  </nav>
+</div>
+</main>
 <script>
 const BOT_USERNAME = "EbSupabaseBot";
 const APP_NAME = "refer";
