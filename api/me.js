@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
     const id = tgId(initData);
 
     const { data: user } = await supabase.from('users')
-      .select('points, streak, last_checkin, first_name, referral_code, photo_url, ads_watched, last_ad_date')
+      .select('points, streak, last_checkin, first_name, referral_code, photo_url, ads_watched, last_ad_date, ads_total, ads_used, refs_used')
       .eq('telegram_id', id).maybeSingle();
     if (!user) return res.status(404).json({ error: 'Not found' });
 
@@ -52,6 +52,9 @@ module.exports = async (req, res) => {
       pending = invited.filter(p => !paidSet.has(p.telegram_id)).length;
     }
 
+    const { count: refsTotal } = await supabase.from('referrals')
+      .select('id', { count: 'exact', head: true }).eq('referrer_id', id);
+
     const { data: activeTasks } = await supabase.from('tasks')
       .select('id, title, icon, reward, link').eq('active', true).order('id');
 
@@ -65,22 +68,39 @@ module.exports = async (req, res) => {
       .select('icon, title, points, created_at').eq('user_id', id)
       .order('created_at', { ascending: false }).limit(20);
 
+    const { data: lb } = await supabase.from('users')
+      .select('telegram_id, first_name, photo_url, points')
+      .order('points', { ascending: false }).limit(15);
+
+    const { data: rev } = await supabase.from('reviews')
+      .select('name, message, stars, created_at')
+      .order('created_at', { ascending: false }).limit(12);
+
     const todayISO = new Date().toISOString().slice(0, 10);
 
     return res.status(200).json({
+      tg_id: id,
       points: user.points,
       streak: user.streak || 0,
       last_checkin: user.last_checkin,
       first_name: user.first_name,
       referral_code: user.referral_code,
       photo_url: user.photo_url,
-      ads: { watched: user.last_ad_date === todayISO ? (user.ads_watched || 0) : 0, limit: 10 },
+      ads: { watched: user.last_ad_date === todayISO ? (user.ads_watched || 0) : 0, limit: 25 },
+      wd: {
+        ads_total: user.ads_total || 0,
+        ads_used: user.ads_used || 0,
+        refs_total: refsTotal || 0,
+        refs_used: user.refs_used || 0
+      },
       tasks: activeTasks || [],
       tasks_done: (tdone || []).map(t => t.task_key),
       referrals,
       pending,
       withdrawals: hist || [],
-      activities: acts || []
+      activities: acts || [],
+      leaderboard: lb || [],
+      reviews: rev || []
     });
   } catch (e) {
     return res.status(500).json({ error: e.message });
