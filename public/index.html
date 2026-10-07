@@ -36,7 +36,6 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .langbtn:active{transform:scale(.94)}
 /* ---------- hero balance ---------- */
 .balance{position:relative;overflow:hidden;background:radial-gradient(130% 90% at 50% -10%,rgba(74,222,128,.08),transparent 55%),var(--card);border:1px solid var(--sep);border-radius:22px;padding:22px;margin-bottom:24px}
-.balance::before,.card::before,.wecard::before,.whero::before{content:'';position:absolute;top:0;left:16px;right:16px;height:1px;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.09),transparent);pointer-events:none}
 .balance::after{content:'';position:absolute;top:-1px;left:24%;right:24%;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(74,222,128,.6),transparent)}
 .deco{position:absolute;right:8px;top:50%;transform:translateY(-50%);width:108px;height:108px;pointer-events:none;opacity:.9}
 .balrow{display:flex;align-items:center;gap:9px}
@@ -51,19 +50,18 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .sechead{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 12px}
 .sechead h3{font-size:15.5px;font-weight:800;letter-spacing:-.2px}
 .viewall{color:var(--acc);font-size:12px;font-weight:700;background:none;border:none;font-family:inherit;cursor:pointer;padding:4px}
-/* ---------- quick actions — aligned premium ---------- */
-.qa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:24px}
-.qa{position:relative;overflow:hidden;display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:16px 6px 14px;border-radius:20px;background:radial-gradient(120% 70% at 50% 0%,rgba(74,222,128,.06),transparent 60%),var(--card);border:1px solid var(--sep);cursor:pointer;font-family:inherit;color:#fff;transition:transform .13s,border-color .15s,box-shadow .2s;box-shadow:0 6px 20px rgba(0,0,0,.35)}
-.qa::before{content:'';position:absolute;top:0;left:14px;right:14px;height:1px;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.12),transparent)}
-.qa:active{transform:translateY(1px) scale(.965);border-color:rgba(74,222,128,.4);box-shadow:0 4px 26px var(--glow)}
-.qic{position:relative;width:48px;height:48px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin-bottom:11px;background:linear-gradient(160deg,rgba(74,222,128,.16),rgba(74,222,128,.05));border:1px solid rgba(74,222,128,.28);transition:box-shadow .2s}
-.qic .ic{width:21px;height:21px;color:#fff}
-.qa:active .qic{box-shadow:0 0 18px var(--glow)}
+/* ---------- quick actions — flat, aligned, compact ---------- */
+.qa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:24px}
+.qa{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:13px 6px 12px;border-radius:16px;background:var(--card);border:1px solid var(--sep);cursor:pointer;font-family:inherit;color:#fff;transition:transform .12s,border-color .15s}
+.qa:active{transform:scale(.96);border-color:rgba(74,222,128,.4)}
+.qic{width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;margin-bottom:9px;background:rgba(74,222,128,.09);border:1px solid rgba(74,222,128,.2)}
+.qic .ic{width:18px;height:18px;color:#fff}
 .qa b{display:block;font-size:12.5px;font-weight:700;letter-spacing:-.1px;white-space:nowrap}
-.qpts{display:block;font-size:11px;color:var(--acc);font-weight:700;margin-top:4px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.qpts{display:block;font-size:9.5px;color:var(--acc);font-weight:600;margin-top:3px;white-space:nowrap;font-variant-numeric:tabular-nums;opacity:.9}
 /* ---------- cards ---------- */
 .card{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--sep);border-radius:18px;padding:16px;margin-bottom:20px;box-shadow:0 6px 20px rgba(0,0,0,.3)}
-.ctitle{font-size:14px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:9px;letter-spacing:-.1px}
+.card::before,.wecard::before,#actList::before,.rev::before,.whero::before{content:'';position:absolute;top:0;left:16px;right:16px;height:1px;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.14),transparent);pointer-events:none;z-index:1}
+.ctitle{font-size:14px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:9px;letter-spacing:-.1px;position:relative;z-index:2}
 /* ---------- buttons ---------- */
 .btn{width:100%;padding:14px;border-radius:15px;border:none;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;color:#000;background:var(--acc);transition:transform .12s,box-shadow .2s,opacity .15s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 4px 22px var(--glow)}
 .btn:active{transform:scale(.97);box-shadow:0 2px 12px var(--glow)}
@@ -130,9 +128,8 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .wemeta{font-size:11.5px;color:var(--dim);font-weight:500;margin-bottom:13px}
 .wemeta b{color:#fff;font-weight:700}
 /* ---------- compact activity ---------- */
-#actList{background:var(--card);border:1px solid var(--sep);border-radius:18px;padding:3px 15px;box-shadow:0 6px 20px rgba(0,0,0,.3)}
-.act{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--sep);animation:fadeup .3s ease both}
-.act:nth-child(2){animation-delay:.04s}.act:nth-child(3){animation-delay:.08s}.act:nth-child(4){animation-delay:.12s}
+#actList{position:relative;overflow:hidden;background:var(--card);border:1px solid var(--sep);border-radius:18px;padding:3px 15px;box-shadow:0 6px 20px rgba(0,0,0,.3)}
+.act{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--sep);animation:fadeup .3s ease both;position:relative;z-index:2}
 .act:last-child{border-bottom:none}
 .aic{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .aic.pos{background:rgba(74,222,128,.13);color:var(--acc)}
@@ -145,11 +142,10 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .apl{font-size:10px;color:var(--dim);font-weight:500;text-align:right}
 /* ---------- reviews ---------- */
 .rev{background:var(--card);border:1px solid var(--sep);border-radius:16px;padding:13px 15px;margin-bottom:8px;position:relative;overflow:hidden;animation:fadeup .3s ease both}
-.rev::before{content:'';position:absolute;top:0;left:14px;right:14px;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.07),transparent)}
-.revtop{display:flex;align-items:center;gap:10px}
+.revtop{display:flex;align-items:center;gap:10px;position:relative;z-index:2}
 .rstars{color:var(--gold);font-size:11px;letter-spacing:1.5px;margin-top:2px}
 .rago{margin-left:auto;font-size:10.5px;color:var(--dim);flex-shrink:0}
-.rmsg{font-size:12.5px;color:#CFCFCF;margin-top:9px;line-height:1.55;font-weight:500}
+.rmsg{font-size:12.5px;color:#CFCFCF;margin-top:9px;line-height:1.55;font-weight:500;position:relative;z-index:2}
 /* ---------- wallet ---------- */
 .whero{position:relative;overflow:hidden;background:radial-gradient(130% 90% at 50% -10%,rgba(74,222,128,.08),transparent 55%),var(--card);border:1px solid var(--sep);border-radius:22px;padding:24px;text-align:center;margin-bottom:20px}
 .whero::after{content:'';position:absolute;top:-1px;left:24%;right:24%;height:2px;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(74,222,128,.6),transparent)}
@@ -379,8 +375,10 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
       <div class="bar"><i id="rqAdsBar" style="width:0%"></i></div>
       <div class="wreqrow"><span data-i18n="friends_invited_l">Friends invited</span><b id="rqRefTxt">0/15</b></div>
       <div class="bar"><i id="rqRefBar" style="width:0%"></i></div>
+      <div class="wreqrow"><span data-i18n="spins_l">Wheel spins</span><b id="rqSpinTxt">0/10</b></div>
+      <div class="bar"><i id="rqSpinBar" style="width:0%"></i></div>
       <div class="wdok hide" id="rqOk"><i class="ic sm" data-ic="check"></i><span data-i18n="wd_req_ok">Requirement met — you can withdraw!</span></div>
-      <p class="note" id="rqNote" data-i18n="wd_req_hint">Watch 25 ads and invite 15 friends (who complete 3 tasks) to unlock withdrawals. These are used up when you withdraw.</p>
+      <p class="note" id="rqNote" data-i18n="wd_req_hint">Watch 25 ads, invite 15 friends (who complete 3 tasks) and spin the wheel 10 times to unlock withdrawals. These are used up when you withdraw.</p>
     </div>
 
     <div class="card">
@@ -419,7 +417,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 const BOT_USERNAME = "EbSupabaseBot";
 const APP_NAME = "refer";
 const MIN_WD = 1000;
-const ADS_REQ = 25, FRIENDS_REQ = 15;
+const ADS_REQ = 25, FRIENDS_REQ = 15, SPINS_REQ = 10;
 const STREAK_REWARDS = [10, 30, 40, 60, 70, 80, 100];
 const REF_REWARD = 50;
 
@@ -435,7 +433,6 @@ const METHODS = {
   binance:{label:'Binance Pay',img:'https://cdn.phototourl.com/member/2026-10-07-3c1c8522-4773-47e4-b0c4-14e1451b0f2d.png',ph:'Binance Pay ID'}
 };
 
-/* Lucide-style premium icons — all white, refined strokes */
 const IC = {
   home:'<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
   check:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
@@ -480,9 +477,9 @@ const LANGS = {
     f_friends:'Friends',f_pending:'Pending',f_earned:'ETB earned',your_friends:'Your friends',no_refs:'No referrals yet — share your link',
     leaderboard:'Top 15 Earners',lb_empty:'Leaderboard is empty',you:'You',
     balance_w:'Balance',
-    wd_req:'Withdrawal Requirements',ads_watched_l:'Ads watched',friends_invited_l:'Friends invited',
+    wd_req:'Withdrawal Requirements',ads_watched_l:'Ads watched',friends_invited_l:'Friends invited',spins_l:'Wheel spins',
     wd_req_ok:'Requirement met — you can withdraw!',
-    wd_req_hint:'Watch 25 ads and invite 15 friends (who complete 3 tasks) to unlock withdrawals. These are used up when you withdraw.',
+    wd_req_hint:'Watch 25 ads, invite 15 friends (who complete 3 tasks) and spin the wheel 10 times to unlock withdrawals. These are used up when you withdraw.',
     amount_l:'AMOUNT',method_l:'METHOD',account_l:'YOUR ACCOUNT',request_wd:'Request Withdrawal',
     wd_note:'Processed manually within 24–48 hours. Double-check your account details.',
     history:'History',no_wd:'No withdrawals yet',
@@ -511,9 +508,9 @@ const LANGS = {
     f_friends:'ጓደኞች',f_pending:'ቆይተዋል',f_earned:'የተገኘ ETB',your_friends:'ጓደኞችዎ',no_refs:'እስካሁን ግብዣ የለም — አገናኝዎን ያጋሩ',
     leaderboard:'ምርጥ 15 ተሸላሚዎች',lb_empty:'ዝርዝሩ ባዶ ነው',you:'እርስዎ',
     balance_w:'ሂሳብ',
-    wd_req:'የመውጫ መስፈርቶች',ads_watched_l:'የተመለከቱ ማስታወቂያዎች',friends_invited_l:'የጋበዙዋቸው ጓደኞች',
+    wd_req:'የመውጫ መስፈርቶች',ads_watched_l:'የተመለከቱ ማስታወቂያዎች',friends_invited_l:'የጋበዙዋቸው ጓደኞች',spins_l:'የዊል ስፒኖች',
     wd_req_ok:'መስፈርቱ ተሟልቷል — መውጫ ይክፈቱ!',
-    wd_req_hint:'መውጫ ለመክፈት 25 ማስታወቂያዎች ይመልከቱ እና 15 ጓደኛዎችን ይጋብዙ። ሲወጡ ይቀነሳሉ።',
+    wd_req_hint:'መውጫ ለመክፈት 25 ማስታወቂያዎች ይመልከቱ፣ 15 ጓደኛዎችን ይጋብዙ እና 10 ጊዜ ዊሉን ያሽከርክሩ። ሲወጡ ይቀነሳሉ።',
     amount_l:'መጠን',method_l:'ዘዴ',account_l:'የመለያዎ',request_wd:'የመውጫ ጥያቄ',
     wd_note:'በ24–48 ሰዓት ውስጥ በእጅ ይከፈላል። የመለያ ዝርዝርዎን ያረጋግጡ።',
     history:'ታሪክ',no_wd:'እስካሁን መውጫ የለም',
@@ -690,14 +687,17 @@ function renderMethods() {
 }
 
 function renderWdReq() {
-  const w = me.wd || { ads_total: 0, ads_used: 0, refs_total: 0, refs_used: 0 };
+  const w = me.wd || { ads_total: 0, ads_used: 0, refs_total: 0, refs_used: 0, spins_total: 0, spins_used: 0 };
   const availAds = Math.max(0, (w.ads_total || 0) - (w.ads_used || 0));
   const availRefs = Math.max(0, (w.refs_total || 0) - (w.refs_used || 0));
+  const availSpins = Math.max(0, (w.spins_total || 0) - (w.spins_used || 0));
   $('rqAdsTxt').textContent = availAds + '/' + ADS_REQ;
   $('rqRefTxt').textContent = availRefs + '/' + FRIENDS_REQ;
+  $('rqSpinTxt').textContent = availSpins + '/' + SPINS_REQ;
   $('rqAdsBar').style.width = Math.min(100, availAds / ADS_REQ * 100) + '%';
   $('rqRefBar').style.width = Math.min(100, availRefs / FRIENDS_REQ * 100) + '%';
-  $('rqOk').classList.toggle('hide', !(availAds >= ADS_REQ && availRefs >= FRIENDS_REQ));
+  $('rqSpinBar').style.width = Math.min(100, availSpins / SPINS_REQ * 100) + '%';
+  $('rqOk').classList.toggle('hide', !(availAds >= ADS_REQ && availRefs >= FRIENDS_REQ && availSpins >= SPINS_REQ));
 }
 
 function renderHistory() {
