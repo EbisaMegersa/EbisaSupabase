@@ -31,14 +31,8 @@ module.exports = async (req, res) => {
     const chatId = msg.chat.id;
     const text = msg.text.trim();
 
-    // ---- regular users ----
+    // everyone except the admin: stay completely silent
     if (chatId !== ADMIN_ID) {
-      if (text.startsWith('/start')) {
-        await tg('sendMessage', {
-          chat_id: chatId,
-          text: '👋 Welcome!\n\nTap the 📋 Menu button (bottom-left) to open the app and start earning!'
-        });
-      }
       return res.status(200).json({ ok: true });
     }
 
@@ -87,17 +81,17 @@ module.exports = async (req, res) => {
       if (w.status !== 'pending') { await tg('sendMessage', { chat_id: chatId, text: '⚠️ #' + wid + ' is already ' + w.status + '.' }); return res.status(200).json({ ok: true }); }
       await supabase.from('withdrawals').update({ status: 'rejected' }).eq('id', wid);
       await supabase.rpc('add_points', { p_telegram_id: w.user_id, p_amount: w.points });
-      // refund consumed withdrawal requirements (ads + friends)
       const { data: ru } = await supabase.from('users')
-        .select('ads_used, refs_used').eq('telegram_id', w.user_id).maybeSingle();
+        .select('ads_used, refs_used, spins_used').eq('telegram_id', w.user_id).maybeSingle();
       if (ru) {
         await supabase.from('users').update({
           ads_used: Math.max(0, (ru.ads_used || 0) - (w.ads_c || 0)),
-          refs_used: Math.max(0, (ru.refs_used || 0) - (w.refs_c || 0))
+          refs_used: Math.max(0, (ru.refs_used || 0) - (w.refs_c || 0)),
+          spins_used: Math.max(0, (ru.spins_used || 0) - (w.spins_c || 0))
         }).eq('telegram_id', w.user_id);
       }
       try {
-        await tg('sendMessage', { chat_id: w.user_id, text: '❌ Your withdrawal of ' + w.points + ' ETB was rejected.\n\nYour ETB and withdrawal requirements (ads + friends) have been refunded.' });
+        await tg('sendMessage', { chat_id: w.user_id, text: '❌ Your withdrawal of ' + w.points + ' ETB was rejected.\n\nYour ETB and withdrawal requirements have been refunded.' });
       } catch (e) {}
       await tg('sendMessage', { chat_id: chatId, text: '❌ #' + wid + ' rejected. ETB + requirements refunded.' });
       return res.status(200).json({ ok: true });
@@ -126,7 +120,7 @@ module.exports = async (req, res) => {
       const title = (segs[1] || '').trim();
       if (!left || !title) {
         await tg('sendMessage', { chat_id: chatId,
-          text: 'Usage:\n/addtask 50 https://t.me/ebtry0 | Join our Channel\n\n• t.me links = auto-verified join check\n• other links = honor system (user taps Verify)\n• optional icon: /addtask 50 star https://… | Title\nIcons: star tg mega chat x yt camera note globe heart bell gift zap coin' });
+          text: 'Usage:\n/addtask 50 https://t.me/ebtry0 | Join our Channel\n\n• t.me links = auto-verified join check\n• other links = honor system\n• optional icon: /addtask 50 star https://… | Title' });
         return res.status(200).json({ ok: true });
       }
       const parts = left.split(/\s+/);
@@ -163,7 +157,7 @@ module.exports = async (req, res) => {
       const tid = parseInt(text.split(/\s+/)[1], 10);
       if (!tid) { await tg('sendMessage', { chat_id: chatId, text: 'Usage: /rmtask 4' }); return res.status(200).json({ ok: true }); }
       await supabase.from('tasks').update({ active: false }).eq('id', tid);
-      await tg('sendMessage', { chat_id: chatId, text: '⚪ Task #' + tid + ' hidden from the app. Restore: /undotask ' + tid });
+      await tg('sendMessage', { chat_id: chatId, text: '⚪ Task #' + tid + ' hidden. Restore: /undotask ' + tid });
       return res.status(200).json({ ok: true });
     }
 
@@ -185,7 +179,7 @@ module.exports = async (req, res) => {
       const stars = Math.min(5, Math.max(1, parseInt(p[2], 10) || 5));
       const { data: rv } = await supabase.from('reviews')
         .insert({ name: p[0], message: p[1], stars }).select().single();
-      await tg('sendMessage', { chat_id: chatId, text: '✅ Review #' + rv.id + ' added:\n\n' + p[0] + ' — ' + '★'.repeat(stars) + '\n"' + p[1] + '"\n\nNow showing in the app. Delete: /delreview ' + rv.id });
+      await tg('sendMessage', { chat_id: chatId, text: '✅ Review #' + rv.id + ' added:\n\n' + p[0] + ' — ' + '★'.repeat(stars) + '\n"' + p[1] + '"\n\nDelete: /delreview ' + rv.id });
       return res.status(200).json({ ok: true });
     }
 
@@ -198,7 +192,7 @@ module.exports = async (req, res) => {
     }
 
     await tg('sendMessage', { chat_id: chatId,
-      text: '👑 ADMIN COMMANDS\n\n/pending — pending withdrawals\n/paid 3 — approve & notify\n/reject 3 — reject & refund (ETB + requirements)\n\n/tasks — list tasks\n/addtask 50 https://t.me/ebtry0 | Title\n/rmtask 4 — hide task\n/undotask 4 — restore task\n\n/review Name | Message | 5 — add review\n/delreview 3 — delete review' });
+      text: '👑 ADMIN COMMANDS\n\n/pending — pending withdrawals\n/paid 3 — approve & notify\n/reject 3 — reject & refund\n\n/tasks — list tasks\n/addtask 50 https://t.me/ebtry0 | Title\n/rmtask 4 — hide task\n/undotask 4 — restore task\n\n/review Name | Message | 5 — add review\n/delreview 3 — delete review' });
     return res.status(200).json({ ok: true });
   } catch (e) {
     return res.status(200).json({ ok: true });
