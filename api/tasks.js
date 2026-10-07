@@ -2,7 +2,8 @@ const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-const REQUIRED_TASKS = 3;
+const REQUIRED_TASKS = 3;   // invitee must complete ANY 3 tasks
+const REF_REWARD = 50;      // referrer earns 50 ETB per qualified friend
 
 function valid(initData) {
   if (!initData) return false;
@@ -54,6 +55,7 @@ module.exports = async (req, res) => {
       user_id: id, icon: 'check', title: taskRow.title, points: taskRow.reward
     });
 
+    // ---- qualified referral: ANY 3 tasks completed ----
     const { count: doneCount } = await supabase.from('task_completions')
       .select('id', { count: 'exact', head: true }).eq('user_id', id);
 
@@ -67,11 +69,11 @@ module.exports = async (req, res) => {
 
         if (!already) {
           await supabase.from('referrals').insert({
-            referrer_id: me2.referred_by, referred_id: id, reward_points: 100
+            referrer_id: me2.referred_by, referred_id: id, reward_points: REF_REWARD
           });
-          await supabase.rpc('add_points', { p_telegram_id: me2.referred_by, p_amount: 100 });
+          await supabase.rpc('add_points', { p_telegram_id: me2.referred_by, p_amount: REF_REWARD });
           await supabase.from('activities').insert({
-            user_id: me2.referred_by, icon: 'userplus', title: 'Friend Invite Bonus', points: 100
+            user_id: me2.referred_by, icon: 'userplus', title: 'Friend Invite Bonus', points: REF_REWARD
           });
           try {
             await fetch('https://api.telegram.org/bot' + process.env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
@@ -79,7 +81,7 @@ module.exports = async (req, res) => {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 chat_id: me2.referred_by,
-                text: '🎉 ' + (me2.first_name || 'Your friend') + ' completed 3 tasks!\n💰 Your +100 referral points have been added.'
+                text: '🎉 ' + (me2.first_name || 'Your friend') + ' completed 3 tasks!\n💰 Your +' + REF_REWARD + ' ETB referral reward has been added.'
               })
             });
           } catch (e) {}
