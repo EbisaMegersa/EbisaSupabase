@@ -2,14 +2,7 @@ const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-const MIN_BET = 50;
-const MAX_BET = 5000;
-const TABLE = [
-  { m: 0,   w: 52 },
-  { m: 1.5, w: 20 },
-  { m: 2,   w: 18 },
-  { m: 3,   w: 10 }
-];
+const REWARDS = [10, 30, 40, 60, 70, 80, 100];
 
 function valid(initData) {
   if (!initData) return false;
@@ -31,30 +24,36 @@ function tgId(initData) {
 
 module.exports = async (req, res) => {
   try {
-    const { initData, bet } = req.body || {};
+    const { initData } = req.body || {};
     if (!valid(initData)) return res.status(401).json({ error: 'Unauthorized' });
     const id = tgId(initData);
 
-    const amt = Number(bet);
-    if (!Number.isInteger(amt) || amt < MIN_BET) return res.status(400).json({ error: 'Minimum bet is ' + MIN_BET + ' ETB' });
-    if (amt > MAX_BET) return res.status(400).json({ error: 'Maximum bet is ' + MAX_BET + ' ETB' });
+    const { data: user, error: ue } = await supabase.from('users')
+      .select('last_checkin, streak').eq('telegram_id', id).maybeSingle();
+    if (ue) return res.status(500).json({ error: ue.message });
+    if (!user) return res.status(404).json({ error: 'User not found — reopen the app' });
 
-    const { data: user } = await supabase.from('users').select('points').eq('telegram_id', id).maybeSingle();
-    if (!user) return res.status(404).json({ error: 'User not found' });
-    if (amt > user.points) return res.status(400).json({ error: 'Not enough balance' });
+    const today = new Date().toISOString().slice(0, 10);
+    const yesterday = new Date(Date.now() - 86400000).toISOString().slice(0, 10);
 
-    let r = Math.random() * 100;
-    let mult = 0;
-    for (const o of TABLE) {
-      if (r < o.w) { mult = o.m; break; }
-      r -= o.w;
+    if (user.last_checkin === today) {
+      return res.status(200).json({ already: true, streak: user.streak || 0 });
     }
 
-    const win = Math.floor(amt * mult);
-    const net = win - amt;
-    await supabase.rpc('add_points', { p_telegram_id: id, p_amount: net });
+    const streak = (user.last_checkin === yesterday) ? (user.streak || 0) + 1 : 1;
+    const reward = REWARDS[Math.min(streak - 1, REWARDS.length - 1)];
 
-    return res.status(200).json({ mult, win, balance: user.points + net });
+    const { error: upErr } = await supabase.from('users')
+      .update({ last_checkin: today, streak }).eq('telegram_id', id);
+    if (upErr) return res.status(500).json({ error: upErr.message });
+
+    const { error: ptErr } = await supabase.rpc('add_points', { p_telegram_id: id, p_amount: reward });
+    if (ptErr) return res.status(500).json({ error: ptErr.message });
+
+    // activity log — never allowed to break the check-in
+    try { await supabase.from('activities').insert({ user_id: id, icon: 'check', title: 'Daily Check-in', points: reward }); } catch (e) {}
+
+    return res.status(200).json({ ok: true, reward, streak });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
