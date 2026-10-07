@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-const MIN_BET = 10;
+const MIN_BET = 50;
 const MAX_BET = 5000;
 const TABLE = [
   { m: 0,   w: 52 },
@@ -36,12 +36,13 @@ module.exports = async (req, res) => {
     const id = tgId(initData);
 
     const amt = Number(bet);
-    if (!Number.isInteger(amt) || amt < MIN_BET) return res.status(400).json({ error: 'Minimum bet is ' + MIN_BET + ' pts' });
-    if (amt > MAX_BET) return res.status(400).json({ error: 'Maximum bet is ' + MAX_BET + ' pts' });
+    if (!Number.isInteger(amt) || amt < MIN_BET) return res.status(400).json({ error: 'Minimum bet is ' + MIN_BET + ' ETB' });
+    if (amt > MAX_BET) return res.status(400).json({ error: 'Maximum bet is ' + MAX_BET + ' ETB' });
 
-    const { data: user } = await supabase.from('users').select('points').eq('telegram_id', id).maybeSingle();
+    const { data: user } = await supabase.from('users')
+      .select('points, spins_total').eq('telegram_id', id).maybeSingle();
     if (!user) return res.status(404).json({ error: 'User not found' });
-    if (amt > user.points) return res.status(400).json({ error: 'Not enough points' });
+    if (amt > user.points) return res.status(400).json({ error: 'Not enough balance' });
 
     let r = Math.random() * 100;
     let mult = 0;
@@ -54,9 +55,10 @@ module.exports = async (req, res) => {
     const net = win - amt;
     await supabase.rpc('add_points', { p_telegram_id: id, p_amount: net });
 
-    const { data: u2 } = await supabase.from('users').select('points').eq('telegram_id', id).maybeSingle();
+    // count every spin toward the withdrawal requirement
+    await supabase.from('users').update({ spins_total: (user.spins_total || 0) + 1 }).eq('telegram_id', id);
 
-    return res.status(200).json({ mult, win, balance: u2.points });
+    return res.status(200).json({ mult, win, balance: user.points + net });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
