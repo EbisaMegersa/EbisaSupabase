@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
     const id = tgId(initData);
 
     const { data: user } = await supabase.from('users')
-      .select('points, streak, last_checkin, first_name, referral_code, photo_url, ads_watched, last_ad_date, ads_total, ads_used, refs_used')
+      .select('points, streak, last_checkin, first_name, referral_code, photo_url, ads_watched, last_ad_date, ads_total, ads_used, refs_used, spins_total, spins_used')
       .eq('telegram_id', id).maybeSingle();
     if (!user) return res.status(404).json({ error: 'Not found' });
 
@@ -91,7 +91,9 @@ module.exports = async (req, res) => {
         ads_total: user.ads_total || 0,
         ads_used: user.ads_used || 0,
         refs_total: refsTotal || 0,
-        refs_used: user.refs_used || 0
+        refs_used: user.refs_used || 0,
+        spins_total: user.spins_total || 0,
+        spins_used: user.spins_used || 0
       },
       tasks: activeTasks || [],
       tasks_done: (tdone || []).map(t => t.task_key),
