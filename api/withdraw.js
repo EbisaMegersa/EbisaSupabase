@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+const { announceVoice } = require('../lib/voice');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 const METHODS = ['telebirr', 'mpesa', 'cbe', 'coop', 'abyssinia', 'awash', 'dashen', 'crypto', 'binance'];
@@ -62,37 +63,37 @@ module.exports = async (req, res) => {
     if (!METHODS.includes(method)) return res.status(400).json({ error: 'Choose a valid method' });
     if (!account || String(account).trim().length < 5) return res.status(400).json({ error: 'Enter your account details' });
 
-    // ---- 1) create the withdrawal record FIRST.
-    // if this fails, we stop here: no points lost, user sees the real reason.
+    // 1) create the record FIRST
     const { data: wd, error: insErr } = await supabase.from('withdrawals')
       .insert({
         user_id: id, points: amt, method, account: String(account).trim(),
         ads_c: ADS_REQUIRED, refs_c: FRIENDS_REQUIRED, spins_c: SPINS_REQUIRED
       })
       .select().single();
-
     if (insErr || !wd) {
       return res.status(500).json({ error: 'Could not save your request: ' + (insErr ? insErr.message : 'unknown error') });
     }
 
-    // ---- 2) deduct points. if this somehow fails, undo the record so nothing is stuck.
+    // 2) deduct points (rollback the record if this fails)
     const { error: ptErr } = await supabase.rpc('add_points', { p_telegram_id: id, p_amount: -amt });
     if (ptErr) {
       await supabase.from('withdrawals').delete().eq('id', wd.id);
       return res.status(500).json({ error: ptErr.message });
     }
 
-    // ---- 3) consume the requirements
+    // 3) consume requirements
     await supabase.from('users').update({
       ads_used: (user.ads_used || 0) + ADS_REQUIRED,
       refs_used: (user.refs_used || 0) + FRIENDS_REQUIRED,
       spins_used: (user.spins_used || 0) + SPINS_REQUIRED
     }).eq('telegram_id', id);
 
-    // ---- 4) activity log — must never break the flow
     try { await supabase.from('activities').insert({ user_id: id, icon: 'dollar', title: 'Withdrawal Request', points: -amt }); } catch (e) {}
 
-    // ---- 5) notify admin — report honestly if it failed
+    // 🔊 Amharic voice announcement
+    try { await announceVoice(id, amt + ' ብር ለዊዝድሮዋል አዘዋል'); } catch (e) {}
+
+    // 5) notify admin WITH approve/reject buttons
     let adminNotified = false;
     let adminNote = '';
     const adminId = process.env.ADMIN_TELEGRAM_ID;
@@ -105,12 +106,21 @@ module.exports = async (req, res) => {
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             chat_id: Number(String(adminId).trim()),
-            text: '🔔 NEW WITHDRAWAL REQUEST\n\nID: #' + wd.id +
-              '\n👤 ' + (user.first_name || 'User') + (user.username ? ' (@' + user.username + ')' : '') +
+            text: '🔔 WITHDRAWAL REQUEST #' + wd.id + '\n\n' +
+              '👤 ' + (user.first_name || 'User') + (user.username ? ' (@' + user.username + ')' : '') +
+              '\n🆔 ' + id +
               '\n💰 ' + amt + ' ETB' +
-              '\n💳 ' + method + ': ' + wd.account +
-              '\n📌 Used: ' + ADS_REQUIRED + ' ads + ' + FRIENDS_REQUIRED + ' friends + ' + SPINS_REQUIRED + ' spins' +
-              '\n\n✅ Approve: /paid ' + wd.id + '\n❌ Reject: /reject ' + wd.id
+              '\n💳 ' + method + ': ' + String(account).trim() +
+              '\n🏦 Balance now: ' + (user.points - amt) + ' ETB' +
+              '\n📌 Used: ' + ADS_REQUIRED + ' ads + ' + FRIENDS_REQUIRED + ' friends + ' + SPINS_REQUIRED + ' spins',
+            reply_markup: {
+              inline_keyboard: [
+                [
+                  { text: '✅ Approve', callback_data: 'wd:paid:' + wd.id },
+                  { text: '❌ Reject', callback_data: 'wd:rej:' + wd.id }
+                ]
+              ]
+            }
           })
         });
         const j = await resp.json();
