@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+const { announceVoice } = require('../lib/voice');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 const REWARDS = [10, 30, 40, 60, 70, 80, 100];
@@ -50,8 +51,10 @@ module.exports = async (req, res) => {
     const { error: ptErr } = await supabase.rpc('add_points', { p_telegram_id: id, p_amount: reward });
     if (ptErr) return res.status(500).json({ error: ptErr.message });
 
-    // activity log — never allowed to break the check-in
     try { await supabase.from('activities').insert({ user_id: id, icon: 'check', title: 'Daily Check-in', points: reward }); } catch (e) {}
+
+    // 🔊 Amharic voice announcement
+    try { await announceVoice(id, reward + ' ብር የዕለት ሽልማት አግኝተዋል, ' + reward + ' ብር ወደ ባላንሶ ገብቷል'); } catch (e) {}
 
     return res.status(200).json({ ok: true, reward, streak });
   } catch (e) {
