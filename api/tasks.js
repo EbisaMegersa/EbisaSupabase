@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+const { announceVoice } = require('../lib/voice');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 const REQUIRED_TASKS = 3;   // invitee must complete ANY 3 tasks
@@ -51,9 +52,10 @@ module.exports = async (req, res) => {
       user_id: id, task_key: String(taskRow.id), reward: taskRow.reward
     });
     await supabase.rpc('add_points', { p_telegram_id: id, p_amount: taskRow.reward });
-    await supabase.from('activities').insert({
-      user_id: id, icon: 'check', title: taskRow.title, points: taskRow.reward
-    });
+    try { await supabase.from('activities').insert({ user_id: id, icon: 'check', title: taskRow.title, points: taskRow.reward }); } catch (e) {}
+
+    // 🔊 Amharic voice for the task reward itself
+    try { await announceVoice(id, taskRow.reward + ' ብር መስራት ችለዋል, ' + taskRow.reward + ' ብር ወደ ባላንሶ ገብቷል'); } catch (e) {}
 
     // ---- qualified referral: ANY 3 tasks completed ----
     const { count: doneCount } = await supabase.from('task_completions')
@@ -72,9 +74,13 @@ module.exports = async (req, res) => {
             referrer_id: me2.referred_by, referred_id: id, reward_points: REF_REWARD
           });
           await supabase.rpc('add_points', { p_telegram_id: me2.referred_by, p_amount: REF_REWARD });
-          await supabase.from('activities').insert({
+          try { await supabase.from('activities').insert({
             user_id: me2.referred_by, icon: 'userplus', title: 'Friend Invite Bonus', points: REF_REWARD
-          });
+          }); } catch (e) {}
+
+          // 🔊 Amharic voice for the referrer
+          try { await announceVoice(me2.referred_by, 'ጓደኛዎ 3 ተግባራትን አጠናቋል, 50 ብር ወደ ባላንሶ ገብቷል'); } catch (e) {}
+
           try {
             await fetch('https://api.telegram.org/bot' + process.env.TELEGRAM_BOT_TOKEN + '/sendMessage', {
               method: 'POST',
