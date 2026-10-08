@@ -1,8 +1,9 @@
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+const { announceVoice } = require('../lib/voice');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
-const MAX_PER_IP = 2;
+const MAX_PER_IP = 2;      // ⬅️ max accounts allowed per IP/device (raise to 3-4 if innocent users get locked)
 
 function valid(initData) {
   if (!initData) return false;
@@ -46,6 +47,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ user, isNew: false });
     }
 
+    // ---- NEW registration: enforce IP + device limits ----
     const { count: ipCount } = await supabase.from('users')
       .select('id', { count: 'exact', head: true }).eq('last_ip', ip);
     const { count: devCount } = did
@@ -53,7 +55,10 @@ module.exports = async (req, res) => {
       : { count: 0 };
 
     if (ipCount >= MAX_PER_IP || devCount >= MAX_PER_IP) {
-      return res.status(403).json({ error: 'MULTI_ACCOUNT' });
+      return res.status(403).json({
+        error: 'MULTI_ACCOUNT',
+        message: 'Multiple accounts detected by IP. This device or network already has the maximum number of registered accounts (' + MAX_PER_IP + ').'
+      });
     }
 
     const { data: newUser, error } = await supabase.from('users').insert({
@@ -69,7 +74,10 @@ module.exports = async (req, res) => {
     if (error) return res.status(500).json({ error: error.message });
     user = newUser;
 
-    await supabase.from('activities').insert({ user_id: u.id, icon: 'star', title: 'Welcome Bonus', points: 25 });
+    try { await supabase.from('activities').insert({ user_id: u.id, icon: 'star', title: 'Welcome Bonus', points: 25 }); } catch (e) {}
+
+    // 🔊 Amharic voice welcome
+    try { await announceVoice(u.id, 'እንኳን ደህና መጡ, 25 ብር ስጦታ ወደ ባላንሶ ገብቷል'); } catch (e) {}
 
     if (startParam) {
       const { data: referrer } = await supabase.from('users')
