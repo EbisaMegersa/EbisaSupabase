@@ -875,7 +875,11 @@ async function doWithdraw() {
       me.points = d.balance;
       $('amt').value = ''; $('acct').value = '';
       haptic('success');
-      notify('Withdrawal of ' + fmt(amt) + ' ETB requested');
+      if (d.adminNotified === false) {
+        notify('Request #' + d.wdId + ' saved ✓\n\n⚠️ Admin was NOT notified: ' + (d.adminNote || 'unknown') + '\n\nThe admin will still see it with /pending.');
+      } else {
+        notify('Withdrawal of ' + fmt(amt) + ' ETB requested ✓');
+      }
       await loadMe();
     } else notify(d.error || 'Failed');
   } catch (e) { notify('Error: ' + e.message); }
@@ -1082,4 +1086,4 @@ async function playGame() {
 applyLang();
 </script>
 </body>
-</html>
+  </html>
