@@ -37,9 +37,33 @@ async function findUser(target) {
   return data;
 }
 
+async function doApprove(w) {
+  await supabase.from('withdrawals').update({ status: 'done' }).eq('id', w.id);
+  try {
+    await tg('sendMessage', { chat_id: w.user_id, text: '🎉 Payment sent!\n\nYour withdrawal of ' + w.points + ' ETB has been PAID to your ' + w.method + ' account:\n' + w.account });
+  } catch (e) {}
+}
+
+async function doReject(w) {
+  await supabase.from('withdrawals').update({ status: 'rejected' }).eq('id', w.id);
+  await supabase.rpc('add_points', { p_telegram_id: w.user_id, p_amount: w.points });
+  const { data: ru } = await supabase.from('users')
+    .select('ads_used, refs_used, spins_used').eq('telegram_id', w.user_id).maybeSingle();
+  if (ru) {
+    await supabase.from('users').update({
+      ads_used: Math.max(0, (ru.ads_used || 0) - (w.ads_c || 0)),
+      refs_used: Math.max(0, (ru.refs_used || 0) - (w.refs_c || 0)),
+      spins_used: Math.max(0, (ru.spins_used || 0) - (w.spins_c || 0))
+    }).eq('telegram_id', w.user_id);
+  }
+  try {
+    await tg('sendMessage', { chat_id: w.user_id, text: '❌ Your withdrawal of ' + w.points + ' ETB was rejected.\n\nYour ETB and withdrawal requirements have been refunded.' });
+  } catch (e) {}
+}
+
 module.exports = async (req, res) => {
   try {
-    // ---------- ✅ / ❌ BUTTON TAPS on withdrawal notifications ----------
+    // ---------- ✅ / ❌ BUTTON TAPS ----------
     const cq = (req.body || {}).callback_query;
     if (cq) {
       const data = cq.data || '';
@@ -60,50 +84,36 @@ module.exports = async (req, res) => {
 
       const p = data.split(':');
 
-      // ✅ Approve button — same as /paid
       if (p[0] === 'wd' && p[1] === 'paid') {
         const wid = parseInt(p[2], 10);
         const { data: w } = await supabase.from('withdrawals').select('*').eq('id', wid).maybeSingle();
         if (!w) { await answer('Not found'); return res.status(200).json({ ok: true }); }
         if (w.status !== 'pending') { await answer('Already ' + w.status); return res.status(200).json({ ok: true }); }
-        await supabase.from('withdrawals').update({ status: 'done' }).eq('id', wid);
-        try {
-          await tg('sendMessage', { chat_id: w.user_id, text: '🎉 Payment sent!\n\nYour withdrawal of ' + w.points + ' ETB has been PAID to your ' + w.method + ' account:\n' + w.account });
-        } catch (e) {}
-        await tg('editMessageText', {
-          chat_id: chatId, message_id: msgId,
-          text: origText + '\n\n✅ APPROVED — ' + w.points + ' ETB paid. User notified.',
-          reply_markup: { inline_keyboard: [] }
-        });
+        await doApprove(w);
+        if (msgId) {
+          await tg('editMessageText', {
+            chat_id: chatId, message_id: msgId,
+            text: origText + '\n\n✅ APPROVED — ' + w.points + ' ETB paid. User notified.',
+            reply_markup: { inline_keyboard: [] }
+          }).catch(() => {});
+        }
         await answer('Paid ✓ User notified');
         return res.status(200).json({ ok: true });
       }
 
-      // ❌ Reject button — same as /reject (refund ETB + requirements)
       if (p[0] === 'wd' && p[1] === 'rej') {
         const wid = parseInt(p[2], 10);
         const { data: w } = await supabase.from('withdrawals').select('*').eq('id', wid).maybeSingle();
         if (!w) { await answer('Not found'); return res.status(200).json({ ok: true }); }
         if (w.status !== 'pending') { await answer('Already ' + w.status); return res.status(200).json({ ok: true }); }
-        await supabase.from('withdrawals').update({ status: 'rejected' }).eq('id', wid);
-        await supabase.rpc('add_points', { p_telegram_id: w.user_id, p_amount: w.points });
-        const { data: ru } = await supabase.from('users')
-          .select('ads_used, refs_used, spins_used').eq('telegram_id', w.user_id).maybeSingle();
-        if (ru) {
-          await supabase.from('users').update({
-            ads_used: Math.max(0, (ru.ads_used || 0) - (w.ads_c || 0)),
-            refs_used: Math.max(0, (ru.refs_used || 0) - (w.refs_c || 0)),
-            spins_used: Math.max(0, (ru.spins_used || 0) - (w.spins_c || 0))
-          }).eq('telegram_id', w.user_id);
+        await doReject(w);
+        if (msgId) {
+          await tg('editMessageText', {
+            chat_id: chatId, message_id: msgId,
+            text: origText + '\n\n❌ REJECTED — ETB + requirements refunded.',
+            reply_markup: { inline_keyboard: [] }
+          }).catch(() => {});
         }
-        try {
-          await tg('sendMessage', { chat_id: w.user_id, text: '❌ Your withdrawal of ' + w.points + ' ETB was rejected.\n\nYour ETB and withdrawal requirements have been refunded.' });
-        } catch (e) {}
-        await tg('editMessageText', {
-          chat_id: chatId, message_id: msgId,
-          text: origText + '\n\n❌ REJECTED — ETB + requirements refunded.',
-          reply_markup: { inline_keyboard: [] }
-        });
         await answer('Rejected & refunded');
         return res.status(200).json({ ok: true });
       }
@@ -112,7 +122,7 @@ module.exports = async (req, res) => {
       return res.status(200).json({ ok: true });
     }
 
-    // ---------- NORMAL MESSAGES ----------
+    // ---------- MESSAGES ----------
     const msg = (req.body || {}).message;
     if (!msg || !msg.text) return res.status(200).json({ ok: true });
 
@@ -132,55 +142,11 @@ module.exports = async (req, res) => {
         await tg('sendMessage', { chat_id: chatId, text: '✅ No pending withdrawals.' });
         return res.status(200).json({ ok: true });
       }
-      let out = '⏳ PENDING WITHDRAWALS\n\n';
-      for (const w of list) {
-        const { data: u } = await supabase.from('users')
-          .select('first_name, username').eq('telegram_id', w.user_id).maybeSingle();
-        out += '#' + w.id + ' — ' + w.points + ' ETB\n👤 ' +
-          (u && u.first_name ? u.first_name : 'User') +
-          (u && u.username ? ' (@' + u.username + ')' : '') +
-          '\n💳 ' + w.method + ': ' + w.account +
-          '\n✅ /paid ' + w.id + '   •   ❌ /reject ' + w.id + '\n\n';
-      }
-      await tg('sendMessage', { chat_id: chatId, text: out });
-      return res.status(200).json({ ok: true });
-    }
-
-    if (text.startsWith('/paid')) {
-      const wid = parseInt(text.split(/\s+/)[1], 10);
-      if (!wid) { await tg('sendMessage', { chat_id: chatId, text: 'Usage: /paid 3' }); return res.status(200).json({ ok: true }); }
-      const { data: w } = await supabase.from('withdrawals').select('*').eq('id', wid).maybeSingle();
-      if (!w) { await tg('sendMessage', { chat_id: chatId, text: '❌ #' + wid + ' not found.' }); return res.status(200).json({ ok: true }); }
-      if (w.status !== 'pending') { await tg('sendMessage', { chat_id: chatId, text: '⚠️ #' + wid + ' is already ' + w.status + '.' }); return res.status(200).json({ ok: true }); }
-      await supabase.from('withdrawals').update({ status: 'done' }).eq('id', wid);
-      try {
-        await tg('sendMessage', { chat_id: w.user_id, text: '🎉 Payment sent!\n\nYour withdrawal of ' + w.points + ' ETB has been PAID to your ' + w.method + ' account:\n' + w.account });
-      } catch (e) {}
-      await tg('sendMessage', { chat_id: chatId, text: '✅ #' + wid + ' marked PAID. User notified.' });
-      return res.status(200).json({ ok: true });
-    }
-
-    if (text.startsWith('/reject')) {
-      const wid = parseInt(text.split(/\s+/)[1], 10);
-      if (!wid) { await tg('sendMessage', { chat_id: chatId, text: 'Usage: /reject 3' }); return res.status(200).json({ ok: true }); }
-      const { data: w } = await supabase.from('withdrawals').select('*').eq('id', wid).maybeSingle();
-      if (!w) { await tg('sendMessage', { chat_id: chatId, text: '❌ #' + wid + ' not found.' }); return res.status(200).json({ ok: true }); }
-      if (w.status !== 'pending') { await tg('sendMessage', { chat_id: chatId, text: '⚠️ #' + wid + ' is already ' + w.status + '.' }); return res.status(200).json({ ok: true }); }
-      await supabase.from('withdrawals').update({ status: 'rejected' }).eq('id', wid);
-      await supabase.rpc('add_points', { p_telegram_id: w.user_id, p_amount: w.points });
-      const { data: ru } = await supabase.from('users')
-        .select('ads_used, refs_used, spins_used').eq('telegram_id', w.user_id).maybeSingle();
-      if (ru) {
-        await supabase.from('users').update({
-          ads_used: Math.max(0, (ru.ads_used || 0) - (w.ads_c || 0)),
-          refs_used: Math.max(0, (ru.refs_used || 0) - (w.refs_c || 0)),
-          spins_used: Math.max(0, (ru.spins_used || 0) - (w.spins_c || 0))
-        }).eq('telegram_id', w.user_id);
-      }
-      try {
-        await tg('sendMessage', { chat_id: w.user_id, text: '❌ Your withdrawal of ' + w.points + ' ETB was rejected.\n\nYour ETB and withdrawal requirements have been refunded.' });
-      } catch (e) {}
-      await tg('sendMessage', { chat_id: chatId, text: '❌ #' + wid + ' rejected. ETB + requirements refunded.' });
+      const rows = list.slice(0, 20).map(w => ([
+        { text: '✅ Approve #' + w.id + ' (' + w.points + ' ETB)', callback_data: 'wd:paid:' + w.id },
+        { text: '❌', callback_data: 'wd:rej:' + w.id }
+      ]));
+      await tg('sendMessage', { chat_id: chatId, text: '⏳ PENDING WITHDRAWALS (' + list.length + ')\n\nTap ✅ to pay, ❌ to reject & refund:', reply_markup: { inline_keyboard: rows } });
       return res.status(200).json({ ok: true });
     }
 
@@ -340,7 +306,7 @@ module.exports = async (req, res) => {
     }
 
     await tg('sendMessage', { chat_id: chatId,
-      text: '👑 ADMIN COMMANDS\n\n/pending — pending withdrawals\n/paid 3 — approve & notify\n/reject 3 — reject & refund\n\n/addref 123456789 5 — add referrals (no ETB)\n/rmref 123456789 2 — remove bonus referrals\n\n/tasks — list tasks\n/addtask 50 https://t.me/ebtry0 | Title\n/rmtask 4 — hide task\n/undotask 4 — restore task\n\n/review Name | Message | 5 — add review\n/delreview 3 — delete review' });
+      text: '👑 ADMIN COMMANDS\n\n/pending — pending withdrawals (approve/reject with buttons)\n\n/addref 123456789 5 — add referrals (no ETB)\n/rmref 123456789 2 — remove bonus referrals\n\n/tasks — list tasks\n/addtask 50 https://t.me/ebtry0 | Title\n/rmtask 4 — hide task\n/undotask 4 — restore task\n\n/review Name | Message | 5 — add review\n/delreview 3 — delete review' });
     return res.status(200).json({ ok: true });
   } catch (e) {
     return res.status(200).json({ ok: true });
