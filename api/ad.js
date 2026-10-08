@@ -1,5 +1,6 @@
 const crypto = require('crypto');
 const { createClient } = require('@supabase/supabase-js');
+const { announceVoice } = require('../lib/voice');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_ROLE_KEY);
 
 const AD_REWARD = 5;
@@ -47,7 +48,10 @@ module.exports = async (req, res) => {
       ads_total: (user.ads_total || 0) + 1
     }).eq('telegram_id', id);
     await supabase.rpc('add_points', { p_telegram_id: id, p_amount: AD_REWARD });
-    await supabase.from('activities').insert({ user_id: id, icon: 'play', title: 'Ad Watch Reward', points: AD_REWARD });
+    try { await supabase.from('activities').insert({ user_id: id, icon: 'play', title: 'Ad Watch Reward', points: AD_REWARD }); } catch (e) {}
+
+    // 🔊 Amharic voice announcement
+    try { await announceVoice(id, AD_REWARD + ' ብር መስራት ችለዋል, ' + AD_REWARD + ' ብር ወደ ባላንሶ ገብቷል'); } catch (e) {}
 
     const { data: u2 } = await supabase.from('users').select('points').eq('telegram_id', id).maybeSingle();
 
