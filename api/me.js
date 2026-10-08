@@ -32,17 +32,22 @@ module.exports = async (req, res) => {
     if (!user) return res.status(404).json({ error: 'Not found' });
 
     const { data: refs } = await supabase.from('referrals')
-      .select('referred_id, created_at').eq('referrer_id', id).order('created_at', { ascending: false });
+      .select('referred_id, reward_points, created_at').eq('referrer_id', id).order('created_at', { ascending: false });
 
     let referrals = [];
     if (refs && refs.length) {
-      const ids = refs.map(r => r.referred_id);
-      const { data: us } = await supabase.from('users')
-        .select('telegram_id, first_name, photo_url').in('telegram_id', ids);
-      referrals = refs.map(r => {
-        const u = (us || []).find(x => x.telegram_id === r.referred_id);
-        return { first_name: u ? u.first_name : null, photo_url: u ? u.photo_url : null };
-      });
+      const ids = refs.map(r => r.referred_id).filter(x => x !== 0);
+      let us = [];
+      if (ids.length) {
+        const { data: urows } = await supabase.from('users')
+          .select('telegram_id, first_name, photo_url').in('telegram_id', ids);
+        us = urows || [];
+      }
+      referrals = refs.map(r => ({
+        first_name: r.referred_id === 0 ? 'Bonus Referral' : ((us.find(x => x.telegram_id === r.referred_id) || {}).first_name || null),
+        photo_url: r.referred_id === 0 ? null : ((us.find(x => x.telegram_id === r.referred_id) || {}).photo_url || null),
+        reward: r.reward_points || 0
+      }));
     }
 
     let pending = 0;
