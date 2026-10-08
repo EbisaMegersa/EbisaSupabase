@@ -178,12 +178,29 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .gtag{font-size:11px;font-weight:700;padding:6px 11px;border-radius:999px;background:var(--card2);color:var(--dim)}
 .gtag.win{background:rgba(74,222,128,.14);color:var(--acc);border:1px solid rgba(74,222,128,.3)}
 .flash{border-color:var(--acc)!important;box-shadow:0 0 0 3px rgba(74,222,128,.12)}
+/* ---------- dice ---------- */
+.dice{width:96px;height:96px;background:#fff;border-radius:20px;margin:6px auto 14px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:14px;box-shadow:0 8px 26px rgba(255,255,255,.14)}
+.dice span{width:15px;height:15px;border-radius:50%;background:#000;opacity:0;align-self:center;justify-self:center;transition:opacity .05s}
+.dice span.on{opacity:1}
+.dice.rolling{animation:droll .16s linear infinite}
+@keyframes droll{0%{transform:rotate(0) translateY(0)}25%{transform:rotate(-16deg) translateY(-7px)}50%{transform:rotate(12deg) translateY(3px)}75%{transform:rotate(-9deg) translateY(-4px)}100%{transform:rotate(0) translateY(0)}}
+.dres{text-align:center;font-size:14px;font-weight:800;margin-top:12px;min-height:20px}
+.dres.win{color:var(--acc)}
+.dres.lose{color:var(--dim)}
+/* ---------- link tasks grid ---------- */
+.lkgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px}
+.lkb{padding:10px 0;border-radius:11px;background:var(--card2);border:1px solid var(--sep);color:var(--dim);font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .12s,background .2s}
+.lkb:active{transform:scale(.9)}
+.lkb.done{background:var(--acc);border-color:var(--acc);color:#000}
+.lkb.next{border-color:rgba(74,222,128,.55);color:var(--acc)}
+.lkb.off{opacity:.3;pointer-events:none}
 @keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 #app{animation:fadeup .35s ease}
 @media (max-width:350px){
   main{padding-left:14px;padding-right:14px}
   .qa-grid{gap:7px}
   .hero-amt{font-size:38px}
+  .lkgrid{grid-template-columns:repeat(4,1fr)}
 }
 @media (min-width:520px){
   main{max-width:620px}
@@ -198,6 +215,7 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
   main{max-width:760px}
   nav{max-width:760px}
   .mgrid{grid-template-columns:repeat(5,1fr)}
+  .lkgrid{grid-template-columns:repeat(8,1fr)}
   .hero-amt{font-size:56px}
   .wheelwrap{width:340px;height:340px}
 }
@@ -269,6 +287,13 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
   <!-- TASKS -->
   <section id="tab-tasks" class="hide">
     <div class="card">
+      <p class="ctitle"><i class="ic" data-ic="link"></i> <span data-i18n="links_title">Link Tasks</span></p>
+      <div class="wreqrow" style="margin-top:0"><span data-i18n="links_prog">Links opened</span><b id="lkTxt">0/50</b></div>
+      <div class="bar"><i id="lkBar" style="width:0%"></i></div>
+      <div class="lkgrid" id="lkGrid"></div>
+      <p class="note" id="lkNote" data-i18n="links_note">Open all 50 links — then the section locks for 12 hours.</p>
+    </div>
+    <div class="card">
       <p class="ctitle"><i class="ic" data-ic="flame"></i> <span data-i18n="daily_streak">Daily Streak</span></p>
       <div class="dots" id="dots2"></div>
       <button class="btn" id="checkinBtn2" onclick="doCheckin()" disabled>Loading…</button>
@@ -309,6 +334,21 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
       <button class="btn" id="spinBtn" onclick="playGame()" data-i18n="spin_btn">Spin the Wheel</button>
       <div class="gres" id="gres"></div>
       <p class="note" data-i18n="game_note">Multipliers: x1.5 · x2 · x3 — results are decided on the server. Play for fun.</p>
+    </div>
+
+    <div class="card">
+      <p class="ctitle"><i class="ic" data-ic="dice"></i> <span data-i18n="dice_title">Lucky Dice</span></p>
+      <div class="dice" id="diceEl"></div>
+      <p class="lbl" data-i18n="dice_pick">PICK A NUMBER — MATCH = 5×</p>
+      <div class="chips" id="dicePicks"></div>
+      <p class="lbl" data-i18n="your_bet">YOUR BET</p>
+      <div class="amtwrap">
+        <input id="dbet" type="number" class="inp" placeholder="50" inputmode="numeric">
+        <button class="maxb" onclick="maxDice()">MAX 5000</button>
+      </div>
+      <button class="btn" id="diceBtn" onclick="rollDice()" data-i18n="dice_roll">Roll Dice</button>
+      <p class="dres" id="dres"></p>
+      <p class="note" data-i18n="dice_note">Match the number to win 5× your bet. The roll is decided on the server — fair for everyone.</p>
     </div>
   </section>
 
@@ -420,6 +460,7 @@ const IC = {
   home:'<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
   check:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
   game:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
+  dice:'<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.25" cy="8.25" r="1.4" fill="currentColor" stroke="none"/><circle cx="15.75" cy="8.25" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="8.25" cy="15.75" r="1.4" fill="currentColor" stroke="none"/><circle cx="15.75" cy="15.75" r="1.4" fill="currentColor" stroke="none"/>',
   users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
   wallet:'<path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>',
   flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
@@ -453,6 +494,7 @@ const LANGS = {
     limit_reached:'Daily limit reached — back tomorrow',watch_ad:'Watch Ad',
     recent_activity:'Recent Activity',view_all:'View all',no_activity:'No activity yet',no_activity_s:'Claim your streak or watch an ad to get started',
     reviews:'User Reviews',no_reviews:'No reviews yet — be the first!',
+    links_title:'Link Tasks',links_prog:'Links opened',links_note:'Open all 50 links — then the section locks for 12 hours.',links_locked:'🔒 Locked — back in',links_locked_msg:'All 50 done — locked! Come back when the timer ends.',links_all_done:'All 50 links done! 🔒 Locked for 12 hours',
     tasks_t:'Tasks',task_note:'Tap Start, join/follow, come back and tap Verify.',done:'Done',start:'Start',verify:'Verify',no_tasks:'No tasks available right now',
     ref_bonus:'Referral bonus',ref_bonus_html:'Complete <b style="color:#fff">any 3 tasks</b> to unlock your inviter\'s <b style="color:var(--acc)">+50 ETB</b>. Fair rewards for real members.',
     ref_link:'Your referral link',copy:'Copy',share:'Share',
@@ -468,6 +510,7 @@ const LANGS = {
     history:'History',no_wd:'No withdrawals yet',
     your_bet:'YOUR BET',spin_btn:'Spin the Wheel',
     game_note:'Multipliers: x1.5 · x2 · x3 — results are decided on the server and cannot be manipulated. Play for fun.',
+    dice_title:'Lucky Dice',dice_pick:'PICK A NUMBER — MATCH = 5×',dice_roll:'Roll Dice',dice_lose:'Not this time — try again!',dice_pick_first:'Pick a number first',dice_note:'Match the number to win 5× your bet. The roll is decided on the server — fair for everyone.',
     paid:'Paid',pend:'Pending',rejected:'Rejected',
     m_min_wd:'Minimum withdrawal is 1000 ETB',m_over:'Amount exceeds your balance',m_acct:'Enter your account details',
     m_min_bet:'Minimum bet is 50 ETB',m_max_bet:'Maximum bet is 5,000 ETB',m_no_bal:'Not enough balance',
@@ -484,6 +527,7 @@ const LANGS = {
     limit_reached:'የዕለት ገደብ ደርሷል — ነገ ይምጡ',watch_ad:'ማስታወቂያ ይመልከቱ',
     recent_activity:'የቅርብ እንቅስቃሴ',view_all:'ሁሉንም',no_activity:'እስካሁን ምንም እንቅስቃሴ የለም',no_activity_s:'ቼክ-ኢን ይግበሩ ወይም ማስታወቂያ ይመልከቱ',
     reviews:'የተጠቃሚ አስተያየቶች',no_reviews:'እስካሁን አስተያየት የለም',
+    links_title:'የሊንክ ተግባራት',links_prog:'የተከፈቱ ሊንኮች',links_note:'ሁሉንም 50 ሊንኮች ይክፈቱ — ከዛ ለ12 ሰዓት ይታጠፋል።',links_locked:'🔒 ተዘግቷል — ይመለሱ ከ',links_locked_msg:'ሁሉም 50 ተጠናቋል — ጊዜው ሲያልቅ ይምጡ!',links_all_done:'ሁሉም 50 ሊንኮች ተጠናቋል! 🔒 12 ሰዓት እረፍት',
     tasks_t:'ተግባራት',task_note:'Start ይንኩ፣ ይቀላቀሉ፣ ተመልሰው Verify ይንኩ።',done:'ተጠናቋል',start:'ጀምር',verify:'አረጋግጥ',no_tasks:'እስካሁን ተግባር የለም',
     ref_bonus:'የግብዣ ሽልማት',ref_bonus_html:'ከላይ ካሉት <b style="color:#fff">ማንኛውም 3 ተግባራት</b> መሞላት ሲጠናቀቅ አስጋቢዎ <b style="color:var(--acc)">+50 ETB</b> ያገኛል።',
     ref_link:'የግብዣ አገናኝዎ',copy:'ቅዳ',share:'አጋራ',
@@ -499,6 +543,7 @@ const LANGS = {
     history:'ታሪክ',no_wd:'እስካሁን መውጫ የለም',
     your_bet:'ውርርድዎ',spin_btn:'አሽከርክር',
     game_note:'ማባዣዎች: x1.5 · x2 · x3 — ውጤቱ በሰርቨሩ ይወሰናል። ለመዝናናት ብቻ።',
+    dice_title:'ሲሳይ ጨዋታ',dice_pick:'ቁጥር ይምረጡ — ከተመሳከረ 5×',dice_roll:'ሲሳይ ወርውር',dice_lose:'አልወጣም — እንደገና ይሞክሩ!',dice_pick_first:'መጀመሪያ ቁጥር ይምረጡ',dice_note:'ቁጥሩ ከወጣ 5× ያሸነፋሉ። ውጤቱ በሰርቨሩ ይወሰናል።',
     paid:'ተከፍሏል',pend:'ቆይቷል',rejected:'ተቀናሽ ሆኗል',
     m_min_wd:'ዝቅተኛ መውጫ 1000 ETB ነው',m_over:'መጠኑ ከሂሳብዎ በላይ ነው',m_acct:'የመለያ ዝርዝርዎን ያስገቡ',
     m_min_bet:'ዝቅተኛ ውርርድ 50 ETB ነው',m_max_bet:'ከፍተኛ ውርርድ 5,000 ETB ነው',m_no_bal:'ሂሳብዎ አይበቃም',
@@ -625,6 +670,7 @@ function renderAll() {
   renderActivity();
   renderReviews();
   renderLb();
+  loadLinks();
 }
 
 function renderBalance() {
@@ -1083,7 +1129,141 @@ async function playGame() {
   }
 }
 
+/* ================= LUCKY DICE ================= */
+const DICE_DOTS = { 1:[5], 2:[3,7], 3:[3,5,7], 4:[1,3,7,9], 5:[1,3,5,7,9], 6:[1,3,4,6,7,9] };
+let dicePickN = 0, diceRolling = false;
+
+function renderDiceFace(n) {
+  const dots = DICE_DOTS[n] || [5];
+  let h = '';
+  for (let i = 1; i <= 9; i++) h += '<span class="' + (dots.includes(i) ? 'on' : '') + '"></span>';
+  $('diceEl').innerHTML = h;
+}
+function buildDicePicks() {
+  $('dicePicks').innerHTML = [1,2,3,4,5,6].map(n =>
+    '<button class="chip' + (dicePickN === n ? ' sel' : '') + '" onclick="pickDice(' + n + ')">' + n + '</button>'
+  ).join('');
+}
+function pickDice(n){ if (diceRolling) return; dicePickN = n; buildDicePicks(); tick(); }
+function maxDice(){ $('dbet').value = Math.min(me.points, 5000); }
+
+async function rollDice() {
+  if (diceRolling) return;
+  if (!dicePickN) return notify(t('dice_pick_first'));
+  const bet = parseInt($('dbet').value, 10);
+  if (!bet || bet < 50) return notify(t('m_min_bet'));
+  if (bet > 5000) return notify(t('m_max_bet'));
+  if (bet > me.points) return notify(t('m_no_bal'));
+
+  diceRolling = true;
+  $('diceBtn').disabled = true;
+  $('dres').textContent = '';
+  $('dres').className = 'dres';
+  $('diceEl').classList.add('rolling');
+  const shuffle = setInterval(() => { renderDiceFace(1 + Math.floor(Math.random() * 6)); }, 90);
+
+  try {
+    const r = await fetch('/api/dice', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initData: tg.initData, bet, pick: dicePickN })
+    });
+    const d = await r.json();
+    if (!r.ok) {
+      clearInterval(shuffle);
+      $('diceEl').classList.remove('rolling');
+      diceRolling = false; $('diceBtn').disabled = false;
+      return notify(d.error || 'Failed');
+    }
+
+    setTimeout(() => {
+      clearInterval(shuffle);
+      $('diceEl').classList.remove('rolling');
+      renderDiceFace(d.roll);
+      me.points = d.balance;
+      renderBalance();
+      $('wBalance').textContent = fmt(me.points);
+      if (d.match) {
+        $('dres').textContent = '🎲 ' + d.roll + ' — +' + fmt(d.win) + ' ETB!';
+        $('dres').className = 'dres win';
+        haptic('success');
+        notify('+' + fmt(d.win) + ' ETB! (x5)');
+      } else {
+        $('dres').textContent = '🎲 ' + d.roll + ' — ' + t('dice_lose');
+        $('dres').className = 'dres lose';
+        haptic('error');
+      }
+      diceRolling = false;
+      $('diceBtn').disabled = false;
+    }, 1400);
+  } catch (e) {
+    clearInterval(shuffle);
+    $('diceEl').classList.remove('rolling');
+    diceRolling = false; $('diceBtn').disabled = false;
+    notify('Error: ' + e.message);
+  }
+}
+
+/* ================= LINK TASKS (50 links, 12h lock) ================= */
+let linkState = { watched: 0, limit: 50, lockedUntil: null, link: '' };
+
+async function loadLinks() {
+  try {
+    const r = await fetch('/api/links', { headers: { 'x-init-data': tg.initData } });
+    const d = await r.json();
+    if (d.watched !== undefined) { linkState = d; renderLinks(); }
+  } catch (e) {}
+}
+
+function renderLinks() {
+  const s = linkState;
+  const locked = s.lockedUntil && new Date(s.lockedUntil) > new Date();
+  $('lkTxt').textContent = s.watched + '/' + s.limit;
+  $('lkBar').style.width = Math.min(100, s.watched / s.limit * 100) + '%';
+  let h = '';
+  for (let i = 1; i <= s.limit; i++) {
+    const done = i <= s.watched;
+    const next = i === s.watched + 1 && !locked;
+    h += '<button class="lkb' + (done ? ' done' : '') + (next ? ' next' : '') + '" onclick="openLinkTask(' + i + ')">' + (done ? '✓' : i) + '</button>';
+  }
+  $('lkGrid').innerHTML = h;
+  if (locked) {
+    $('lkGrid').querySelectorAll('.lkb:not(.done)').forEach(b => b.classList.add('off'));
+    const ms = new Date(s.lockedUntil) - Date.now();
+    const hrs = Math.floor(ms / 3600000), mins = Math.floor(ms % 3600000 / 60000);
+    $('lkNote').textContent = t('links_locked') + ' ' + hrs + 'h ' + mins + 'm';
+  } else {
+    $('lkNote').textContent = t('links_note');
+  }
+}
+
+async function openLinkTask(i) {
+  if (i <= linkState.watched) return;
+  if (linkState.lockedUntil && new Date(linkState.lockedUntil) > new Date()) {
+    return notify(t('links_locked_msg'));
+  }
+  try {
+    const r = await fetch('/api/links', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initData: tg.initData })
+    });
+    const d = await r.json();
+    if (!r.ok) {
+      if (d.lockedUntil) linkState.lockedUntil = d.lockedUntil;
+      renderLinks();
+      return notify(d.error || 'Failed');
+    }
+    linkState.watched = d.watched;
+    linkState.limit = d.limit;
+    linkState.lockedUntil = d.lockedUntil;
+    renderLinks();
+    if (d.allDone) notify(t('links_all_done'));
+    if (d.link) tg.openLink(d.link);
+  } catch (e) { notify('Error: ' + e.message); }
+}
+
+renderDiceFace(5);
+buildDicePicks();
 applyLang();
 </script>
 </body>
-  </html>
+</html>
