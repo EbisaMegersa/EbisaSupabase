@@ -23,6 +23,21 @@ function guessIcon(link) {
   return 'star';
 }
 
+async function findUser(target) {
+  if (!target) return null;
+  if (target.startsWith('@')) {
+    const uname = target.slice(1);
+    const { data } = await supabase.from('users')
+      .select('telegram_id, first_name, username').ilike('username', uname).maybeSingle();
+    return data;
+  }
+  const num = Number(target);
+  if (!Number.isInteger(num)) return null;
+  const { data } = await supabase.from('users')
+    .select('telegram_id, first_name, username').eq('telegram_id', num).maybeSingle();
+  return data;
+}
+
 module.exports = async (req, res) => {
   try {
     const msg = (req.body || {}).message;
@@ -94,6 +109,67 @@ module.exports = async (req, res) => {
         await tg('sendMessage', { chat_id: w.user_id, text: '❌ Your withdrawal of ' + w.points + ' ETB was rejected.\n\nYour ETB and withdrawal requirements have been refunded.' });
       } catch (e) {}
       await tg('sendMessage', { chat_id: chatId, text: '❌ #' + wid + ' rejected. ETB + requirements refunded.' });
+      return res.status(200).json({ ok: true });
+    }
+
+    if (text.startsWith('/addref')) {
+      const parts = text.split(/\s+/);
+      const target = parts[1];
+      const count = parseInt(parts[2], 10);
+      if (!target || !Number.isInteger(count) || count < 1 || count > 100) {
+        await tg('sendMessage', { chat_id: chatId, text: 'Usage:\n/addref 123456789 5\n/addref @username 5\n(count 1–100, adds referrals WITHOUT any ETB)' });
+        return res.status(200).json({ ok: true });
+      }
+      const user = await findUser(target);
+      if (!user) {
+        await tg('sendMessage', { chat_id: chatId, text: '❌ User not found. Use their telegram ID or exact @username.' });
+        return res.status(200).json({ ok: true });
+      }
+      const rows = Array.from({ length: count }, () => ({
+        referrer_id: user.telegram_id, referred_id: 0, reward_points: 0
+      }));
+      const { error: insErr } = await supabase.from('referrals').insert(rows);
+      if (insErr) {
+        await tg('sendMessage', { chat_id: chatId, text: '❌ Failed: ' + insErr.message });
+        return res.status(200).json({ ok: true });
+      }
+      const { count: newTotal } = await supabase.from('referrals')
+        .select('id', { count: 'exact', head: true }).eq('referrer_id', user.telegram_id);
+      await tg('sendMessage', { chat_id: chatId,
+        text: '✅ Added ' + count + ' referral(s) to ' + (user.first_name || 'User') +
+          (user.username ? ' (@' + user.username + ')' : '') +
+          '\n👤 ID: ' + user.telegram_id +
+          '\n📊 Total referrals now: ' + (newTotal || 0) +
+          '\n💸 No ETB was given.' });
+      return res.status(200).json({ ok: true });
+    }
+
+    if (text.startsWith('/rmref')) {
+      const parts = text.split(/\s+/);
+      const target = parts[1];
+      const count = parseInt(parts[2], 10);
+      if (!target || !Number.isInteger(count) || count < 1) {
+        await tg('sendMessage', { chat_id: chatId, text: 'Usage:\n/rmref 123456789 2\n/rmref @username 2\n(removes bonus referrals only — real invited friends are never touched)' });
+        return res.status(200).json({ ok: true });
+      }
+      const user = await findUser(target);
+      if (!user) {
+        await tg('sendMessage', { chat_id: chatId, text: '❌ User not found.' });
+        return res.status(200).json({ ok: true });
+      }
+      const { data: bonusRows } = await supabase.from('referrals')
+        .select('id').eq('referrer_id', user.telegram_id).eq('referred_id', 0).order('id', { ascending: true }).limit(count);
+      if (!bonusRows || !bonusRows.length) {
+        await tg('sendMessage', { chat_id: chatId, text: '⚠️ No bonus referrals to remove for this user.' });
+        return res.status(200).json({ ok: true });
+      }
+      const ids = bonusRows.map(r => r.id);
+      await supabase.from('referrals').delete().in('id', ids);
+      const { count: newTotal } = await supabase.from('referrals')
+        .select('id', { count: 'exact', head: true }).eq('referrer_id', user.telegram_id);
+      await tg('sendMessage', { chat_id: chatId,
+        text: '🗑 Removed ' + ids.length + ' bonus referral(s) from ' + (user.first_name || 'User') +
+          '\n📊 Total referrals now: ' + (newTotal || 0) });
       return res.status(200).json({ ok: true });
     }
 
@@ -192,7 +268,7 @@ module.exports = async (req, res) => {
     }
 
     await tg('sendMessage', { chat_id: chatId,
-      text: '👑 ADMIN COMMANDS\n\n/pending — pending withdrawals\n/paid 3 — approve & notify\n/reject 3 — reject & refund\n\n/tasks — list tasks\n/addtask 50 https://t.me/ebtry0 | Title\n/rmtask 4 — hide task\n/undotask 4 — restore task\n\n/review Name | Message | 5 — add review\n/delreview 3 — delete review' });
+      text: '👑 ADMIN COMMANDS\n\n/pending — pending withdrawals\n/paid 3 — approve & notify\n/reject 3 — reject & refund\n\n/addref 123456789 5 — add referrals (no ETB)\n/rmref 123456789 2 — remove bonus referrals\n\n/tasks — list tasks\n/addtask 50 https://t.me/ebtry0 | Title\n/rmtask 4 — hide task\n/undotask 4 — restore task\n\n/review Name | Message | 5 — add review\n/delreview 3 — delete review' });
     return res.status(200).json({ ok: true });
   } catch (e) {
     return res.status(200).json({ ok: true });
