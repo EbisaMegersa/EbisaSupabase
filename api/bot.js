@@ -12,6 +12,8 @@ function tg(method, body) {
   });
 }
 
+function kb(rows) { return { inline_keyboard: rows }; }
+
 function guessIcon(link) {
   const l = link.toLowerCase();
   if (l.includes('x.com') || l.includes('twitter.com')) return 'x';
@@ -61,9 +63,22 @@ async function doReject(w) {
   } catch (e) {}
 }
 
+async function buildWdText(w) {
+  const { data: u } = await supabase.from('users')
+    .select('first_name, username, points').eq('telegram_id', w.user_id).maybeSingle();
+  const statusLine = w.status === 'pending' ? '⏳ pending' : (w.status === 'done' ? '✅ paid' : '❌ rejected');
+  return '💳 Withdrawal info\n\n' +
+    '🆔 ID: #' + w.id + '\n' +
+    '👤 ' + (u && u.first_name ? u.first_name : 'User') + (u && u.username ? ' (@' + u.username + ')' : '') + '\n' +
+    '💰 ' + w.points + ' ETB\n' +
+    '💳 ' + w.method + ': ' + w.account + '\n' +
+    '🏦 Balance now: ' + (u && u.points !== undefined ? u.points : '?') + ' ETB\n\n' +
+    '📌 Status: ' + statusLine;
+}
+
 module.exports = async (req, res) => {
   try {
-    // ---------- ✅ / ❌ BUTTON TAPS ----------
+    // ---------- BUTTON TAPS ----------
     const cq = (req.body || {}).callback_query;
     if (cq) {
       const data = cq.data || '';
@@ -84,6 +99,36 @@ module.exports = async (req, res) => {
 
       const p = data.split(':');
 
+      // tap a request in the /pending list → open its info card
+      if (p[0] === 'wd' && p[1] === 'view') {
+        const wid = parseInt(p[2], 10);
+        const { data: w } = await supabase.from('withdrawals').select('*').eq('id', wid).maybeSingle();
+        if (!w) { await answer('Not found'); return res.status(200).json({ ok: true }); }
+        if (w.status !== 'pending') {
+          await tg('editMessageText', {
+            chat_id: chatId, message_id: msgId,
+            text: await buildWdText(w),
+            reply_markup: kb([[{ text: '⬅️ Back to list', callback_data: 'wd:list' }]])
+          }).catch(() => {});
+          await answer('Already ' + w.status);
+          return res.status(200).json({ ok: true });
+        }
+        await tg('editMessageText', {
+          chat_id: chatId, message_id: msgId,
+          text: await buildWdText(w),
+          reply_markup: kb([
+            [
+              { text: '✅ Approve', callback_data: 'wd:paid:' + w.id },
+              { text: '❌ Reject', callback_data: 'wd:rej:' + w.id }
+            ],
+            [{ text: '⬅️ Back to list', callback_data: 'wd:list' }]
+          ])
+        }).catch(() => {});
+        await answer();
+        return res.status(200).json({ ok: true });
+      }
+
+      // ✅ approve from the info card
       if (p[0] === 'wd' && p[1] === 'paid') {
         const wid = parseInt(p[2], 10);
         const { data: w } = await supabase.from('withdrawals').select('*').eq('id', wid).maybeSingle();
@@ -93,14 +138,15 @@ module.exports = async (req, res) => {
         if (msgId) {
           await tg('editMessageText', {
             chat_id: chatId, message_id: msgId,
-            text: origText + '\n\n✅ APPROVED — ' + w.points + ' ETB paid. User notified.',
-            reply_markup: { inline_keyboard: [] }
+            text: await buildWdText({ ...w, status: 'done' }),
+            reply_markup: kb([[{ text: '⬅️ Back to list', callback_data: 'wd:list' }]])
           }).catch(() => {});
         }
         await answer('Paid ✓ User notified');
         return res.status(200).json({ ok: true });
       }
 
+      // ❌ reject from the info card
       if (p[0] === 'wd' && p[1] === 'rej') {
         const wid = parseInt(p[2], 10);
         const { data: w } = await supabase.from('withdrawals').select('*').eq('id', wid).maybeSingle();
@@ -110,11 +156,31 @@ module.exports = async (req, res) => {
         if (msgId) {
           await tg('editMessageText', {
             chat_id: chatId, message_id: msgId,
-            text: origText + '\n\n❌ REJECTED — ETB + requirements refunded.',
-            reply_markup: { inline_keyboard: [] }
+            text: await buildWdText({ ...w, status: 'rejected' }),
+            reply_markup: kb([[{ text: '⬅️ Back to list', callback_data: 'wd:list' }]])
           }).catch(() => {});
         }
         await answer('Rejected & refunded');
+        return res.status(200).json({ ok: true });
+      }
+
+      // back to the /pending list
+      if (p[0] === 'wd' && p[1] === 'list') {
+        const { data: list } = await supabase.from('withdrawals')
+          .select('id, user_id, points, method, account').eq('status', 'pending').order('id');
+        if (!list || !list.length) {
+          await tg('editMessageText', { chat_id: chatId, message_id: msgId,
+            text: '✅ No pending withdrawals.', reply_markup: kb([]) }).catch(() => {});
+          await answer();
+          return res.status(200).json({ ok: true });
+        }
+        const rows = list.slice(0, 20).map(w => ([
+          { text: '💳 #' + w.id + ' — ' + w.points + ' ETB — ' + w.method, callback_data: 'wd:view:' + w.id }
+        ]));
+        await tg('editMessageText', { chat_id: chatId, message_id: msgId,
+          text: '⏳ PENDING WITHDRAWALS (' + list.length + ')\n\nTap a request to view full info:',
+          reply_markup: kb(rows) }).catch(() => {});
+        await answer();
         return res.status(200).json({ ok: true });
       }
 
@@ -143,10 +209,9 @@ module.exports = async (req, res) => {
         return res.status(200).json({ ok: true });
       }
       const rows = list.slice(0, 20).map(w => ([
-        { text: '✅ Approve #' + w.id + ' (' + w.points + ' ETB)', callback_data: 'wd:paid:' + w.id },
-        { text: '❌', callback_data: 'wd:rej:' + w.id }
+        { text: '💳 #' + w.id + ' — ' + w.points + ' ETB — ' + w.method, callback_data: 'wd:view:' + w.id }
       ]));
-      await tg('sendMessage', { chat_id: chatId, text: '⏳ PENDING WITHDRAWALS (' + list.length + ')\n\nTap ✅ to pay, ❌ to reject & refund:', reply_markup: { inline_keyboard: rows } });
+      await tg('sendMessage', { chat_id: chatId, text: '⏳ PENDING WITHDRAWALS (' + list.length + ')\n\nTap a request to view full info:', reply_markup: kb(rows) });
       return res.status(200).json({ ok: true });
     }
 
@@ -306,7 +371,7 @@ module.exports = async (req, res) => {
     }
 
     await tg('sendMessage', { chat_id: chatId,
-      text: '👑 ADMIN COMMANDS\n\n/pending — pending withdrawals (approve/reject with buttons)\n\n/addref 123456789 5 — add referrals (no ETB)\n/rmref 123456789 2 — remove bonus referrals\n\n/tasks — list tasks\n/addtask 50 https://t.me/ebtry0 | Title\n/rmtask 4 — hide task\n/undotask 4 — restore task\n\n/review Name | Message | 5 — add review\n/delreview 3 — delete review' });
+      text: '👑 ADMIN COMMANDS\n\n/pending — pending withdrawals (tap to view & approve/reject)\n\n/addref 123456789 5 — add referrals (no ETB)\n/rmref 123456789 2 — remove bonus referrals\n\n/tasks — list tasks\n/addtask 50 https://t.me/ebtry0 | Title\n/rmtask 4 — hide task\n/undotask 4 — restore task\n\n/review Name | Message | 5 — add review\n/delreview 3 — delete review' });
     return res.status(200).json({ ok: true });
   } catch (e) {
     return res.status(200).json({ ok: true });
