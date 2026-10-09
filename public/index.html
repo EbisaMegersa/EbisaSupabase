@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#000000">
+<meta name="theme-color" content="#0E2417">
 <title>EarnApp</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -16,7 +16,6 @@ input,textarea{-webkit-user-select:text!important;user-select:text!important}
 img{-webkit-user-drag:none}
 html{-webkit-font-smoothing:antialiased}
 body{background:#000;color:var(--txt);font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;padding-bottom:128px;-webkit-font-smoothing:antialiased}
-/* iOS ambient light */
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
   background:radial-gradient(600px 420px at 85% -8%,rgba(74,222,128,.09),transparent 60%),
              radial-gradient(500px 380px at -10% 30%,rgba(74,222,128,.05),transparent 60%),
@@ -31,7 +30,6 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .bigwrap .ic{width:36px;height:36px}
 .screen h2{font-size:19px;font-weight:800;margin-top:24px;letter-spacing:-.3px}
 .screen p{font-size:13px;color:var(--dim);margin-top:10px;line-height:1.65;max-width:300px}
-/* ---------- header ---------- */
 .header{display:flex;align-items:center;gap:13px;margin:16px 0 24px}
 .avatar{width:50px;height:50px;border-radius:50%;background:var(--glass2);border:1px solid rgba(255,255,255,.14);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:19px;flex-shrink:0;overflow:hidden;box-shadow:inset 0 1px 0 rgba(255,255,255,.15)}
 .avatar img{width:100%;height:100%;object-fit:cover}
@@ -39,7 +37,6 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .hsub{font-size:12.5px;color:var(--dim);margin-top:2px;font-weight:500}
 .langbtn{margin-left:auto;background:var(--glass);border:1px solid var(--sep);backdrop-filter:blur(20px) saturate(160%);-webkit-backdrop-filter:blur(20px) saturate(160%);color:#fff;font-size:12.5px;font-weight:600;padding:10px 16px;border-radius:999px;display:flex;align-items:center;gap:7px;font-family:inherit;cursor:pointer;transition:transform .4s var(--spring),background .2s;box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}
 .langbtn:active{transform:scale(.92);background:var(--glass2)}
-/* ---------- hero balance ---------- */
 .balance{position:relative;overflow:hidden;background:radial-gradient(130% 100% at 50% -10%,rgba(74,222,128,.1),transparent 55%),var(--glass);backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border:1px solid rgba(255,255,255,.12);border-radius:28px;padding:24px;margin-bottom:26px;box-shadow:0 16px 48px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.14)}
 .balance::after{content:'';position:absolute;top:0;left:20%;right:20%;height:1.5px;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(74,222,128,.7),transparent)}
 .deco{position:absolute;right:6px;top:50%;transform:translateY(-50%);width:112px;height:112px;pointer-events:none;opacity:.9}
@@ -51,11 +48,9 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .hero-amt .ptsfx{font-size:16px;color:var(--dim);font-weight:600;letter-spacing:0}
 .hero-hint{margin-top:12px;font-size:12px;color:var(--dim);font-weight:500;display:flex;align-items:center;gap:7px}
 .hero-hint .dotg{width:6px;height:6px;border-radius:50%;background:var(--acc);box-shadow:0 0 10px var(--glow);flex-shrink:0;animation:pulse 2s ease infinite}
-/* ---------- section heads ---------- */
 .sechead{display:flex;align-items:baseline;justify-content:space-between;margin:0 2px 13px}
 .sechead h3{font-size:16px;font-weight:800;letter-spacing:-.4px}
 .viewall{color:var(--acc);font-size:12px;font-weight:700;background:none;border:none;font-family:inherit;cursor:pointer;padding:4px}
-/* ---------- quick actions ---------- */
 .qa-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:26px}
 .qa{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;padding:15px 6px 14px;border-radius:24px;background:var(--glass);border:1px solid var(--sep);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);cursor:pointer;font-family:inherit;color:#fff;transition:transform .45s var(--spring),border-color .25s,background .25s;box-shadow:0 10px 30px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1)}
 .qa:active{transform:scale(.94);border-color:rgba(74,222,128,.45);background:var(--glass2)}
@@ -63,11 +58,9 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .qic .ic{width:18px;height:18px;color:#fff}
 .qa b{display:block;font-size:12.5px;font-weight:700;letter-spacing:-.1px;white-space:nowrap}
 .qpts{display:block;font-size:9.5px;color:var(--acc);font-weight:600;margin-top:3px;white-space:nowrap;font-variant-numeric:tabular-nums;opacity:.9}
-/* ---------- cards — liquid glass ---------- */
 .card{position:relative;overflow:hidden;background:var(--glass);border:1px solid var(--sep);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border-radius:24px;padding:17px;margin-bottom:20px;box-shadow:0 12px 36px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.1)}
 .card::before,.wecard::before,#actList::before,.rev::before,.whero::before{content:'';position:absolute;top:0;left:14px;right:14px;height:1px;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.18),transparent);pointer-events:none;z-index:1}
 .ctitle{font-size:14.5px;font-weight:800;margin-bottom:14px;display:flex;align-items:center;gap:9px;letter-spacing:-.2px;position:relative;z-index:2}
-/* ---------- buttons — springy iOS ---------- */
 .btn{width:100%;padding:15px;border-radius:18px;border:none;font-weight:800;font-size:14.5px;font-family:inherit;cursor:pointer;color:#000;background:var(--acc);transition:transform .45s var(--spring),box-shadow .3s,opacity .2s;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:0 8px 28px var(--glow),inset 0 1.5px 0 rgba(255,255,255,.4)}
 .btn:active{transform:scale(.955);box-shadow:0 3px 14px var(--glow),inset 0 1.5px 0 rgba(255,255,255,.3)}
 .btn:disabled{opacity:.35;cursor:default;box-shadow:none}
@@ -79,20 +72,17 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .pill.pending{background:var(--glass2);color:var(--dim)}
 .pill.rejected{background:rgba(255,69,58,.14);color:var(--red)}
 .done{display:inline-block;background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.4);color:var(--acc);font-weight:700;font-size:11px;padding:6px 14px;border-radius:999px}
-/* ---------- streak ---------- */
 .dots{display:flex;gap:5px;margin-bottom:14px}
 .dot{flex:1;text-align:center;padding:11px 2px;border-radius:14px;background:var(--glass);border:1px solid transparent;font-size:9px;color:var(--dim);font-weight:600;transition:background .35s,transform .45s var(--spring)}
 .dot b{display:block;font-size:12px;font-weight:800;margin-bottom:1px}
 .dot.on{background:var(--acc);color:#000;border-color:var(--acc);box-shadow:0 4px 16px var(--glow);transform:scale(1.04)}
 .streaknote{font-size:12px;color:var(--dim);font-weight:500}
-/* ---------- tasks ---------- */
 .task{display:flex;align-items:center;gap:12px;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.07)}
 .task:last-child{border-bottom:none}
 .ticon{width:42px;height:42px;border-radius:14px;background:var(--glass2);border:1px solid var(--sep);display:flex;align-items:center;justify-content:center;flex-shrink:0}
 .tinfo{flex:1;min-width:0}
 .ttitle{font-size:13.5px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .trew{font-size:12px;color:var(--acc);font-weight:800;margin-top:2px}
-/* ---------- inputs ---------- */
 .inp{width:100%;padding:15px;border-radius:16px;background:var(--glass);border:1px solid var(--sep);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:#fff;font-size:15px;font-family:inherit;outline:none;margin-bottom:10px;transition:border-color .2s,background .2s}
 .inp:focus{border-color:rgba(74,222,128,.6);background:var(--glass2)}
 .inp::placeholder{color:#565656}
@@ -109,7 +99,6 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .mtile.sel{border-color:var(--acc);background:rgba(74,222,128,.1)}
 .mtile.sel b{color:#fff;font-weight:700}
 .mimg{width:18px;height:18px;border-radius:5px;object-fit:cover;flex-shrink:0}
-/* ---------- stats ---------- */
 .grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;text-align:center}
 .gnum{font-size:21px;font-weight:900;font-variant-numeric:tabular-nums}
 .gnum.ok{color:var(--acc)}
@@ -125,14 +114,12 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .note{font-size:11px;color:var(--dim);margin-top:12px;line-height:1.55}
 .linkbox{width:100%;font-size:11px;background:var(--glass);border:1px solid var(--sep);border-radius:15px;padding:13px;color:#fff;outline:none;word-break:break-all;font-family:inherit}
 .linkbox:focus{border-color:rgba(74,222,128,.6)}
-/* ---------- watch & earn ---------- */
 .wecard{position:relative;overflow:hidden;background:radial-gradient(120% 110% at 0% 0%,rgba(74,222,128,.09),transparent 55%),var(--glass);border:1px solid rgba(74,222,128,.25);backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border-radius:24px;padding:17px 16px;margin-bottom:20px;box-shadow:0 14px 40px rgba(0,0,0,.5),0 0 0 .5px rgba(74,222,128,.15),inset 0 1px 0 rgba(255,255,255,.12)}
 .segbar{display:flex;gap:3px;margin:4px 0 10px}
 .segbar span{flex:1;height:6px;border-radius:99px;background:rgba(255,255,255,.08);transition:background .4s,box-shadow .4s}
 .segbar span.on{background:var(--acc);box-shadow:0 0 8px rgba(74,222,128,.5)}
 .wemeta{font-size:11.5px;color:var(--dim);font-weight:500;margin-bottom:13px}
 .wemeta b{color:#fff;font-weight:700}
-/* ---------- compact activity ---------- */
 #actList{position:relative;overflow:hidden;background:var(--glass);border:1px solid var(--sep);backdrop-filter:blur(24px) saturate(160%);-webkit-backdrop-filter:blur(24px) saturate(160%);border-radius:24px;padding:3px 15px;box-shadow:0 12px 36px rgba(0,0,0,.4),inset 0 1px 0 rgba(255,255,255,.1)}
 .act{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.07);animation:fadeup .4s var(--ease) both;position:relative;z-index:2}
 .act:last-child{border-bottom:none}
@@ -145,13 +132,11 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .apv{font-size:14.5px;font-weight:800;color:var(--acc);font-variant-numeric:tabular-nums}
 .apv.neg{color:#fff}
 .apl{font-size:10px;color:var(--dim);font-weight:500;text-align:right}
-/* ---------- reviews ---------- */
 .rev{background:var(--glass);border:1px solid var(--sep);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:20px;padding:13px 15px;margin-bottom:8px;position:relative;overflow:hidden;animation:fadeup .4s var(--ease) both;box-shadow:inset 0 1px 0 rgba(255,255,255,.08)}
 .revtop{display:flex;align-items:center;gap:10px;position:relative;z-index:2}
 .rstars{color:var(--gold);font-size:11px;letter-spacing:1.5px;margin-top:2px}
 .rago{margin-left:auto;font-size:10.5px;color:var(--dim);flex-shrink:0}
 .rmsg{font-size:12.5px;color:#CFCFCF;margin-top:9px;line-height:1.55;font-weight:500;position:relative;z-index:2}
-/* ---------- wallet ---------- */
 .whero{position:relative;overflow:hidden;background:radial-gradient(130% 100% at 50% -10%,rgba(74,222,128,.1),transparent 55%),var(--glass);border:1px solid rgba(255,255,255,.12);backdrop-filter:blur(28px) saturate(170%);-webkit-backdrop-filter:blur(28px) saturate(170%);border-radius:28px;padding:26px;text-align:center;margin-bottom:20px;box-shadow:0 16px 48px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,255,255,.14)}
 .whero::after{content:'';position:absolute;top:0;left:20%;right:20%;height:1.5px;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(74,222,128,.7),transparent)}
 .wamt{font-size:40px;font-weight:900;font-variant-numeric:tabular-nums;margin-top:8px;letter-spacing:-.8px}
@@ -161,7 +146,6 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .bar{height:8px;border-radius:99px;background:rgba(255,255,255,.07);overflow:hidden;margin-bottom:4px}
 .bar i{display:block;height:100%;background:linear-gradient(90deg,var(--acc),rgba(74,222,128,.7));border-radius:99px;transition:width .6s var(--ease);box-shadow:0 0 10px rgba(74,222,128,.4)}
 .wdok{display:flex;align-items:center;gap:8px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.35);color:var(--acc);border-radius:15px;padding:11px 13px;font-size:12px;font-weight:700;margin-top:12px}
-/* ---------- leaderboard ---------- */
 .podnew{display:flex;align-items:flex-end;gap:10px;margin:6px 0 20px}
 .pcolnew{flex:1;display:flex;flex-direction:column;align-items:center;min-width:0}
 .crownic{width:32px;height:32px;color:var(--gold);margin-bottom:2px;filter:drop-shadow(0 0 8px rgba(255,194,75,.4))}
@@ -179,7 +163,6 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .lbn{flex:1;min-width:0}
 .lbp{font-size:13.5px;font-weight:800;color:var(--acc);font-variant-numeric:tabular-nums}
 .youtag{background:var(--acc);color:#000;font-size:8.5px;font-weight:800;padding:2px 7px;border-radius:99px;margin-left:6px;vertical-align:1px}
-/* ---------- floating glass tab bar ---------- */
 nav{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;transform:translateX(-50%);width:calc(100% - 28px);max-width:452px;display:flex;background:rgba(18,18,18,.62);backdrop-filter:blur(32px) saturate(180%);-webkit-backdrop-filter:blur(32px) saturate(180%);border:1px solid rgba(255,255,255,.12);border-radius:30px;padding:9px 6px;z-index:50;box-shadow:0 18px 50px rgba(0,0,0,.65),inset 0 1px 0 rgba(255,255,255,.14)}
 .nav-btn{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;padding:2px 0;font-size:9.5px;font-weight:600;color:var(--dim);background:none;border:none;font-family:inherit;cursor:pointer;transition:color .2s,transform .45s var(--spring)}
 .nav-btn:active{transform:scale(.88)}
@@ -188,7 +171,6 @@ nav{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;tran
 .nav-btn.active{color:var(--acc);font-weight:700}
 .nav-btn.active .ic{color:var(--acc);filter:drop-shadow(0 0 8px var(--glow))}
 .nav-btn.active .navic{background:rgba(74,222,128,.16);box-shadow:inset 0 1px 0 rgba(255,255,255,.1)}
-/* ---------- misc ---------- */
 .amtwrap{position:relative}
 .maxb{position:absolute;right:9px;top:9px;background:var(--acc);color:#000;border:none;font-size:10px;font-weight:800;padding:7px 12px;border-radius:10px;cursor:pointer;font-family:inherit;box-shadow:0 3px 12px var(--glow)}
 .wheelwrap{position:relative;width:258px;height:258px;margin:8px auto 4px}
@@ -203,7 +185,6 @@ nav{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;tran
 #app{animation:fadeup .5s var(--ease)}
 #app section:not(.hide){animation:fadeup .4s var(--ease)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-/* ---------- link tasks ---------- */
 .lkgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px}
 .lkb{padding:11px 0;border-radius:13px;background:var(--glass);border:1px solid var(--sep);color:var(--dim);font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .4s var(--spring),background .3s}
 .lkb:active{transform:scale(.88)}
@@ -215,7 +196,6 @@ nav{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;tran
 .lkrew{font-size:13px;color:var(--acc);font-weight:800}
 .cnt{font-size:54px;font-weight:900;color:var(--acc);text-align:center;margin:10px 0;font-variant-numeric:tabular-nums;animation:pulse .9s ease infinite;text-shadow:0 0 30px rgba(74,222,128,.4)}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-/* ===== premium 12h countdown — glass ===== */
 .cdwrap{display:flex;align-items:stretch;justify-content:center;gap:7px;margin:12px 0 14px}
 .cdblk{position:relative;overflow:hidden;background:var(--glass2);border:1px solid rgba(74,222,128,.3);border-radius:20px;padding:15px 6px 11px;min-width:76px;text-align:center;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 10px 30px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.12)}
 .cdblk::before{content:'';position:absolute;top:0;left:10px;right:10px;height:1px;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(74,222,128,.6),transparent)}
@@ -227,7 +207,6 @@ nav{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;tran
 .cdprog i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--acc),rgba(74,222,128,.4),var(--acc));background-size:200% 100%;animation:shimmer 2.2s linear infinite;transition:width 1s linear;box-shadow:0 0 12px rgba(74,222,128,.4)}
 @keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
 .lkminicd{color:var(--acc);font-variant-numeric:tabular-nums;font-weight:800}
-/* ---------- links overlay page — glass sheet ---------- */
 #view-links{position:fixed;inset:0;background:rgba(0,0,0,.82);backdrop-filter:blur(36px) saturate(170%);-webkit-backdrop-filter:blur(36px) saturate(170%);z-index:120;overflow-y:auto;padding:calc(12px + env(safe-area-inset-top)) 18px 24px;animation:fadeup .35s var(--ease)}
 .lktop{display:flex;align-items:center;gap:12px;margin-bottom:18px}
 .backbtn{width:42px;height:42px;border-radius:16px;background:var(--glass);border:1px solid var(--sep);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:inherit;transition:transform .4s var(--spring)}
@@ -691,6 +670,12 @@ if (!tg || !tg.initData) { showScreen('nottg'); } else { start(); }
 async function start() {
   tg.ready();
   tg.expand();
+
+  // 🟢 native Telegram top header + background — match the green theme
+  // change '#0E2417' to '#4ADE80' if you want the bright brand green bar
+  try { tg.setHeaderColor('#0E2417'); } catch (e) {}
+  try { tg.setBackgroundColor('#0E2417'); } catch (e) {}
+
   try {
     const r = await fetch('/api/auth', {
       method: 'POST',
