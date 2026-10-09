@@ -180,14 +180,16 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .flash{border-color:var(--acc)!important;box-shadow:0 0 0 3px rgba(74,222,128,.12)}
 /* ---------- link tasks ---------- */
 .lkgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px}
-.lkb{padding:11px 0;border-radius:11px;background:var(--card2);border:1px solid var(--sep);color:var(--dim);font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .12s,background .2s}
+.lkb{padding:11px 0;border-radius:11px;background:var(--card2);border:1px solid var(--sep);color:var(--dim);font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .12s}
 .lkb:active{transform:scale(.9)}
 .lkb.done{background:var(--acc);border-color:var(--acc);color:#000}
 .lkb.next{border-color:rgba(74,222,128,.55);color:var(--acc);box-shadow:0 0 10px rgba(74,222,128,.15)}
 .lkb.off{opacity:.28;pointer-events:none}
-.lkcur{text-align:center;padding:8px 0 2px}
+.lkcur{text-align:center}
 .lknum{font-size:34px;font-weight:900;margin:6px 0 2px;font-variant-numeric:tabular-nums}
 .lkrew{font-size:13px;color:var(--acc);font-weight:800}
+.lklock{font-size:44px;font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums;letter-spacing:2px;margin:8px 0 2px;animation:pulse 1s ease infinite}
+.lklockl{font-size:11px;color:var(--dim);font-weight:600;letter-spacing:1.5px;margin-bottom:10px}
 .cnt{font-size:52px;font-weight:900;color:var(--acc);text-align:center;margin:8px 0;font-variant-numeric:tabular-nums;animation:pulse .9s ease infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
 /* ---------- links overlay page ---------- */
@@ -437,6 +439,8 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
     <p class="lbl" data-i18n="links_cur">CURRENT LINK</p>
     <p class="lknum" id="lkCurNum">Link 1</p>
     <p class="lkrew" id="lkCurRew">+2 ETB</p>
+    <div class="lklock hide" id="lkLockCd">12:00:00</div>
+    <p class="lklockl hide" id="lkLockLbl" data-i18n="links_unlock_in">UNLOCKS IN</p>
     <button class="btn" id="lkGo" style="margin-top:14px" onclick="startLinkTask()" data-i18n="links_open_btn">Open Link</button>
     <div class="cnt hide" id="lkCount">15</div>
     <p class="note hide" id="lkWait" data-i18n="links_wait">Stay in the app — your reward unlocks when the timer ends.</p>
@@ -510,7 +514,7 @@ const LANGS = {
     links_entry_note:'50 links daily, in order — 15 seconds each. Finishes lock for 12 hours.',
     links_cur:'CURRENT LINK',links_open_btn:'Open Link',links_wait:'Stay in the app — your reward unlocks when the timer ends.',
     links_note:'Complete the links in order — 1, then 2, then 3… After all 50, locked for 12 hours.',
-    links_locked:'Locked — back in',links_locked_msg:'All 50 done — locked! Come back when the timer ends.',links_all_done:'All 50 links done! Locked for 12 hours',
+    links_unlock_in:'UNLOCKS IN',links_locked_msg:'All 50 done — locked! Come back when the timer ends.',links_all_done:'All 50 links done! Locked for 12 hours',
     tasks_t:'Tasks',task_note:'Tap Start, join/follow, come back and tap Verify.',done:'Done',start:'Start',verify:'Verify',no_tasks:'No tasks available right now',
     ref_bonus:'Referral bonus',ref_bonus_html:'Complete <b style="color:#fff">any 3 tasks</b> to unlock your inviter\'s <b style="color:var(--acc)">+50 ETB</b>. Fair rewards for real members.',
     ref_link:'Your referral link',copy:'Copy',share:'Share',
@@ -546,7 +550,7 @@ const LANGS = {
     links_entry_note:'በቀን 50 ሊንኮች፣ በቅደም ተከተል — እያንዳንዱ 15 ሰከንድ። ሲጨርሱ ለ12 ሰዓት ይታጠፋል።',
     links_cur:'የአሁኑ ሊንክ',links_open_btn:'ሊንክ ይክፈቱ',links_wait:'በመተግበሪያው ውስጥ ይቆዩ — ጊዜው ሲያልቅ ሽልማትዎ ይገባል።',
     links_note:'ሊንኮቹን በቅደም ተከተል ይጠናቀቁ — 1፣ ከዛ 2፣ ከዛ 3… ሁሉም 50 ከተጠናቀቁ ለ12 ሰዓት ይታጠፋል።',
-    links_locked:'ተዘግቷል — ይመለሱ ከ',links_locked_msg:'ሁሉም 50 ተጠናቋል — ጊዜው ሲያልቅ ይምጡ!',links_all_done:'ሁሉም 50 ሊንኮች ተጠናቀቁ! 12 ሰዓት እረፍት',
+    links_unlock_in:'ይከፈታል በ',links_locked_msg:'ሁሉም 50 ተጠናቋል — ጊዜው ሲያልቅ ይምጡ!',links_all_done:'ሁሉም 50 ሊንኮች ተጠናቀቁ! 12 ሰዓት እረፍት',
     tasks_t:'ተግባራት',task_note:'Start ይንኩ፣ ይቀላቀሉ፣ ተመልሰው Verify ይንኩ።',done:'ተጠናቋል',start:'ጀምር',verify:'አረጋግጥ',no_tasks:'እስካሁን ተግባር የለም',
     ref_bonus:'የግብዣ ሽልማት',ref_bonus_html:'ከላይ ካሉት <b style="color:#fff">ማንኛውም 3 ተግባራት</b> መሞላት ሲጠናቀቅ አስጋቢዎ <b style="color:var(--acc)">+50 ETB</b> ያገኛል።',
     ref_link:'የግብዣ አገናኝዎ',copy:'ቅዳ',share:'አጋራ',
@@ -597,18 +601,6 @@ function timeAgo(d){
   const m = Math.floor(s/60); if (m < 60) return m + (m === 1 ? ' minute ago' : ' minutes ago');
   const h = Math.floor(m/60); if (h < 24) return h + (h === 1 ? ' hour ago' : ' hours ago');
   const dd = Math.floor(h/24); return dd + (dd === 1 ? ' day ago' : ' days ago');
-}
-
-/* ---------- Amharic TTS inside the mini-app ---------- */
-function sayEarn(amount){
-  try {
-    if (!window.speechSynthesis) return;
-    speechSynthesis.cancel();
-    const u = new SpeechSynthesisUtterance(amount + ' ብር መስራት ችለዋል');
-    u.lang = 'am-ET';
-    u.rate = 1;
-    speechSynthesis.speak(u);
-  } catch (e) {}
 }
 
 /* ---------- app ---------- */
@@ -890,7 +882,6 @@ async function doCheckin() {
     me.streak = d.streak;
     me.last_checkin = todayUTC();
     haptic('success');
-    sayEarn(d.reward);
     notify('+' + d.reward + ' ETB! ' + t('daily_streak') + ': ' + d.streak);
     await loadMe();
   } catch (e) { notify('Error: ' + e.message); }
@@ -915,7 +906,6 @@ async function taskVerify(id) {
       doneTasks.add(String(id));
       me.points += d.reward;
       haptic('success');
-      sayEarn(d.reward);
       notify('+' + d.reward + ' ETB!' + (doneTasks.size >= 3 ? ' 3 tasks done!' : ''));
       await loadMe();
     } else notify(d.error || 'Verification failed');
@@ -1057,7 +1047,6 @@ async function watchAd() {
       me.points = d.balance;
       me.ads = { watched: d.watched, limit: d.limit };
       haptic('success');
-      sayEarn(d.reward);
       notify('+' + d.reward + ' ETB! ' + (d.limit - d.watched) + ' ' + t('left'));
       await loadMe();
     } else {
@@ -1144,7 +1133,6 @@ async function playGame() {
       $('hub').textContent = d.mult > 0 ? 'x' + d.mult : '×';
       if (d.mult > 0) {
         haptic('success');
-        sayEarn(d.win);
         notify('+' + fmt(d.win) + ' ETB (x' + d.mult + ')');
       } else {
         haptic('error');
@@ -1164,11 +1152,19 @@ async function playGame() {
   }
 }
 
-/* ================= LINK TASKS (sequential, 15s timer, 12h lock) ================= */
+/* ================= LINK TASKS (sequential, 15s timer, live 12h countdown) ================= */
 let linkState = { watched: 0, limit: 50, lockedUntil: null, link: '', reward: 2 };
 let lkTimer = null, lkSeconds = 0, lkBusy = false;
 
 function isLinkLocked(){ return linkState.lockedUntil && new Date(linkState.lockedUntil) > new Date(); }
+
+function fmtCd(ms){
+  if (ms < 0) ms = 0;
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor(ms % 3600000 / 60000);
+  const s = Math.floor(ms % 60000 / 1000);
+  return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+}
 
 async function loadLinks() {
   try {
@@ -1191,23 +1187,29 @@ function renderLinksPage() {
   $('lkTxt').textContent = linkState.watched + '/' + linkState.limit;
   $('lkBar').style.width = Math.min(100, linkState.watched / linkState.limit * 100) + '%';
 
-  // current task card
   if (locked) {
-    const ms = new Date(linkState.lockedUntil) - Date.now();
-    const hrs = Math.floor(ms / 3600000), mins = Math.floor(ms % 3600000 / 60000);
+    // live 12-hour countdown instead of a done mark
     $('lkCurNum').textContent = '🔒';
-    $('lkCurRew').textContent = t('links_locked') + ' ' + hrs + 'h ' + mins + 'm';
+    $('lkCurRew').classList.add('hide');
+    $('lkLockCd').classList.remove('hide');
+    $('lkLockLbl').classList.remove('hide');
+    $('lkLockCd').textContent = fmtCd(new Date(linkState.lockedUntil) - Date.now());
     $('lkGo').classList.add('hide');
     $('lkCount').classList.add('hide');
     $('lkWait').classList.add('hide');
-    $('lkClaimed').classList.add('hide');
   } else if (linkState.watched >= linkState.limit) {
     $('lkCurNum').textContent = '🎉';
+    $('lkCurRew').classList.remove('hide');
     $('lkCurRew').textContent = t('links_all_done');
+    $('lkLockCd').classList.add('hide');
+    $('lkLockLbl').classList.add('hide');
     $('lkGo').classList.add('hide');
   } else {
     $('lkCurNum').textContent = 'Link ' + (linkState.watched + 1);
+    $('lkCurRew').classList.remove('hide');
     $('lkCurRew').textContent = '+' + linkState.reward + ' ETB';
+    $('lkLockCd').classList.add('hide');
+    $('lkLockLbl').classList.add('hide');
     $('lkGo').classList.remove('hide');
     $('lkGo').disabled = false;
     $('lkCount').classList.add('hide');
@@ -1215,7 +1217,6 @@ function renderLinksPage() {
   }
   $('lkClaimed').classList.add('hide');
 
-  // 50-task grid — strictly sequential
   let h = '';
   for (let i = 1; i <= linkState.limit; i++) {
     const done = i <= linkState.watched;
@@ -1223,14 +1224,19 @@ function renderLinksPage() {
     h += '<button class="lkb' + (done ? ' done' : '') + (next ? ' next' : '') + '" onclick="goToCurrent()">' + (done ? '✓' : i) + '</button>';
   }
   $('lkGrid').innerHTML = h;
-  $('lkNote').textContent = locked
-    ? t('links_locked') + ' ' + Math.floor((new Date(linkState.lockedUntil) - Date.now()) / 3600000) + 'h'
-    : t('links_note');
 }
+
+// live countdown ticker — updates the lock timer every second while visible
+setInterval(() => {
+  if ($('view-links').classList.contains('hide')) return;
+  if (isLinkLocked()) {
+    const el = $('lkLockCd');
+    if (el) el.textContent = fmtCd(new Date(linkState.lockedUntil) - Date.now());
+  }
+}, 1000);
 
 function goToCurrent(){
   if (isLinkLocked()) return notify(t('links_locked_msg'));
-  // scrolling hint: only the current link is claimable — the button above does it
   haptic('light');
 }
 
@@ -1243,7 +1249,6 @@ function startLinkTask() {
   $('lkGo').disabled = true;
   tg.openLink(linkState.link);
 
-  // 15-second countdown before the reward lands
   lkSeconds = 15;
   $('lkCount').classList.remove('hide');
   $('lkWait').classList.remove('hide');
@@ -1276,12 +1281,14 @@ async function claimLink() {
     linkState.watched = d.watched;
     linkState.limit = d.limit;
     linkState.lockedUntil = d.lockedUntil;
-    me.points = d.balance;
-    renderBalance();
-    $('wBalance').textContent = fmt(me.points);
+    if (typeof d.balance === 'number') {
+      me.points = d.balance;
+      renderBalance();
+      $('wBalance').textContent = fmt(me.points);
+    }
     haptic('success');
-    sayEarn(d.reward); // 🔊 short Amharic: "2 ብር መስራት ችለዋል"
     if (d.allDone) notify(t('links_all_done'));
+    else notify('+' + d.reward + ' ETB ✓');
     renderLinksEntry();
     renderLinksPage();
   } catch (e) {
