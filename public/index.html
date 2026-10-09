@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#00D027">
+<meta name="theme-color" content="#274D23">
 <title>EarnApp</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +17,7 @@ img{-webkit-user-drag:none}
 html{-webkit-font-smoothing:antialiased}
 body{background:#000;color:var(--txt);font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;padding-bottom:128px;-webkit-font-smoothing:antialiased}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:linear-gradient(180deg,rgba(0,208,39,.55) 0%,rgba(19,169,0,.3) 100px,rgba(19,169,0,.12) 200px,transparent 340px),
+  background:linear-gradient(180deg,rgba(39,77,35,.85) 0%,rgba(39,77,35,.45) 100px,rgba(78,4,4,.18) 220px,transparent 380px),
              radial-gradient(600px 420px at 85% -8%,rgba(74,222,128,.09),transparent 60%),
              radial-gradient(500px 380px at -10% 30%,rgba(74,222,128,.05),transparent 60%),
              radial-gradient(700px 500px at 50% 115%,rgba(74,222,128,.045),transparent 65%)}
@@ -673,9 +673,10 @@ async function start() {
   tg.ready();
   tg.expand();
 
-  // 🟢 native Telegram header — bright premium green
-  try { tg.setHeaderColor('#00D027'); } catch (e) {}
-  try { tg.setBackgroundColor('#13A900'); } catch (e) {}
+  // 🟢 native Telegram header — dark green + dark red background (alpha with solid fallback)
+  try { tg.setHeaderColor('#274D23'); } catch (e) {}
+  try { tg.setBackgroundColor('#4E0404C4'); } catch (e) {}      // 8-digit (Telegram may reject alpha)
+  try { if (!tg.backgroundColor || tg.backgroundColor === '#ffffff') tg.setBackgroundColor('#4E0404'); } catch (e) {} // fallback: solid dark red
 
   try {
     const r = await fetch('/api/auth', {
