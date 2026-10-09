@@ -178,22 +178,24 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .gtag{font-size:11px;font-weight:700;padding:6px 11px;border-radius:999px;background:var(--card2);color:var(--dim)}
 .gtag.win{background:rgba(74,222,128,.14);color:var(--acc);border:1px solid rgba(74,222,128,.3)}
 .flash{border-color:var(--acc)!important;box-shadow:0 0 0 3px rgba(74,222,128,.12)}
-/* ---------- dice ---------- */
-.dice{width:96px;height:96px;background:#fff;border-radius:20px;margin:6px auto 14px;display:grid;grid-template-columns:repeat(3,1fr);grid-template-rows:repeat(3,1fr);padding:14px;box-shadow:0 8px 26px rgba(255,255,255,.14)}
-.dice span{width:15px;height:15px;border-radius:50%;background:#000;opacity:0;align-self:center;justify-self:center;transition:opacity .05s}
-.dice span.on{opacity:1}
-.dice.rolling{animation:droll .16s linear infinite}
-@keyframes droll{0%{transform:rotate(0) translateY(0)}25%{transform:rotate(-16deg) translateY(-7px)}50%{transform:rotate(12deg) translateY(3px)}75%{transform:rotate(-9deg) translateY(-4px)}100%{transform:rotate(0) translateY(0)}}
-.dres{text-align:center;font-size:14px;font-weight:800;margin-top:12px;min-height:20px}
-.dres.win{color:var(--acc)}
-.dres.lose{color:var(--dim)}
-/* ---------- link tasks grid ---------- */
+/* ---------- link tasks ---------- */
 .lkgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px;margin-top:12px}
-.lkb{padding:10px 0;border-radius:11px;background:var(--card2);border:1px solid var(--sep);color:var(--dim);font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .12s,background .2s}
+.lkb{padding:11px 0;border-radius:11px;background:var(--card2);border:1px solid var(--sep);color:var(--dim);font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;transition:transform .12s,background .2s}
 .lkb:active{transform:scale(.9)}
 .lkb.done{background:var(--acc);border-color:var(--acc);color:#000}
-.lkb.next{border-color:rgba(74,222,128,.55);color:var(--acc)}
-.lkb.off{opacity:.3;pointer-events:none}
+.lkb.next{border-color:rgba(74,222,128,.55);color:var(--acc);box-shadow:0 0 10px rgba(74,222,128,.15)}
+.lkb.off{opacity:.28;pointer-events:none}
+.lkcur{text-align:center;padding:8px 0 2px}
+.lknum{font-size:34px;font-weight:900;margin:6px 0 2px;font-variant-numeric:tabular-nums}
+.lkrew{font-size:13px;color:var(--acc);font-weight:800}
+.cnt{font-size:52px;font-weight:900;color:var(--acc);text-align:center;margin:8px 0;font-variant-numeric:tabular-nums;animation:pulse .9s ease infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+/* ---------- links overlay page ---------- */
+#view-links{position:fixed;inset:0;background:var(--bg);z-index:120;overflow-y:auto;padding:calc(12px + env(safe-area-inset-top)) 18px 24px}
+.lktop{display:flex;align-items:center;gap:12px;margin-bottom:18px}
+.backbtn{width:40px;height:40px;border-radius:12px;background:var(--card);border:1px solid var(--sep);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:inherit}
+.backbtn:active{transform:scale(.92)}
+.lktitle{font-size:16px;font-weight:800}
 @keyframes fadeup{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 #app{animation:fadeup .35s ease}
 @media (max-width:350px){
@@ -287,11 +289,11 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
   <!-- TASKS -->
   <section id="tab-tasks" class="hide">
     <div class="card">
-      <p class="ctitle"><i class="ic" data-ic="link"></i> <span data-i18n="links_title">Link Tasks</span></p>
-      <div class="wreqrow" style="margin-top:0"><span data-i18n="links_prog">Links opened</span><b id="lkTxt">0/50</b></div>
-      <div class="bar"><i id="lkBar" style="width:0%"></i></div>
-      <div class="lkgrid" id="lkGrid"></div>
-      <p class="note" id="lkNote" data-i18n="links_note">Open all 50 links — then the section locks for 12 hours.</p>
+      <p class="ctitle"><i class="ic" data-ic="link"></i> <span data-i18n="links_title">Watch Link Tasks</span></p>
+      <div class="wreqrow" style="margin-top:0"><span data-i18n="links_prog">Links opened</span><b id="lkMiniTxt">0/50</b></div>
+      <div class="bar"><i id="lkMiniBar" style="width:0%"></i></div>
+      <button class="btn" style="margin-top:12px" onclick="openLinksView()" data-i18n="links_open">Open Link Tasks</button>
+      <p class="note" data-i18n="links_entry_note">50 links daily, in order — 15 seconds each. Finishes lock for 12 hours.</p>
     </div>
     <div class="card">
       <p class="ctitle"><i class="ic" data-ic="flame"></i> <span data-i18n="daily_streak">Daily Streak</span></p>
@@ -334,21 +336,6 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
       <button class="btn" id="spinBtn" onclick="playGame()" data-i18n="spin_btn">Spin the Wheel</button>
       <div class="gres" id="gres"></div>
       <p class="note" data-i18n="game_note">Multipliers: x1.5 · x2 · x3 — results are decided on the server. Play for fun.</p>
-    </div>
-
-    <div class="card">
-      <p class="ctitle"><i class="ic" data-ic="dice"></i> <span data-i18n="dice_title">Lucky Dice</span></p>
-      <div class="dice" id="diceEl"></div>
-      <p class="lbl" data-i18n="dice_pick">PICK A NUMBER — MATCH = 5×</p>
-      <div class="chips" id="dicePicks"></div>
-      <p class="lbl" data-i18n="your_bet">YOUR BET</p>
-      <div class="amtwrap">
-        <input id="dbet" type="number" class="inp" placeholder="50" inputmode="numeric">
-        <button class="maxb" onclick="maxDice()">MAX 5000</button>
-      </div>
-      <button class="btn" id="diceBtn" onclick="rollDice()" data-i18n="dice_roll">Roll Dice</button>
-      <p class="dres" id="dres"></p>
-      <p class="note" data-i18n="dice_note">Match the number to win 5× your bet. The roll is decided on the server — fair for everyone.</p>
     </div>
   </section>
 
@@ -436,6 +423,31 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 </div>
 </main>
 
+<!-- LINK TASKS FULL PAGE -->
+<div id="view-links" class="hide">
+  <div class="lktop">
+    <button class="backbtn" onclick="closeLinksView()"><i class="ic" data-ic="back"></i></button>
+    <p class="lktitle" data-i18n="links_title">Watch Link Tasks</p>
+  </div>
+  <div class="card">
+    <div class="wreqrow" style="margin-top:0"><span data-i18n="links_prog">Links opened</span><b id="lkTxt">0/50</b></div>
+    <div class="bar"><i id="lkBar" style="width:0%"></i></div>
+  </div>
+  <div class="card lkcur" id="lkCurCard">
+    <p class="lbl" data-i18n="links_cur">CURRENT LINK</p>
+    <p class="lknum" id="lkCurNum">Link 1</p>
+    <p class="lkrew" id="lkCurRew">+2 ETB</p>
+    <button class="btn" id="lkGo" style="margin-top:14px" onclick="startLinkTask()" data-i18n="links_open_btn">Open Link</button>
+    <div class="cnt hide" id="lkCount">15</div>
+    <p class="note hide" id="lkWait" data-i18n="links_wait">Stay in the app — your reward unlocks when the timer ends.</p>
+    <p class="note hide" id="lkClaimed" style="color:var(--acc);font-weight:700"></p>
+  </div>
+  <div class="card">
+    <div class="lkgrid" id="lkGrid"></div>
+    <p class="note" id="lkNote" data-i18n="links_note">Complete the links in order — 1, then 2, then 3… After all 50, locked for 12 hours.</p>
+  </div>
+</div>
+
 <script>
 const BOT_USERNAME = "EbSupabaseBot";
 const APP_NAME = "refer";
@@ -460,7 +472,6 @@ const IC = {
   home:'<path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"/><path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>',
   check:'<circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/>',
   game:'<circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="6"/><circle cx="12" cy="12" r="2"/>',
-  dice:'<rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.25" cy="8.25" r="1.4" fill="currentColor" stroke="none"/><circle cx="15.75" cy="8.25" r="1.4" fill="currentColor" stroke="none"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/><circle cx="8.25" cy="15.75" r="1.4" fill="currentColor" stroke="none"/><circle cx="15.75" cy="15.75" r="1.4" fill="currentColor" stroke="none"/>',
   users:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',
   wallet:'<path d="M21 12V7H5a2 2 0 0 1 0-4h14v4"/><path d="M3 5v14a2 2 0 0 0 2 2h16v-5"/><path d="M18 12a2 2 0 0 0 0 4h4v-4Z"/>',
   flame:'<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>',
@@ -478,7 +489,8 @@ const IC = {
   calcheck:'<path d="M8 2v4"/><path d="M16 2v4"/><rect width="18" height="18" x="3" y="4" rx="2"/><path d="M3 10h18"/><path d="m9 16 2 2 4-4"/>',
   userplus:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/>',
   eye:'<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
-  eyeoff:'<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/>'
+  eyeoff:'<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/>',
+  back:'<path d="m15 18-6-6 6-6"/>'
 };
 function icon(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IC[n] || IC.star) + '</svg>'; }
 document.querySelectorAll('[data-ic]').forEach(el => { el.innerHTML = icon(el.dataset.ic); });
@@ -494,7 +506,11 @@ const LANGS = {
     limit_reached:'Daily limit reached — back tomorrow',watch_ad:'Watch Ad',
     recent_activity:'Recent Activity',view_all:'View all',no_activity:'No activity yet',no_activity_s:'Claim your streak or watch an ad to get started',
     reviews:'User Reviews',no_reviews:'No reviews yet — be the first!',
-    links_title:'Link Tasks',links_prog:'Links opened',links_note:'Open all 50 links — then the section locks for 12 hours.',links_locked:'🔒 Locked — back in',links_locked_msg:'All 50 done — locked! Come back when the timer ends.',links_all_done:'All 50 links done! 🔒 Locked for 12 hours',
+    links_title:'Watch Link Tasks',links_prog:'Links opened',links_open:'Open Link Tasks',
+    links_entry_note:'50 links daily, in order — 15 seconds each. Finishes lock for 12 hours.',
+    links_cur:'CURRENT LINK',links_open_btn:'Open Link',links_wait:'Stay in the app — your reward unlocks when the timer ends.',
+    links_note:'Complete the links in order — 1, then 2, then 3… After all 50, locked for 12 hours.',
+    links_locked:'Locked — back in',links_locked_msg:'All 50 done — locked! Come back when the timer ends.',links_all_done:'All 50 links done! Locked for 12 hours',
     tasks_t:'Tasks',task_note:'Tap Start, join/follow, come back and tap Verify.',done:'Done',start:'Start',verify:'Verify',no_tasks:'No tasks available right now',
     ref_bonus:'Referral bonus',ref_bonus_html:'Complete <b style="color:#fff">any 3 tasks</b> to unlock your inviter\'s <b style="color:var(--acc)">+50 ETB</b>. Fair rewards for real members.',
     ref_link:'Your referral link',copy:'Copy',share:'Share',
@@ -510,7 +526,6 @@ const LANGS = {
     history:'History',no_wd:'No withdrawals yet',
     your_bet:'YOUR BET',spin_btn:'Spin the Wheel',
     game_note:'Multipliers: x1.5 · x2 · x3 — results are decided on the server and cannot be manipulated. Play for fun.',
-    dice_title:'Lucky Dice',dice_pick:'PICK A NUMBER — MATCH = 5×',dice_roll:'Roll Dice',dice_lose:'Not this time — try again!',dice_pick_first:'Pick a number first',dice_note:'Match the number to win 5× your bet. The roll is decided on the server — fair for everyone.',
     paid:'Paid',pend:'Pending',rejected:'Rejected',
     m_min_wd:'Minimum withdrawal is 1000 ETB',m_over:'Amount exceeds your balance',m_acct:'Enter your account details',
     m_min_bet:'Minimum bet is 50 ETB',m_max_bet:'Maximum bet is 5,000 ETB',m_no_bal:'Not enough balance',
@@ -527,7 +542,11 @@ const LANGS = {
     limit_reached:'የዕለት ገደብ ደርሷል — ነገ ይምጡ',watch_ad:'ማስታወቂያ ይመልከቱ',
     recent_activity:'የቅርብ እንቅስቃሴ',view_all:'ሁሉንም',no_activity:'እስካሁን ምንም እንቅስቃሴ የለም',no_activity_s:'ቼክ-ኢን ይግበሩ ወይም ማስታወቂያ ይመልከቱ',
     reviews:'የተጠቃሚ አስተያየቶች',no_reviews:'እስካሁን አስተያየት የለም',
-    links_title:'የሊንክ ተግባራት',links_prog:'የተከፈቱ ሊንኮች',links_note:'ሁሉንም 50 ሊንኮች ይክፈቱ — ከዛ ለ12 ሰዓት ይታጠፋል።',links_locked:'🔒 ተዘግቷል — ይመለሱ ከ',links_locked_msg:'ሁሉም 50 ተጠናቋል — ጊዜው ሲያልቅ ይምጡ!',links_all_done:'ሁሉም 50 ሊንኮች ተጠናቋል! 🔒 12 ሰዓት እረፍት',
+    links_title:'የሊንክ ተግባራት',links_prog:'የተከፈቱ ሊንኮች',links_open:'የሊንክ ተግባራትን ይክፈቱ',
+    links_entry_note:'በቀን 50 ሊንኮች፣ በቅደም ተከተል — እያንዳንዱ 15 ሰከንድ። ሲጨርሱ ለ12 ሰዓት ይታጠፋል።',
+    links_cur:'የአሁኑ ሊንክ',links_open_btn:'ሊንክ ይክፈቱ',links_wait:'በመተግበሪያው ውስጥ ይቆዩ — ጊዜው ሲያልቅ ሽልማትዎ ይገባል።',
+    links_note:'ሊንኮቹን በቅደም ተከተል ይጠናቀቁ — 1፣ ከዛ 2፣ ከዛ 3… ሁሉም 50 ከተጠናቀቁ ለ12 ሰዓት ይታጠፋል።',
+    links_locked:'ተዘግቷል — ይመለሱ ከ',links_locked_msg:'ሁሉም 50 ተጠናቋል — ጊዜው ሲያልቅ ይምጡ!',links_all_done:'ሁሉም 50 ሊንኮች ተጠናቀቁ! 12 ሰዓት እረፍት',
     tasks_t:'ተግባራት',task_note:'Start ይንኩ፣ ይቀላቀሉ፣ ተመልሰው Verify ይንኩ።',done:'ተጠናቋል',start:'ጀምር',verify:'አረጋግጥ',no_tasks:'እስካሁን ተግባር የለም',
     ref_bonus:'የግብዣ ሽልማት',ref_bonus_html:'ከላይ ካሉት <b style="color:#fff">ማንኛውም 3 ተግባራት</b> መሞላት ሲጠናቀቅ አስጋቢዎ <b style="color:var(--acc)">+50 ETB</b> ያገኛል።',
     ref_link:'የግብዣ አገናኝዎ',copy:'ቅዳ',share:'አጋራ',
@@ -543,7 +562,6 @@ const LANGS = {
     history:'ታሪክ',no_wd:'እስካሁን መውጫ የለም',
     your_bet:'ውርርድዎ',spin_btn:'አሽከርክር',
     game_note:'ማባዣዎች: x1.5 · x2 · x3 — ውጤቱ በሰርቨሩ ይወሰናል። ለመዝናናት ብቻ።',
-    dice_title:'ሲሳይ ጨዋታ',dice_pick:'ቁጥር ይምረጡ — ከተመሳከረ 5×',dice_roll:'ሲሳይ ወርውር',dice_lose:'አልወጣም — እንደገና ይሞክሩ!',dice_pick_first:'መጀመሪያ ቁጥር ይምረጡ',dice_note:'ቁጥሩ ከወጣ 5× ያሸነፋሉ። ውጤቱ በሰርቨሩ ይወሰናል።',
     paid:'ተከፍሏል',pend:'ቆይቷል',rejected:'ተቀናሽ ሆኗል',
     m_min_wd:'ዝቅተኛ መውጫ 1000 ETB ነው',m_over:'መጠኑ ከሂሳብዎ በላይ ነው',m_acct:'የመለያ ዝርዝርዎን ያስገቡ',
     m_min_bet:'ዝቅተኛ ውርርድ 50 ETB ነው',m_max_bet:'ከፍተኛ ውርርድ 5,000 ETB ነው',m_no_bal:'ሂሳብዎ አይበቃም',
@@ -579,6 +597,18 @@ function timeAgo(d){
   const m = Math.floor(s/60); if (m < 60) return m + (m === 1 ? ' minute ago' : ' minutes ago');
   const h = Math.floor(m/60); if (h < 24) return h + (h === 1 ? ' hour ago' : ' hours ago');
   const dd = Math.floor(h/24); return dd + (dd === 1 ? ' day ago' : ' days ago');
+}
+
+/* ---------- Amharic TTS inside the mini-app ---------- */
+function sayEarn(amount){
+  try {
+    if (!window.speechSynthesis) return;
+    speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(amount + ' ብር መስራት ችለዋል');
+    u.lang = 'am-ET';
+    u.rate = 1;
+    speechSynthesis.speak(u);
+  } catch (e) {}
 }
 
 /* ---------- app ---------- */
@@ -670,7 +700,8 @@ function renderAll() {
   renderActivity();
   renderReviews();
   renderLb();
-  loadLinks();
+  renderLinksEntry();
+  if (!$('view-links').classList.contains('hide')) renderLinksPage();
 }
 
 function renderBalance() {
@@ -859,6 +890,7 @@ async function doCheckin() {
     me.streak = d.streak;
     me.last_checkin = todayUTC();
     haptic('success');
+    sayEarn(d.reward);
     notify('+' + d.reward + ' ETB! ' + t('daily_streak') + ': ' + d.streak);
     await loadMe();
   } catch (e) { notify('Error: ' + e.message); }
@@ -883,6 +915,7 @@ async function taskVerify(id) {
       doneTasks.add(String(id));
       me.points += d.reward;
       haptic('success');
+      sayEarn(d.reward);
       notify('+' + d.reward + ' ETB!' + (doneTasks.size >= 3 ? ' 3 tasks done!' : ''));
       await loadMe();
     } else notify(d.error || 'Verification failed');
@@ -1024,6 +1057,7 @@ async function watchAd() {
       me.points = d.balance;
       me.ads = { watched: d.watched, limit: d.limit };
       haptic('success');
+      sayEarn(d.reward);
       notify('+' + d.reward + ' ETB! ' + (d.limit - d.watched) + ' ' + t('left'));
       await loadMe();
     } else {
@@ -1110,6 +1144,7 @@ async function playGame() {
       $('hub').textContent = d.mult > 0 ? 'x' + d.mult : '×';
       if (d.mult > 0) {
         haptic('success');
+        sayEarn(d.win);
         notify('+' + fmt(d.win) + ' ETB (x' + d.mult + ')');
       } else {
         haptic('error');
@@ -1129,140 +1164,133 @@ async function playGame() {
   }
 }
 
-/* ================= LUCKY DICE ================= */
-const DICE_DOTS = { 1:[5], 2:[3,7], 3:[3,5,7], 4:[1,3,7,9], 5:[1,3,5,7,9], 6:[1,3,4,6,7,9] };
-let dicePickN = 0, diceRolling = false;
+/* ================= LINK TASKS (sequential, 15s timer, 12h lock) ================= */
+let linkState = { watched: 0, limit: 50, lockedUntil: null, link: '', reward: 2 };
+let lkTimer = null, lkSeconds = 0, lkBusy = false;
 
-function renderDiceFace(n) {
-  const dots = DICE_DOTS[n] || [5];
-  let h = '';
-  for (let i = 1; i <= 9; i++) h += '<span class="' + (dots.includes(i) ? 'on' : '') + '"></span>';
-  $('diceEl').innerHTML = h;
-}
-function buildDicePicks() {
-  $('dicePicks').innerHTML = [1,2,3,4,5,6].map(n =>
-    '<button class="chip' + (dicePickN === n ? ' sel' : '') + '" onclick="pickDice(' + n + ')">' + n + '</button>'
-  ).join('');
-}
-function pickDice(n){ if (diceRolling) return; dicePickN = n; buildDicePicks(); tick(); }
-function maxDice(){ $('dbet').value = Math.min(me.points, 5000); }
-
-async function rollDice() {
-  if (diceRolling) return;
-  if (!dicePickN) return notify(t('dice_pick_first'));
-  const bet = parseInt($('dbet').value, 10);
-  if (!bet || bet < 50) return notify(t('m_min_bet'));
-  if (bet > 5000) return notify(t('m_max_bet'));
-  if (bet > me.points) return notify(t('m_no_bal'));
-
-  diceRolling = true;
-  $('diceBtn').disabled = true;
-  $('dres').textContent = '';
-  $('dres').className = 'dres';
-  $('diceEl').classList.add('rolling');
-  const shuffle = setInterval(() => { renderDiceFace(1 + Math.floor(Math.random() * 6)); }, 90);
-
-  try {
-    const r = await fetch('/api/dice', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ initData: tg.initData, bet, pick: dicePickN })
-    });
-    const d = await r.json();
-    if (!r.ok) {
-      clearInterval(shuffle);
-      $('diceEl').classList.remove('rolling');
-      diceRolling = false; $('diceBtn').disabled = false;
-      return notify(d.error || 'Failed');
-    }
-
-    setTimeout(() => {
-      clearInterval(shuffle);
-      $('diceEl').classList.remove('rolling');
-      renderDiceFace(d.roll);
-      me.points = d.balance;
-      renderBalance();
-      $('wBalance').textContent = fmt(me.points);
-      if (d.match) {
-        $('dres').textContent = '🎲 ' + d.roll + ' — +' + fmt(d.win) + ' ETB!';
-        $('dres').className = 'dres win';
-        haptic('success');
-        notify('+' + fmt(d.win) + ' ETB! (x5)');
-      } else {
-        $('dres').textContent = '🎲 ' + d.roll + ' — ' + t('dice_lose');
-        $('dres').className = 'dres lose';
-        haptic('error');
-      }
-      diceRolling = false;
-      $('diceBtn').disabled = false;
-    }, 1400);
-  } catch (e) {
-    clearInterval(shuffle);
-    $('diceEl').classList.remove('rolling');
-    diceRolling = false; $('diceBtn').disabled = false;
-    notify('Error: ' + e.message);
-  }
-}
-
-/* ================= LINK TASKS (50 links, 12h lock) ================= */
-let linkState = { watched: 0, limit: 50, lockedUntil: null, link: '' };
+function isLinkLocked(){ return linkState.lockedUntil && new Date(linkState.lockedUntil) > new Date(); }
 
 async function loadLinks() {
   try {
     const r = await fetch('/api/links', { headers: { 'x-init-data': tg.initData } });
     const d = await r.json();
-    if (d.watched !== undefined) { linkState = d; renderLinks(); }
+    if (d.watched !== undefined) { linkState = d; renderLinksEntry(); renderLinksPage(); }
   } catch (e) {}
 }
 
-function renderLinks() {
-  const s = linkState;
-  const locked = s.lockedUntil && new Date(s.lockedUntil) > new Date();
-  $('lkTxt').textContent = s.watched + '/' + s.limit;
-  $('lkBar').style.width = Math.min(100, s.watched / s.limit * 100) + '%';
-  let h = '';
-  for (let i = 1; i <= s.limit; i++) {
-    const done = i <= s.watched;
-    const next = i === s.watched + 1 && !locked;
-    h += '<button class="lkb' + (done ? ' done' : '') + (next ? ' next' : '') + '" onclick="openLinkTask(' + i + ')">' + (done ? '✓' : i) + '</button>';
-  }
-  $('lkGrid').innerHTML = h;
-  if (locked) {
-    $('lkGrid').querySelectorAll('.lkb:not(.done)').forEach(b => b.classList.add('off'));
-    const ms = new Date(s.lockedUntil) - Date.now();
-    const hrs = Math.floor(ms / 3600000), mins = Math.floor(ms % 3600000 / 60000);
-    $('lkNote').textContent = t('links_locked') + ' ' + hrs + 'h ' + mins + 'm';
-  } else {
-    $('lkNote').textContent = t('links_note');
-  }
+function renderLinksEntry() {
+  $('lkMiniTxt').textContent = linkState.watched + '/' + linkState.limit;
+  $('lkMiniBar').style.width = Math.min(100, linkState.watched / linkState.limit * 100) + '%';
 }
 
-async function openLinkTask(i) {
-  if (i <= linkState.watched) return;
-  if (linkState.lockedUntil && new Date(linkState.lockedUntil) > new Date()) {
-    return notify(t('links_locked_msg'));
+function openLinksView(){ renderLinksPage(); $('view-links').classList.remove('hide'); window.scrollTo(0, 0); }
+function closeLinksView(){ if (lkTimer) { clearInterval(lkTimer); lkTimer = null; } $('view-links').classList.add('hide'); }
+
+function renderLinksPage() {
+  const locked = isLinkLocked();
+  $('lkTxt').textContent = linkState.watched + '/' + linkState.limit;
+  $('lkBar').style.width = Math.min(100, linkState.watched / linkState.limit * 100) + '%';
+
+  // current task card
+  if (locked) {
+    const ms = new Date(linkState.lockedUntil) - Date.now();
+    const hrs = Math.floor(ms / 3600000), mins = Math.floor(ms % 3600000 / 60000);
+    $('lkCurNum').textContent = '🔒';
+    $('lkCurRew').textContent = t('links_locked') + ' ' + hrs + 'h ' + mins + 'm';
+    $('lkGo').classList.add('hide');
+    $('lkCount').classList.add('hide');
+    $('lkWait').classList.add('hide');
+    $('lkClaimed').classList.add('hide');
+  } else if (linkState.watched >= linkState.limit) {
+    $('lkCurNum').textContent = '🎉';
+    $('lkCurRew').textContent = t('links_all_done');
+    $('lkGo').classList.add('hide');
+  } else {
+    $('lkCurNum').textContent = 'Link ' + (linkState.watched + 1);
+    $('lkCurRew').textContent = '+' + linkState.reward + ' ETB';
+    $('lkGo').classList.remove('hide');
+    $('lkGo').disabled = false;
+    $('lkCount').classList.add('hide');
+    $('lkWait').classList.add('hide');
   }
+  $('lkClaimed').classList.add('hide');
+
+  // 50-task grid — strictly sequential
+  let h = '';
+  for (let i = 1; i <= linkState.limit; i++) {
+    const done = i <= linkState.watched;
+    const next = i === linkState.watched + 1 && !locked;
+    h += '<button class="lkb' + (done ? ' done' : '') + (next ? ' next' : '') + '" onclick="goToCurrent()">' + (done ? '✓' : i) + '</button>';
+  }
+  $('lkGrid').innerHTML = h;
+  $('lkNote').textContent = locked
+    ? t('links_locked') + ' ' + Math.floor((new Date(linkState.lockedUntil) - Date.now()) / 3600000) + 'h'
+    : t('links_note');
+}
+
+function goToCurrent(){
+  if (isLinkLocked()) return notify(t('links_locked_msg'));
+  // scrolling hint: only the current link is claimable — the button above does it
+  haptic('light');
+}
+
+function startLinkTask() {
+  if (lkBusy) return;
+  if (isLinkLocked()) return notify(t('links_locked_msg'));
+  if (linkState.watched >= linkState.limit) return;
+
+  lkBusy = true;
+  $('lkGo').disabled = true;
+  tg.openLink(linkState.link);
+
+  // 15-second countdown before the reward lands
+  lkSeconds = 15;
+  $('lkCount').classList.remove('hide');
+  $('lkWait').classList.remove('hide');
+  $('lkCount').textContent = lkSeconds;
+  lkTimer = setInterval(() => {
+    lkSeconds--;
+    if (lkSeconds <= 0) {
+      clearInterval(lkTimer);
+      lkTimer = null;
+      claimLink();
+    } else {
+      $('lkCount').textContent = lkSeconds;
+    }
+  }, 1000);
+}
+
+async function claimLink() {
   try {
     const r = await fetch('/api/links', {
       method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ initData: tg.initData })
     });
     const d = await r.json();
+    lkBusy = false;
     if (!r.ok) {
       if (d.lockedUntil) linkState.lockedUntil = d.lockedUntil;
-      renderLinks();
+      renderLinksPage();
       return notify(d.error || 'Failed');
     }
     linkState.watched = d.watched;
     linkState.limit = d.limit;
     linkState.lockedUntil = d.lockedUntil;
-    renderLinks();
+    me.points = d.balance;
+    renderBalance();
+    $('wBalance').textContent = fmt(me.points);
+    haptic('success');
+    sayEarn(d.reward); // 🔊 short Amharic: "2 ብር መስራት ችለዋል"
     if (d.allDone) notify(t('links_all_done'));
-    if (d.link) tg.openLink(d.link);
-  } catch (e) { notify('Error: ' + e.message); }
+    renderLinksEntry();
+    renderLinksPage();
+  } catch (e) {
+    lkBusy = false;
+    notify('Error: ' + e.message);
+  }
 }
 
-renderDiceFace(5);
-buildDicePicks();
+loadLinks();
 applyLang();
 </script>
 </body>
