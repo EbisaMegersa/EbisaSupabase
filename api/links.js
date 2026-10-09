@@ -5,6 +5,7 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_SER
 const LINK_URL = process.env.AD_LINK_URL || 'https://t.me/';
 const LIMIT = 50;
 const LOCK_HOURS = 12;
+const LINK_REWARD = 2;
 
 function valid(initData) {
   if (!initData) return false;
@@ -38,7 +39,6 @@ module.exports = async (req, res) => {
     let lockedUntil = u.links_locked_until || null;
     const now = Date.now();
 
-    // expired lock → start a fresh session
     if (lockedUntil && new Date(lockedUntil).getTime() <= now && watched >= LIMIT) {
       watched = 0;
       lockedUntil = null;
@@ -47,10 +47,9 @@ module.exports = async (req, res) => {
     }
 
     if (req.method === 'GET') {
-      return res.status(200).json({ watched, limit: LIMIT, lockedUntil, link: LINK_URL });
+      return res.status(200).json({ watched, limit: LIMIT, lockedUntil, link: LINK_URL, reward: LINK_REWARD });
     }
 
-    // ---- POST: user tapped a link ----
     if (lockedUntil && new Date(lockedUntil).getTime() > now) {
       return res.status(400).json({ error: 'Locked — come back later', lockedUntil, watched, limit: LIMIT });
     }
@@ -69,7 +68,15 @@ module.exports = async (req, res) => {
     await supabase.from('users')
       .update({ links_watched: watched, links_locked_until: lockedUntil }).eq('telegram_id', id);
 
-    return res.status(200).json({ ok: true, watched, limit: LIMIT, lockedUntil, allDone, link: LINK_URL });
+    await supabase.rpc('add_points', { p_telegram_id: id, p_amount: LINK_REWARD });
+    try { await supabase.from('activities').insert({ user_id: id, icon: 'link', title: 'Link Task #' + watched, points: LINK_REWARD }); } catch (e) {}
+
+    const { data: u2 } = await supabase.from('users').select('points').eq('telegram_id', id).maybeSingle();
+
+    return res.status(200).json({
+      ok: true, reward: LINK_REWARD, watched, limit: LIMIT, lockedUntil, allDone,
+      link: LINK_URL, balance: (u2 && typeof u2.points === 'number') ? u2.points : null
+    });
   } catch (e) {
     return res.status(500).json({ error: e.message });
   }
