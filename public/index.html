@@ -188,10 +188,20 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
 .lkcur{text-align:center}
 .lknum{font-size:34px;font-weight:900;margin:6px 0 2px;font-variant-numeric:tabular-nums}
 .lkrew{font-size:13px;color:var(--acc);font-weight:800}
-.lklock{font-size:44px;font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums;letter-spacing:2px;margin:8px 0 2px;animation:pulse 1s ease infinite}
-.lklockl{font-size:11px;color:var(--dim);font-weight:600;letter-spacing:1.5px;margin-bottom:10px}
 .cnt{font-size:52px;font-weight:900;color:var(--acc);text-align:center;margin:8px 0;font-variant-numeric:tabular-nums;animation:pulse .9s ease infinite}
 @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+/* ===== premium 12h countdown ===== */
+.cdwrap{display:flex;align-items:stretch;justify-content:center;gap:7px;margin:12px 0 14px}
+.cdblk{position:relative;overflow:hidden;background:var(--card2);border:1px solid rgba(74,222,128,.28);border-radius:16px;padding:14px 6px 11px;min-width:74px;text-align:center;box-shadow:0 6px 22px rgba(0,0,0,.45)}
+.cdblk::before{content:'';position:absolute;top:0;left:10px;right:10px;height:1px;border-radius:99px;background:linear-gradient(90deg,transparent,rgba(74,222,128,.5),transparent)}
+.cdblk span{display:block;font-size:34px;font-weight:900;color:var(--acc);font-variant-numeric:tabular-nums;letter-spacing:1px;line-height:1;text-shadow:0 0 20px rgba(74,222,128,.5)}
+.cdblk small{display:block;font-size:8.5px;color:var(--dim);font-weight:800;letter-spacing:2.5px;margin-top:7px}
+.cdsep{display:flex;align-items:center;font-size:26px;font-weight:900;color:var(--acc);text-shadow:0 0 12px rgba(74,222,128,.5);animation:blink 1s steps(2) infinite;margin-top:-16px}
+@keyframes blink{50%{opacity:.15}}
+.cdprog{height:8px;border-radius:99px;background:var(--card2);overflow:hidden;margin:2px 0 6px}
+.cdprog i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,var(--acc),rgba(74,222,128,.35),var(--acc));background-size:200% 100%;animation:shimmer 2.2s linear infinite;transition:width 1s linear}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+.lkminicd{color:var(--acc);font-variant-numeric:tabular-nums;font-weight:800}
 /* ---------- links overlay page ---------- */
 #view-links{position:fixed;inset:0;background:var(--bg);z-index:120;overflow-y:auto;padding:calc(12px + env(safe-area-inset-top)) 18px 24px}
 .lktop{display:flex;align-items:center;gap:12px;margin-bottom:18px}
@@ -205,6 +215,8 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
   .qa-grid{gap:7px}
   .hero-amt{font-size:38px}
   .lkgrid{grid-template-columns:repeat(4,1fr)}
+  .cdblk{min-width:62px}
+  .cdblk span{font-size:27px}
 }
 @media (min-width:520px){
   main{max-width:620px}
@@ -439,15 +451,34 @@ nav{position:fixed;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-w
     <p class="lbl" data-i18n="links_cur">CURRENT LINK</p>
     <p class="lknum" id="lkCurNum">Link 1</p>
     <p class="lkrew" id="lkCurRew">+2 ETB</p>
-    <div class="lklock hide" id="lkLockCd">12:00:00</div>
-    <p class="lklockl hide" id="lkLockLbl" data-i18n="links_unlock_in">UNLOCKS IN</p>
+    <div class="hide" id="lkLockBox">
+      <p class="lbl" style="text-align:center;margin-top:4px" data-i18n="links_unlock_in">UNLOCKS IN</p>
+      <div class="cdwrap">
+        <div class="cdblk"><span class="cdH">00</span><small>HRS</small></div>
+        <span class="cdsep">:</span>
+        <div class="cdblk"><span class="cdM">00</span><small>MIN</small></div>
+        <span class="cdsep">:</span>
+        <div class="cdblk"><span class="cdS">00</span><small>SEC</small></div>
+      </div>
+      <div class="cdprog"><i class="lkCdBar" style="width:100%"></i></div>
+    </div>
     <button class="btn" id="lkGo" style="margin-top:14px" onclick="startLinkTask()" data-i18n="links_open_btn">Open Link</button>
     <div class="cnt hide" id="lkCount">15</div>
     <p class="note hide" id="lkWait" data-i18n="links_wait">Stay in the app — your reward unlocks when the timer ends.</p>
-    <p class="note hide" id="lkClaimed" style="color:var(--acc);font-weight:700"></p>
   </div>
   <div class="card">
     <div class="lkgrid" id="lkGrid"></div>
+    <div class="hide" id="lkLockBox2">
+      <p class="empty" data-i18n="links_all_done">All 50 links done!</p>
+      <div class="cdwrap">
+        <div class="cdblk"><span class="cdH">00</span><small>HRS</small></div>
+        <span class="cdsep">:</span>
+        <div class="cdblk"><span class="cdM">00</span><small>MIN</small></div>
+        <span class="cdsep">:</span>
+        <div class="cdblk"><span class="cdS">00</span><small>SEC</small></div>
+      </div>
+      <div class="cdprog"><i class="lkCdBar" style="width:100%"></i></div>
+    </div>
     <p class="note" id="lkNote" data-i18n="links_note">Complete the links in order — 1, then 2, then 3… After all 50, locked for 12 hours.</p>
   </div>
 </div>
@@ -514,7 +545,7 @@ const LANGS = {
     links_entry_note:'50 links daily, in order — 15 seconds each. Finishes lock for 12 hours.',
     links_cur:'CURRENT LINK',links_open_btn:'Open Link',links_wait:'Stay in the app — your reward unlocks when the timer ends.',
     links_note:'Complete the links in order — 1, then 2, then 3… After all 50, locked for 12 hours.',
-    links_unlock_in:'UNLOCKS IN',links_locked_msg:'All 50 done — locked! Come back when the timer ends.',links_all_done:'All 50 links done! Locked for 12 hours',
+    links_unlock_in:'UNLOCKS IN',links_locked_msg:'All 50 done — new links unlock when the timer ends!',links_all_done:'All 50 links done! Locked for 12 hours',
     tasks_t:'Tasks',task_note:'Tap Start, join/follow, come back and tap Verify.',done:'Done',start:'Start',verify:'Verify',no_tasks:'No tasks available right now',
     ref_bonus:'Referral bonus',ref_bonus_html:'Complete <b style="color:#fff">any 3 tasks</b> to unlock your inviter\'s <b style="color:var(--acc)">+50 ETB</b>. Fair rewards for real members.',
     ref_link:'Your referral link',copy:'Copy',share:'Share',
@@ -550,7 +581,7 @@ const LANGS = {
     links_entry_note:'በቀን 50 ሊንኮች፣ በቅደም ተከተል — እያንዳንዱ 15 ሰከንድ። ሲጨርሱ ለ12 ሰዓት ይታጠፋል።',
     links_cur:'የአሁኑ ሊንክ',links_open_btn:'ሊንክ ይክፈቱ',links_wait:'በመተግበሪያው ውስጥ ይቆዩ — ጊዜው ሲያልቅ ሽልማትዎ ይገባል።',
     links_note:'ሊንኮቹን በቅደም ተከተል ይጠናቀቁ — 1፣ ከዛ 2፣ ከዛ 3… ሁሉም 50 ከተጠናቀቁ ለ12 ሰዓት ይታጠፋል።',
-    links_unlock_in:'ይከፈታል በ',links_locked_msg:'ሁሉም 50 ተጠናቋል — ጊዜው ሲያልቅ ይምጡ!',links_all_done:'ሁሉም 50 ሊንኮች ተጠናቀቁ! 12 ሰዓት እረፍት',
+    links_unlock_in:'ይከፈታል በ',links_locked_msg:'ሁሉም 50 ተጠናቋል — ጊዜው ሲያልቅ አዲስ ሊንኮች ይከፈታሉ!',links_all_done:'ሁሉም 50 ሊንኮች ተጠናቀቁ! 12 ሰዓት እረፍት',
     tasks_t:'ተግባራት',task_note:'Start ይንኩ፣ ይቀላቀሉ፣ ተመልሰው Verify ይንኩ።',done:'ተጠናቋል',start:'ጀምር',verify:'አረጋግጥ',no_tasks:'እስካሁን ተግባር የለም',
     ref_bonus:'የግብዣ ሽልማት',ref_bonus_html:'ከላይ ካሉት <b style="color:#fff">ማንኛውም 3 ተግባራት</b> መሞላት ሲጠናቀቅ አስጋቢዎ <b style="color:var(--acc)">+50 ETB</b> ያገኛል።',
     ref_link:'የግብዣ አገናኝዎ',copy:'ቅዳ',share:'አጋራ',
@@ -1152,7 +1183,7 @@ async function playGame() {
   }
 }
 
-/* ================= LINK TASKS (sequential, 15s timer, live 12h countdown) ================= */
+/* ================= LINK TASKS (sequential, 15s timer, live premium countdown) ================= */
 let linkState = { watched: 0, limit: 50, lockedUntil: null, link: '', reward: 2 };
 let lkTimer = null, lkSeconds = 0, lkBusy = false;
 
@@ -1163,7 +1194,20 @@ function fmtCd(ms){
   const h = Math.floor(ms / 3600000);
   const m = Math.floor(ms % 3600000 / 60000);
   const s = Math.floor(ms % 60000 / 1000);
-  return (h < 10 ? '0' : '') + h + ':' + (m < 10 ? '0' : '') + m + ':' + (s < 10 ? '0' : '') + s;
+  const pad = n => (n < 10 ? '0' : '') + n;
+  return pad(h) + ':' + pad(m) + ':' + pad(s);
+}
+
+function updateCountdown(ms){
+  const h = Math.floor(ms / 3600000);
+  const m = Math.floor(ms % 3600000 / 60000);
+  const s = Math.floor(ms % 60000 / 1000);
+  const pad = n => (n < 10 ? '0' : '') + n;
+  document.querySelectorAll('.cdH').forEach(e => { e.textContent = pad(h); });
+  document.querySelectorAll('.cdM').forEach(e => { e.textContent = pad(m); });
+  document.querySelectorAll('.cdS').forEach(e => { e.textContent = pad(s); });
+  const pct = Math.max(0, Math.min(100, ms / (12 * 3600000) * 100));
+  document.querySelectorAll('.lkCdBar').forEach(e => { e.style.width = pct + '%'; });
 }
 
 async function loadLinks() {
@@ -1175,7 +1219,10 @@ async function loadLinks() {
 }
 
 function renderLinksEntry() {
-  $('lkMiniTxt').textContent = linkState.watched + '/' + linkState.limit;
+  const locked = isLinkLocked();
+  let txt = linkState.watched + '/' + linkState.limit;
+  if (locked) txt += '  •  <span class="lkminicd">' + fmtCd(new Date(linkState.lockedUntil) - Date.now()) + '</span>';
+  $('lkMiniTxt').innerHTML = txt;
   $('lkMiniBar').style.width = Math.min(100, linkState.watched / linkState.limit * 100) + '%';
 }
 
@@ -1188,34 +1235,40 @@ function renderLinksPage() {
   $('lkBar').style.width = Math.min(100, linkState.watched / linkState.limit * 100) + '%';
 
   if (locked) {
-    // live 12-hour countdown instead of a done mark
-    $('lkCurNum').textContent = '🔒';
+    // ===== impressive live countdown — no ✓ grid =====
+    $('lkCurNum').classList.add('hide');
     $('lkCurRew').classList.add('hide');
-    $('lkLockCd').classList.remove('hide');
-    $('lkLockLbl').classList.remove('hide');
-    $('lkLockCd').textContent = fmtCd(new Date(linkState.lockedUntil) - Date.now());
+    $('lkLockBox').classList.remove('hide');
     $('lkGo').classList.add('hide');
     $('lkCount').classList.add('hide');
     $('lkWait').classList.add('hide');
+    $('lkGrid').classList.add('hide');
+    $('lkLockBox2').classList.remove('hide');
+    updateCountdown(new Date(linkState.lockedUntil) - Date.now());
+    $('lkNote').textContent = t('links_locked_msg');
   } else if (linkState.watched >= linkState.limit) {
+    $('lkCurNum').classList.remove('hide');
     $('lkCurNum').textContent = '🎉';
     $('lkCurRew').classList.remove('hide');
     $('lkCurRew').textContent = t('links_all_done');
-    $('lkLockCd').classList.add('hide');
-    $('lkLockLbl').classList.add('hide');
+    $('lkLockBox').classList.add('hide');
+    $('lkGrid').classList.remove('hide');
+    $('lkLockBox2').classList.add('hide');
     $('lkGo').classList.add('hide');
   } else {
+    $('lkCurNum').classList.remove('hide');
     $('lkCurNum').textContent = 'Link ' + (linkState.watched + 1);
     $('lkCurRew').classList.remove('hide');
     $('lkCurRew').textContent = '+' + linkState.reward + ' ETB';
-    $('lkLockCd').classList.add('hide');
-    $('lkLockLbl').classList.add('hide');
+    $('lkLockBox').classList.add('hide');
+    $('lkGrid').classList.remove('hide');
+    $('lkLockBox2').classList.add('hide');
     $('lkGo').classList.remove('hide');
     $('lkGo').disabled = false;
     $('lkCount').classList.add('hide');
     $('lkWait').classList.add('hide');
   }
-  $('lkClaimed').classList.add('hide');
+  $('lkClaimed') && $('lkClaimed').classList.add('hide');
 
   let h = '';
   for (let i = 1; i <= linkState.limit; i++) {
@@ -1226,13 +1279,13 @@ function renderLinksPage() {
   $('lkGrid').innerHTML = h;
 }
 
-// live countdown ticker — updates the lock timer every second while visible
+// live ticker — every second, updates all countdown instances everywhere
 setInterval(() => {
-  if ($('view-links').classList.contains('hide')) return;
-  if (isLinkLocked()) {
-    const el = $('lkLockCd');
-    if (el) el.textContent = fmtCd(new Date(linkState.lockedUntil) - Date.now());
-  }
+  if (!isLinkLocked()) return;
+  const ms = new Date(linkState.lockedUntil) - Date.now();
+  if (ms <= 0) { loadLinks(); return; }  // timer hit zero → refresh, links unlock
+  updateCountdown(ms);
+  if (me) renderLinksEntry();
 }, 1000);
 
 function goToCurrent(){
