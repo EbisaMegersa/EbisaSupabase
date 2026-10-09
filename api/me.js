@@ -27,7 +27,7 @@ module.exports = async (req, res) => {
     const id = tgId(initData);
 
     const { data: user } = await supabase.from('users')
-      .select('points, streak, last_checkin, first_name, referral_code, photo_url, ads_watched, last_ad_date, ads_total, ads_used, refs_used, spins_total, spins_used')
+      .select('points, streak, last_checkin, first_name, referral_code, photo_url, ads_watched, last_ad_date, ads_total, ads_used, refs_used, spins_total, spins_used, referred_by, gate_done')
       .eq('telegram_id', id).maybeSingle();
     if (!user) return res.status(404).json({ error: 'Not found' });
 
@@ -83,6 +83,19 @@ module.exports = async (req, res) => {
 
     const todayISO = new Date().toISOString().slice(0, 10);
 
+    // join & verify gate — only for referred users who haven't finished it
+    let gate = null;
+    if (user.referred_by && !user.gate_done) {
+      const { data: gc } = await supabase.from('task_completions')
+        .select('task_key').eq('user_id', id).in('task_key', ['gate_channel', 'gate_group']);
+      gate = {
+        needed: true,
+        done: false,
+        channel: (gc || []).some(x => x.task_key === 'gate_channel'),
+        group: (gc || []).some(x => x.task_key === 'gate_group')
+      };
+    }
+
     return res.status(200).json({
       tg_id: id,
       points: user.points,
@@ -107,7 +120,8 @@ module.exports = async (req, res) => {
       withdrawals: hist || [],
       activities: acts || [],
       leaderboard: lb || [],
-      reviews: rev || []
+      reviews: rev || [],
+      gate
     });
   } catch (e) {
     return res.status(500).json({ error: e.message });
