@@ -26,6 +26,9 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .ic{display:inline-flex;width:20px;height:20px;color:#fff;flex-shrink:0}
 .ic svg{width:100%;height:100%}
 .ic.sm{width:15px;height:15px}.ic.lg{width:22px;height:22px}.ic.dark{color:#000}.ic.gold{color:var(--gold)}
+.hiimg{width:23px;height:23px;vertical-align:-5px;margin-left:5px}
+.ckimg{width:15px;height:15px;vertical-align:-3px}
+.ckimg2{width:14px;height:14px;vertical-align:-2px}
 .screen{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:36px}
 .bigwrap{width:88px;height:88px;border-radius:30px;background:var(--glass);border:1px solid var(--sep);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.12),0 12px 40px rgba(0,0,0,.5)}
 .bigwrap .ic{width:36px;height:36px}
@@ -213,31 +216,27 @@ nav{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;tran
 .backbtn{width:42px;height:42px;border-radius:16px;background:var(--glass);border:1px solid var(--sep);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;font-family:inherit;transition:transform .4s var(--spring)}
 .backbtn:active{transform:scale(.88)}
 .lktitle{font-size:17px;font-weight:800;letter-spacing:-.3px}
-@media (max-width:350px){
-  main{padding-left:14px;padding-right:14px}
-  .qa-grid{gap:7px}
-  .hero-amt{font-size:38px}
-  .lkgrid{grid-template-columns:repeat(4,1fr)}
-  .cdblk{min-width:62px}
-  .cdblk span{font-size:27px}
-}
-@media (min-width:520px){
-  main{max-width:620px}
-  nav{max-width:592px}
-  body{padding-bottom:134px}
-  .hero-amt{font-size:52px}
-  .balance{padding:28px}
-  .qa-grid{gap:14px}
-  .wheelwrap{width:300px;height:300px}
-}
-@media (min-width:760px){
-  main{max-width:760px}
-  nav{max-width:732px}
-  .mgrid{grid-template-columns:repeat(5,1fr)}
-  .lkgrid{grid-template-columns:repeat(8,1fr)}
-  .hero-amt{font-size:56px}
-  .wheelwrap{width:340px;height:340px}
-}
+/* ---------- join & verify gate ---------- */
+#view-gate{position:fixed;inset:0;background:rgba(0,0,0,.9);backdrop-filter:blur(40px) saturate(180%);-webkit-backdrop-filter:blur(40px) saturate(180%);z-index:140;overflow-y:auto;padding:calc(24px + env(safe-area-inset-top)) 18px 24px;animation:fadeup .35s var(--ease)}
+.gatehead{text-align:center;margin:6px 0 18px}
+.gatelogo{width:64px;height:64px;border-radius:20px;margin:0 auto 12px;background:var(--glass);border:1px solid var(--sep);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);display:flex;align-items:center;justify-content:center;box-shadow:inset 0 1px 0 rgba(255,255,255,.14)}
+.gatelogo .ic{width:30px;height:30px;color:var(--acc)}
+.gatehead h2{font-size:21px;font-weight:900;letter-spacing:-.4px}
+.gatesub{font-size:13px;color:var(--dim);margin-top:6px}
+.gatebonus{display:flex;align-items:center;gap:10px;background:rgba(74,222,128,.1);border:1px solid rgba(74,222,128,.35);border-radius:16px;padding:12px 14px;font-size:12.5px;font-weight:700;color:var(--acc);margin-bottom:14px;box-shadow:0 0 22px rgba(74,222,128,.1)}
+.gaterow{display:flex;align-items:center;gap:11px;background:var(--glass);border:1px solid var(--sep);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);border-radius:18px;padding:13px;margin-bottom:10px}
+.gaterow .gico{width:42px;height:42px;border-radius:13px;background:var(--glass2);border:1px solid var(--sep);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.gateinfo{flex:1;min-width:0}
+.gatet{font-size:13.5px;font-weight:700}
+.gates{font-size:11px;color:var(--dim);margin-top:1px}
+.gbtns{display:flex;gap:6px;flex-shrink:0}
+.gbtn{padding:9px 14px;border-radius:12px;border:none;font-size:12px;font-weight:800;font-family:inherit;cursor:pointer;transition:transform .4s var(--spring)}
+.gbtn:active{transform:scale(.95)}
+.gbtn-join{background:var(--glass2);color:#fff;border:1px solid var(--sep)}
+.gbtn-verify{background:var(--acc);color:#000;box-shadow:0 4px 14px var(--glow)}
+.gdone{display:flex;align-items:center;gap:5px;color:var(--acc);font-weight:800;font-size:12px}
+.gdone img{width:16px;height:16px}
+.gatecont{margin-top:6px}
 </style>
 </head>
 <body>
@@ -325,7 +324,7 @@ nav{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;tran
     </div>
     <div class="card">
       <p class="ctitle"><i class="ic" data-ic="gift"></i> <span data-i18n="ref_bonus">Referral bonus</span></p>
-      <p style="font-size:13px;line-height:1.65;color:var(--dim)" data-i18n-html="ref_bonus_html">Complete any 3 tasks to unlock your inviter's +50 ETB.</p>
+      <p style="font-size:13px;line-height:1.65;color:var(--dim)" data-i18n-html="ref_bonus_html">Invite friends and earn +50 ETB.</p>
     </div>
   </section>
 
@@ -374,7 +373,7 @@ nav{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;tran
         <button class="btn btn-ghost" onclick="copyLink()" data-i18n="copy">Copy</button>
         <button class="btn" onclick="shareLink()" data-i18n="share">Share</button>
       </div>
-      <p class="note" data-i18n-html="ref_note_html">You get +50 ETB when your friend completes any 3 tasks.</p>
+      <p class="note" data-i18n-html="ref_note_html">You get +50 ETB when your friend joins & verifies.</p>
     </div>
     <div class="card">
       <div class="grid3">
@@ -486,6 +485,31 @@ nav{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;tran
   </div>
 </div>
 
+<!-- JOIN & VERIFY GATE (referred users) -->
+<div id="view-gate" class="hide">
+  <div class="gatehead">
+    <div class="gatelogo"><i class="ic" data-ic="zap"></i></div>
+    <h2>EarnApp</h2>
+    <p class="gatesub" data-i18n="gate_sub">Complete these 2 quick steps to unlock the app</p>
+  </div>
+  <div class="gatebonus"><i class="ic sm" data-ic="gift"></i><span data-i18n="gate_bonus">25 ETB welcome topup added to your balance!</span></div>
+  <div class="card">
+    <p class="ctitle"><i class="ic" data-ic="check"></i> <span data-i18n="gate_title">Join & Verify</span></p>
+    <div class="gaterow">
+      <div class="gico"><i class="ic" data-ic="mega"></i></div>
+      <div class="gateinfo"><p class="gatet" data-i18n="gate_ch_t">Join our Channel</p><p class="gates">@ebtry0</p></div>
+      <div class="gbtns" id="gateCh"></div>
+    </div>
+    <div class="gaterow">
+      <div class="gico"><i class="ic" data-ic="chat"></i></div>
+      <div class="gateinfo"><p class="gatet" data-i18n="gate_gr_t">Join our Group</p><p class="gates">@ebatest</p></div>
+      <div class="gbtns" id="gateGr"></div>
+    </div>
+    <button class="btn hide gatecont" id="gateGo" onclick="gateContinue()" data-i18n="gate_continue">Continue to App</button>
+    <p class="note" data-i18n="gate_note">Verification is automatic — join, come back, tap Verify.</p>
+  </div>
+</div>
+
 <script>
 const BOT_USERNAME = "EbSupabaseBot";
 const APP_NAME = "refer";
@@ -493,7 +517,9 @@ const MIN_WD = 1000;
 const ADS_REQ = 25, FRIENDS_REQ = 15, SPINS_REQ = 10;
 const STREAK_REWARDS = [10, 30, 40, 60, 70, 80, 100];
 const REF_REWARD = 50;
-const CHECK = '✅️'; // iOS/Telegram emoji used everywhere
+const CKIMG = 'https://cdn.phototourl.com/member/2026-10-09-71e9e0fb-07a4-482a-a939-957a11289fb9.png';
+const HIIMG = 'https://cdn.phototourl.com/member/2026-10-09-b6ddf6ea-8255-4cfa-8539-8e183a0262cb.png';
+const GATE_LINKS = { channel:'https://t.me/ebtry0', group:'https://t.me/ebatest' };
 
 const METHODS = {
   telebirr:{label:'Telebirr',img:'https://cdn.phototourl.com/member/2026-10-07-1415c5f3-9d5b-4611-8a1e-0e98b8b41bae.jpg',ph:'Telebirr phone number e.g. 07xxxxxxxx'},
@@ -529,7 +555,10 @@ const IC = {
   userplus:'<path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" x2="19" y1="8" y2="14"/><line x1="22" x2="16" y1="11" y2="11"/>',
   eye:'<path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/>',
   eyeoff:'<path d="M10.733 5.076a10.744 10.744 0 0 1 11.205 6.575 1 1 0 0 1 0 .696 10.747 10.747 0 0 1-1.444 2.49"/><path d="M14.084 14.158a3 3 0 0 1-4.242-4.242"/><path d="M17.479 17.499a10.75 10.75 0 0 1-15.417-5.151 1 1 0 0 1 0-.696 10.75 10.75 0 0 1 4.446-5.143"/><path d="m2 2 20 20"/>',
-  back:'<path d="m15 18-6-6 6-6"/>'
+  back:'<path d="m15 18-6-6 6-6"/>',
+  mega:'<path d="m3 11 18-5v12L3 14v-3z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/>',
+  chat:'<path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>',
+  zap:'<path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/>'
 };
 function icon(n){ return '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' + (IC[n] || IC.star) + '</svg>'; }
 document.querySelectorAll('[data-ic]').forEach(el => { el.innerHTML = icon(el.dataset.ic); });
@@ -551,9 +580,9 @@ const LANGS = {
     links_note:'Complete the links in order — 1, then 2, then 3… After all 50, locked for 12 hours.',
     links_unlock_in:'UNLOCKS IN',links_locked_msg:'All 50 done — new links unlock when the timer ends!',links_all_done:'All 50 links done! Locked for 12 hours',
     tasks_t:'Tasks',task_note:'Tap Start, join/follow, come back and tap Verify.',done:'Done',start:'Start',verify:'Verify',no_tasks:'No tasks available right now',
-    ref_bonus:'Referral bonus',ref_bonus_html:'Complete <b style="color:#fff">any 3 tasks</b> to unlock your inviter\'s <b style="color:var(--acc)">+50 ETB</b>. Fair rewards for real members.',
+    ref_bonus:'Referral bonus',ref_bonus_html:'Invite friends and earn <b style="color:var(--acc)">+50 ETB</b> each — they just need to <b style="color:#fff">join & verify</b> our channel and group.',
     ref_link:'Your referral link',copy:'Copy',share:'Share',
-    ref_note_html:'You get <b style="color:var(--acc)">+50 ETB</b> when your friend <b style="color:#fff">completes any 3 tasks</b>. They get <b style="color:var(--acc)">+25 ETB</b> welcome bonus.',
+    ref_note_html:'You get <b style="color:var(--acc)">+50 ETB</b> when your friend <b style="color:#fff">joins & verifies</b> our channel and group. They get <b style="color:var(--acc)">+25 ETB</b> welcome bonus.',
     f_friends:'Friends',f_pending:'Pending',f_earned:'ETB earned',your_friends:'Your friends',no_refs:'No referrals yet — share your link',
     leaderboard:'Top 15 Earners',lb_empty:'Leaderboard is empty',you:'You',
     balance_w:'Balance',
@@ -570,7 +599,10 @@ const LANGS = {
     m_min_bet:'Minimum bet is 50 ETB',m_max_bet:'Maximum bet is 5,000 ETB',m_no_bal:'Not enough balance',
     locked_t:'Multiple Accounts Detected',locked_p:'Multiple accounts detected by IP. This device or network already has the maximum of 2 registered accounts.',
     err_t:'Something went wrong',open_tg:'Open in Telegram',open_tg_s:'Please open this app inside Telegram.',
-    streak_fmt:'day streak — come back daily for bigger rewards'
+    streak_fmt:'day streak — come back daily for bigger rewards',
+    gate_sub:'Complete these 2 quick steps to unlock the app',gate_bonus:'25 ETB welcome topup added to your balance!',
+    gate_title:'Join & Verify',gate_ch_t:'Join our Channel',gate_gr_t:'Join our Group',
+    gate_continue:'Continue to App',gate_note:'Verification is automatic — join, come back, tap Verify.'
   },
   am: {
     nav_home:'መነሻ',nav_tasks:'ተግባራት',nav_game:'ጨዋታ',nav_top:'ከፍተኛ',nav_friends:'ጓዞች',nav_wallet:'ዋሌት',
@@ -587,9 +619,9 @@ const LANGS = {
     links_note:'ሊንኮቹን በቅደም ተከተል ይጠናቀቁ — 1፣ ከዛ 2፣ ከዛ 3… ሁሉም 50 ከተጠናቀቁ ለ12 ሰዓት ይታጠፋል።',
     links_unlock_in:'ይከፈታል በ',links_locked_msg:'ሁሉም 50 ተጠናቋል — ጊዜው ሲያልቅ አዲስ ሊንኮች ይከፈታሉ!',links_all_done:'ሁሉም 50 ሊንኮች ተጠናቀቁ! 12 ሰዓት እረፍት',
     tasks_t:'ተግባራት',task_note:'Start ይንኩ፣ ይቀላቀሉ፣ ተመልሰው Verify ይንኩ።',done:'ተጠናቋል',start:'ጀምር',verify:'አረጋግጥ',no_tasks:'እስካሁን ተግባር የለም',
-    ref_bonus:'የግብዣ ሽልማት',ref_bonus_html:'ከላይ ካሉት <b style="color:#fff">ማንኛውም 3 ተግባራት</b> መሞላት ሲጠናቀቅ አስጋቢዎ <b style="color:var(--acc)">+50 ETB</b> ያገኛል።',
+    ref_bonus:'የግብዣ ሽልማት',ref_bonus_html:'ጓደኛዎችን ይጋብዙ — ቻናላችንንና ግሩፓችንን <b style="color:#fff">ሲቀላቀሉና ሲያረጋግጡ</b> እርስዎ <b style="color:var(--acc)">+50 ETB</b> ያገኛሉ።',
     ref_link:'የግብዣ አገናኝዎ',copy:'ቅዳ',share:'አጋራ',
-    ref_note_html:'ጓደኛዎ <b style="color:#fff">3 ተግባራት</b> ሲያከናውን እርስዎ <b style="color:var(--acc)">+50 ETB</b> ያገኛሉ። እሱ <b style="color:var(--acc)">+25 ETB</b> ይቀበላል።',
+    ref_note_html:'ጓደኛዎ <b style="color:#fff">ቻናሉንና ግሩፁን ሲቀላቀልና ሲያረጋግጥ</b> እርስዎ <b style="color:var(--acc)">+50 ETB</b> ያገኛሉ። እሱ <b style="color:var(--acc)">+25 ETB</b> ይቀበላል።',
     f_friends:'ጓደኞች',f_pending:'ቆይተዋል',f_earned:'የተገኘ ETB',your_friends:'ጓደኞችዎ',no_refs:'እስካሁን ግብዣ የለም — አገናኝዎን ያጋሩ',
     leaderboard:'ምርጥ 15 ተሸላሚዎች',lb_empty:'ዝርዝሩ ባዶ ነው',you:'እርስዎ',
     balance_w:'ሂሳብ',
@@ -606,7 +638,10 @@ const LANGS = {
     m_min_bet:'ዝቅተኛ ውርርድ 50 ETB ነው',m_max_bet:'ከፍተኛ ውርርድ 5,000 ETB ነው',m_no_bal:'ሂሳብዎ አይበቃም',
     locked_t:'በርካታ መለያዎች ተገኝተዋል',locked_p:'በIP በርካታ መለያዎች ተገኝተዋል። ከአንድ መሣሪያ ከ2 በላይ መለያ መክፈት አይቻልም።',
     err_t:'ችግር አጋጥሟል',open_tg:'በቴሌግራም ይክፈቱ',open_tg_s:'እባክዎ ይህን መተግበሪያ በቴሌግራም ውስጥ ይክፈቱ።',
-    streak_fmt:'ቀን ተከታታይ — ተመልሰው ይምጡ፣ ሽልማቱ ይጨምራል'
+    streak_fmt:'ቀን ተከታታይ — ተመልሰው ይምጡ፣ ሽልማቱ ይጨምራል',
+    gate_sub:'መተግበሪያውን ለመክፈት እነዚህን 2 ፈጣን ደረጃዎች ይጠናቀቁ',gate_bonus:'25 ETB የእንኳን ደህና መጣ ስጦታ ወደ ባላንሶዎ ገብቷል!',
+    gate_title:'ይቀላቀሉ እና ያረጋግጡ',gate_ch_t:'ቻናላችንን ይቀላቀሉ',gate_gr_t:'ግሩፓችንን ይቀላቀሉ',
+    gate_continue:'ወደ መተግበሪያው ይቀጥሉ',gate_note:'ማረጋገጫው በራስ-ሰር ነው — ይቀላቀሉ፣ ይመለሱ፣ Verify ይንኩ።'
   }
 };
 let lang = 'en';
@@ -675,8 +710,8 @@ async function start() {
 
   // 🟢 native Telegram header — dark green + dark red background (alpha with solid fallback)
   try { tg.setHeaderColor('#274D23'); } catch (e) {}
-  try { tg.setBackgroundColor('#4E0404C4'); } catch (e) {}      // 8-digit (Telegram may reject alpha)
-  try { if (!tg.backgroundColor || tg.backgroundColor === '#ffffff') tg.setBackgroundColor('#4E0404'); } catch (e) {} // fallback: solid dark red
+  try { tg.setBackgroundColor('#4E0404C4'); } catch (e) {}
+  try { if (!tg.backgroundColor || tg.backgroundColor === '#ffffff') tg.setBackgroundColor('#4E0404'); } catch (e) {}
 
   try {
     const r = await fetch('/api/auth', {
@@ -688,6 +723,7 @@ async function start() {
     if (a.error === 'MULTI_ACCOUNT') { document.getElementById('app').classList.add('hide'); showScreen('locked'); return; }
     if (!a.user) throw new Error(a.error || 'Login failed');
     await loadMe();
+    maybeShowGate();
   } catch (e) {
     document.getElementById('app').classList.add('hide');
     $('errMsg').textContent = e.message + ' — please close and reopen the app.';
@@ -708,7 +744,7 @@ function avatarHtml(pic, name, cls) {
 }
 
 function renderAll() {
-  $('hello').textContent = (lang === 'am' ? 'ሰላም, ' : 'Hi, ') + (me.first_name || 'Friend') + ' 👋';
+  $('hello').innerHTML = (lang === 'am' ? 'ሰላም, ' : 'Hi, ') + (me.first_name || 'Friend') + ' <img class="hiimg" src="' + HIIMG + '">';
   $('avatar').innerHTML = me.photo_url ? '<img src="' + me.photo_url + '">' : (me.first_name || '?')[0].toUpperCase();
   renderBalance();
   $('link').value = 'https://t.me/' + BOT_USERNAME + '/' + APP_NAME + '?startapp=' + (me.referral_code || '');
@@ -763,7 +799,7 @@ function renderTasks() {
   $('taskList').innerHTML = list.map(tp => {
     const done = doneTasks.has(String(tp.id));
     let btn;
-    if (done) btn = '<span class="done">' + CHECK + ' ' + t('done') + '</span>';
+    if (done) btn = '<span class="done"><img class="ckimg" src="' + CKIMG + '"> ' + t('done') + '</span>';
     else if (startedTasks.has(String(tp.id))) btn = '<button class="btn btn-outline btn-sm" onclick="taskVerify(' + tp.id + ')">' + t('verify') + '</button>';
     else btn = '<button class="btn btn-sm" onclick="taskStart(' + tp.id + ')">' + t('start') + '</button>';
     return '<div class="task"><div class="ticon"><i class="ic">' + icon(tp.icon) + '</i></div>' +
@@ -1282,7 +1318,7 @@ function renderLinksPage() {
   for (let i = 1; i <= linkState.limit; i++) {
     const done = i <= linkState.watched;
     const next = i === linkState.watched + 1 && !locked;
-    h += '<button class="lkb' + (done ? ' done' : '') + (next ? ' next' : '') + '" onclick="goToCurrent()">' + (done ? CHECK : i) + '</button>';
+    h += '<button class="lkb' + (done ? ' done' : '') + (next ? ' next' : '') + '" onclick="goToCurrent()">' + (done ? '<img class="ckimg2" src="' + CKIMG + '">' : i) + '</button>';
   }
   $('lkGrid').innerHTML = h;
 }
@@ -1355,6 +1391,52 @@ async function claimLink() {
     lkBusy = false;
     notify('Error: ' + e.message);
   }
+}
+
+/* ================= JOIN & VERIFY GATE (referred users) ================= */
+function maybeShowGate() {
+  if (me && me.gate && me.gate.needed) {
+    renderGate();
+    $('view-gate').classList.remove('hide');
+  }
+}
+
+function renderGate() {
+  const g = me.gate || { channel: false, group: false };
+  $('gateCh').innerHTML = g.channel
+    ? '<span class="gdone"><img src="' + CKIMG + '"> ' + t('done') + '</span>'
+    : '<button class="gbtn gbtn-join" onclick="gateJoin(\'channel\')">' + t('start') + '</button>' +
+      '<button class="gbtn gbtn-verify" onclick="gateVerify(\'channel\')">' + t('verify') + '</button>';
+  $('gateGr').innerHTML = g.group
+    ? '<span class="gdone"><img src="' + CKIMG + '"> ' + t('done') + '</span>'
+    : '<button class="gbtn gbtn-join" onclick="gateJoin(\'group\')">' + t('start') + '</button>' +
+      '<button class="gbtn gbtn-verify" onclick="gateVerify(\'group\')">' + t('verify') + '</button>';
+  $('gateGo').classList.toggle('hide', !(g.channel && g.group));
+}
+
+function gateJoin(s) {
+  const l = GATE_LINKS[s];
+  if (l.includes('t.me')) tg.openTelegramLink(l); else tg.openLink(l);
+}
+
+async function gateVerify(s) {
+  try {
+    const r = await fetch('/api/gate', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ initData: tg.initData, step: s })
+    });
+    const d = await r.json();
+    if (!r.ok) return notify(d.error || 'Verify failed');
+    me.gate = { needed: true, done: d.gateDone, channel: d.channel, group: d.group };
+    haptic('success');
+    renderGate();
+    if (d.gateDone) notify('App unlocked!');
+  } catch (e) { notify('Error: ' + e.message); }
+}
+
+function gateContinue() {
+  $('view-gate').classList.add('hide');
+  haptic('success');
 }
 
 loadLinks();
