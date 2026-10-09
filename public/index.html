@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#0B6623">
+<meta name="theme-color" content="#0E2417">
 <title>EarnApp</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,8 +17,7 @@ img{-webkit-user-drag:none}
 html{-webkit-font-smoothing:antialiased}
 body{background:#000;color:var(--txt);font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;padding-bottom:128px;-webkit-font-smoothing:antialiased}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:linear-gradient(180deg,rgba(11,102,35,.7) 0%,rgba(11,102,35,.3) 90px,rgba(11,102,35,.1) 180px,transparent 300px),
-             radial-gradient(600px 420px at 85% -8%,rgba(74,222,128,.09),transparent 60%),
+  background:radial-gradient(600px 420px at 85% -8%,rgba(74,222,128,.09),transparent 60%),
              radial-gradient(500px 380px at -10% 30%,rgba(74,222,128,.05),transparent 60%),
              radial-gradient(700px 500px at 50% 115%,rgba(74,222,128,.045),transparent 65%)}
 main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top)) 18px 20px;position:relative;z-index:1}
@@ -71,7 +70,7 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .pill{display:inline-block;padding:4px 12px;border-radius:999px;font-size:11px;font-weight:700}
 .pill.paid{background:var(--acc);color:#000;box-shadow:0 2px 10px var(--glow)}
 .pill.pending{background:var(--glass2);color:var(--dim)}
-.pill.rejected{background:rgba(255,69,58,.12);color:var(--red)}
+.pill.rejected{background:rgba(255,69,58,.14);color:var(--red)}
 .done{display:inline-block;background:rgba(74,222,128,.15);border:1px solid rgba(74,222,128,.4);color:var(--acc);font-weight:700;font-size:11px;padding:6px 14px;border-radius:999px}
 .dots{display:flex;gap:5px;margin-bottom:14px}
 .dot{flex:1;text-align:center;padding:11px 2px;border-radius:14px;background:var(--glass);border:1px solid transparent;font-size:9px;color:var(--dim);font-weight:600;transition:background .35s,transform .45s var(--spring)}
@@ -273,7 +272,7 @@ nav{position:fixed;bottom:calc(14px + env(safe-area-inset-bottom));left:50%;tran
   <section id="tab-home">
     <div class="balance">
       <svg class="deco" viewBox="0 0 120 120">
-        <defs><pattern id="dg" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="#333"/></pattern>
+        <defs><pattern id="dg" width="10" height="10" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="#3A3A3A"/></pattern>
         <radialGradient id="rg"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#000"/></radialGradient>
         <mask id="dm"><rect width="120" height="120" fill="url(#rg)"/></mask></defs>
         <rect width="120" height="120" fill="url(#dg)" mask="url(#dm)"/>
@@ -672,9 +671,10 @@ async function start() {
   tg.ready();
   tg.expand();
 
-  // 🟢 native Telegram header — your chosen premium green
-  try { tg.setHeaderColor('#0B6623'); } catch (e) {}
-  try { tg.setBackgroundColor('#0B6623'); } catch (e) {}
+  // 🟢 native Telegram top header + background — match the green theme
+  // change '#0E2417' to '#4ADE80' if you want the bright brand green bar
+  try { tg.setHeaderColor('#0E2417'); } catch (e) {}
+  try { tg.setBackgroundColor('#0E2417'); } catch (e) {}
 
   try {
     const r = await fetch('/api/auth', {
