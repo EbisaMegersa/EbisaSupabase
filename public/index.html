@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
-<meta name="theme-color" content="#02610B">
+<meta name="theme-color" content="#274D23">
 <title>EarnApp</title>
 <script src="https://telegram.org/js/telegram-web-app.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -17,7 +17,7 @@ img{-webkit-user-drag:none}
 html{-webkit-font-smoothing:antialiased}
 body{background:#000;color:var(--txt);font-family:'Inter',-apple-system,BlinkMacSystemFont,'SF Pro Display',sans-serif;padding-bottom:128px;-webkit-font-smoothing:antialiased}
 body::before{content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
-  background:linear-gradient(180deg,rgba(2,97,11,.8) 0%,rgba(2,97,11,.4) 100px,rgba(2,97,11,.15) 220px,transparent 380px),
+  background:linear-gradient(180deg,rgba(39,77,35,.85) 0%,rgba(39,77,35,.45) 100px,rgba(78,4,4,.18) 220px,transparent 380px),
              radial-gradient(600px 420px at 85% -8%,rgba(74,222,128,.09),transparent 60%),
              radial-gradient(500px 380px at -10% 30%,rgba(74,222,128,.05),transparent 60%),
              radial-gradient(700px 500px at 50% 115%,rgba(74,222,128,.045),transparent 65%)}
@@ -26,7 +26,7 @@ main{max-width:480px;margin:0 auto;padding:calc(14px + env(safe-area-inset-top))
 .ic{display:inline-flex;width:20px;height:20px;color:#fff;flex-shrink:0}
 .ic svg{width:100%;height:100%}
 .ic.sm{width:15px;height:15px}.ic.lg{width:22px;height:22px}.ic.dark{color:#000}.ic.gold{color:var(--gold)}
-.hiimg{width:18px;height:18px;vertical-align:-4px;margin-left:4px}
+.hiimg{width:23px;height:23px;vertical-align:-5px;margin-left:5px}
 .ckimg{width:15px;height:15px;vertical-align:-3px}
 .ckimg2{width:14px;height:14px;vertical-align:-2px}
 .screen{position:fixed;inset:0;background:rgba(0,0,0,.75);backdrop-filter:blur(30px) saturate(160%);-webkit-backdrop-filter:blur(30px) saturate(160%);z-index:150;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:36px}
@@ -619,7 +619,7 @@ const LANGS = {
     links_note:'ሊንኮቹን በቅደም ተከተል ይጠናቀቁ — 1፣ ከዛ 2፣ ከዛ 3… ሁሉም 50 ከተጠናቀቁ ለ12 ሰዓት ይታጠፋል።',
     links_unlock_in:'ይከፈታል በ',links_locked_msg:'ሁሉም 50 ተጠናቋል — ጊዜው ሲያልቅ አዲስ ሊንኮች ይከፈታሉ!',links_all_done:'ሁሉም 50 ሊንኮች ተጠናቀቁ! 12 ሰዓት እረፍት',
     tasks_t:'ተግባራት',task_note:'Start ይንኩ፣ ይቀላቀሉ፣ ተመልሰው Verify ይንኩ።',done:'ተጠናቋል',start:'ጀምር',verify:'አረጋግጥ',no_tasks:'እስካሁን ተግባር የለም',
-    ref_bonus:'የግብዣ ሽልማት',ref_bonus_html:'ጓደኛዎችን ይጋብዙ — ቻናላችንንና ግሩፓችንን <b style="color:#fff">ሲቀላቀሉና ሲያረጋግጡ</b> እርስዎ <b style="color:var(--acc)">+50 ETB</b> ያገኛል።',
+    ref_bonus:'የግብዣ ሽልማት',ref_bonus_html:'ጓደኛዎችን ይጋብዙ — ቻናላችንንና ግሩፓችንን <b style="color:#fff">ሲቀላቀሉና ሲያረጋግጡ</b> እርስዎ <b style="color:var(--acc)">+50 ETB</b> ያገኛሉ።',
     ref_link:'የግብዣ አገናኝዎ',copy:'ቅዳ',share:'አጋራ',
     ref_note_html:'ጓደኛዎ <b style="color:#fff">ቻናሉንና ግሩፁን ሲቀላቀልና ሲያረጋግጥ</b> እርስዎ <b style="color:var(--acc)">+50 ETB</b> ያገኛሉ። እሱ <b style="color:var(--acc)">+25 ETB</b> ይቀበላል።',
     f_friends:'ጓደኞች',f_pending:'ቆይተዋል',f_earned:'የተገኘ ETB',your_friends:'ጓደኞችዎ',no_refs:'እስካሁን ግብዣ የለም — አገናኝዎን ያጋሩ',
@@ -708,9 +708,10 @@ async function start() {
   tg.ready();
   tg.expand();
 
-  // 🟢 native Telegram header — green + dark background
-  try { tg.setHeaderColor('#02610B'); } catch (e) {}
-  try { tg.setBackgroundColor('#02610B'); } catch (e) {}
+  // 🟢 native Telegram header — dark green + dark red background (alpha with solid fallback)
+  try { tg.setHeaderColor('#274D23'); } catch (e) {}
+  try { tg.setBackgroundColor('#4E0404C4'); } catch (e) {}
+  try { if (!tg.backgroundColor || tg.backgroundColor === '#ffffff') tg.setBackgroundColor('#4E0404'); } catch (e) {}
 
   try {
     const r = await fetch('/api/auth', {
@@ -1383,7 +1384,7 @@ async function claimLink() {
     }
     haptic('success');
     if (d.allDone) notify(t('links_all_done'));
-    else notify('+' + d.reward + ' ETB ✅️');
+    else notify('+' + d.reward + ' ETB ✓');
     renderLinksEntry();
     renderLinksPage();
   } catch (e) {
@@ -1403,11 +1404,11 @@ function maybeShowGate() {
 function renderGate() {
   const g = me.gate || { channel: false, group: false };
   $('gateCh').innerHTML = g.channel
-    ? '<span class="gdone"><img class="ckimg" src="' + CKIMG + '"> ' + t('done') + '</span>'
+    ? '<span class="gdone"><img src="' + CKIMG + '"> ' + t('done') + '</span>'
     : '<button class="gbtn gbtn-join" onclick="gateJoin(\'channel\')">' + t('start') + '</button>' +
       '<button class="gbtn gbtn-verify" onclick="gateVerify(\'channel\')">' + t('verify') + '</button>';
   $('gateGr').innerHTML = g.group
-    ? '<span class="gdone"><img class="ckimg" src="' + CKIMG + '"> ' + t('done') + '</span>'
+    ? '<span class="gdone"><img src="' + CKIMG + '"> ' + t('done') + '</span>'
     : '<button class="gbtn gbtn-join" onclick="gateJoin(\'group\')">' + t('start') + '</button>' +
       '<button class="gbtn gbtn-verify" onclick="gateVerify(\'group\')">' + t('verify') + '</button>';
   $('gateGo').classList.toggle('hide', !(g.channel && g.group));
@@ -1437,14 +1438,6 @@ function gateContinue() {
   $('view-gate').classList.add('hide');
   haptic('success');
 }
-
-/* kill all copy/select/download/context-menu */
-document.addEventListener('contextmenu', e => e.preventDefault());
-document.addEventListener('selectstart', e => { if (!e.target.closest('input,textarea')) e.preventDefault(); });
-document.addEventListener('dragstart', e => e.preventDefault());
-document.addEventListener('copy', e => { if (!e.target.closest('input,textarea')) e.preventDefault(); });
-document.addEventListener('cut', e => e.preventDefault());
-document.querySelectorAll('img').forEach(i => { i.setAttribute('draggable','false'); i.style.webkitTouchCallout = 'none'; });
 
 loadLinks();
 applyLang();
